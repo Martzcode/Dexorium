@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -53,6 +53,12 @@ export class AppShell {
 
   protected readonly year = new Date().getFullYear();
   protected readonly mobileNavOpen = signal(false);
+
+  constructor() {
+    effect(() => {
+      document.documentElement.lang = this.language();
+    });
+  }
 
   protected toggleMobileNav(): void {
     this.mobileNavOpen.update((open) => !open);

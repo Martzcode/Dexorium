@@ -55,7 +55,7 @@
       "items": {
         "shell": {
           "title": "Native Tauri shell",
-          "description": "Lightweight system WebView, signed installers and a strict content security policy from day one."
+          "description": "Lightweight system WebView, cross-platform installers and a strict content security policy from day one."
         },
         "rust": {
           "title": "Layered Rust core",

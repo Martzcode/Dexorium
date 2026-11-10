@@ -55,7 +55,7 @@
       "items": {
         "shell": {
           "title": "Coque native Tauri",
-          "description": "WebView système légère, installateurs signés et politique de sécurité stricte dès le premier jour."
+          "description": "WebView système légère, installateurs multiplateformes et politique de sécurité stricte dès le premier jour."
         },
         "rust": {
           "title": "Cœur Rust en couches",
