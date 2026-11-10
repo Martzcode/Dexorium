@@ -1,12 +1,8 @@
 import { NgComponentOutlet } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import {
-  LucideAppWindow,
-  LucideArrowLeftRight,
   LucideBookOpen,
   LucideBrain,
-  LucideCpu,
-  LucideDatabase,
   LucideLayoutDashboard,
   LucideLibraryBig,
   LucideMenu,
@@ -17,17 +13,12 @@ import {
   LucideSun,
   LucideSwords,
   LucideUsers,
-  LucideWifiOff,
   LucideWrench,
 } from '@lucide/angular';
 
 const ICONS = {
-  'app-window': LucideAppWindow,
-  'arrow-left-right': LucideArrowLeftRight,
   'book-open': LucideBookOpen,
   brain: LucideBrain,
-  cpu: LucideCpu,
-  database: LucideDatabase,
   'layout-dashboard': LucideLayoutDashboard,
   'library-big': LucideLibraryBig,
   menu: LucideMenu,
@@ -38,7 +29,6 @@ const ICONS = {
   sun: LucideSun,
   swords: LucideSwords,
   users: LucideUsers,
-  'wifi-off': LucideWifiOff,
   wrench: LucideWrench,
 } as const;
 
