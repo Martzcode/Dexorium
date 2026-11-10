@@ -1,63 +1,99 @@
-<div class="shell">
-  <aside class="sidebar" [class.sidebar--open]="mobileNavOpen()">
-    <a class="brand" href="/" aria-label="Dexorium home">
-      <span class="brand__mark" aria-hidden="true">
-        <span class="brand__lens"></span>
+<div class="grid min-h-screen grid-cols-1 lg:grid-cols-[244px_minmax(0,1fr)]">
+  <aside [class]="sidebarClass()">
+    <a
+      class="flex items-center gap-3 px-2 py-1 text-ink no-underline"
+      href="/"
+      aria-label="Dexorium home"
+    >
+      <span
+        class="grid size-[38px] place-items-center overflow-hidden rounded-full border-2 border-orb bg-[linear-gradient(180deg,var(--accent)_0_46%,var(--orb-border)_46%_54%,#eef0f6_54%)] shadow-[0_8px_20px_color-mix(in_srgb,var(--accent)_22%,transparent)]"
+        aria-hidden="true"
+      >
+        <span class="size-3 rounded-full border-4 border-orb bg-[#eef0f6]"></span>
       </span>
-      <span class="brand__text">
-        <strong>Dexorium</strong>
-        <small>{{ 'app.tagline' | transloco }}</small>
+      <span class="flex min-w-0 flex-col">
+        <strong class="text-base tracking-[-0.02em]">Dexorium</strong>
+        <small
+          class="overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.6rem] tracking-[0.04em] text-ink-muted"
+        >
+          {{ 'app.tagline' | transloco }}
+        </small>
       </span>
     </a>
 
-    <nav class="nav" [attr.aria-label]="'nav.ariaLabel' | transloco">
-      <p class="nav__label">{{ 'nav.section' | transloco }}</p>
+    <nav class="flex flex-col gap-[3px]" [attr.aria-label]="'nav.ariaLabel' | transloco">
+      <p class="mb-2 px-2.5 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-ink-muted">
+        {{ 'nav.section' | transloco }}
+      </p>
       @for (item of navItems; track item.labelKey) {
         @if (item.ready) {
-          <a class="nav__item nav__item--active" [routerLink]="item.route">
-            <span class="nav__icon" aria-hidden="true">{{ item.icon }}</span>
+          <a
+            class="flex items-center gap-2.5 rounded-lg bg-accent/10 px-2.5 py-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-accent/15"
+            [routerLink]="item.route"
+          >
+            <span class="grid w-5 place-items-center text-accent" aria-hidden="true">
+              <app-icon [name]="item.icon" [size]="17" />
+            </span>
             {{ item.labelKey | transloco }}
           </a>
         } @else {
-          <span class="nav__item nav__item--soon" aria-disabled="true">
-            <span class="nav__icon" aria-hidden="true">{{ item.icon }}</span>
+          <span
+            class="flex cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-sm text-ink-soft opacity-60"
+            aria-disabled="true"
+          >
+            <span class="grid w-5 place-items-center text-ink-muted" aria-hidden="true">
+              <app-icon [name]="item.icon" [size]="17" />
+            </span>
             {{ item.labelKey | transloco }}
-            <span class="nav__badge">{{ 'nav.soon' | transloco }}</span>
+            <span
+              class="ml-auto rounded-full border border-line px-1.5 py-0.5 font-mono text-[0.52rem] uppercase tracking-[0.06em] text-ink-muted"
+            >
+              {{ 'nav.soon' | transloco }}
+            </span>
           </span>
         }
       }
     </nav>
 
-    <div class="sidebar__footer">
-      <div class="build">
-        <span class="build__dot"></span>
-        <span>{{ 'sidebar.build' | transloco }} {{ appInfo.info()?.version ?? '0.1.0' }}</span>
-      </div>
-      <p>{{ 'sidebar.license' | transloco }}</p>
+    <div class="mt-auto border-t border-line px-2.5 pt-3.5 text-[0.68rem] text-ink-muted">
+      <p class="m-0 leading-relaxed">{{ 'sidebar.license' | transloco }}</p>
     </div>
   </aside>
 
-  <div class="main">
-    <header class="topbar">
+  <div class="flex min-w-0 flex-col">
+    <header
+      class="sticky top-0 z-20 flex items-center gap-3.5 border-b border-line bg-canvas/80 px-6 py-3 backdrop-blur-xl max-sm:px-3.5 max-sm:py-2.5"
+    >
       <button
-        class="icon-button menu-button"
+        class="grid size-9 place-items-center rounded-lg border border-line bg-panel text-ink-soft transition-colors hover:border-line-strong hover:text-ink lg:hidden"
         type="button"
         [attr.aria-label]="'nav.toggle' | transloco"
         (click)="toggleMobileNav()"
       >
-        ☰
+        <app-icon name="menu" [size]="18" />
       </button>
 
-      <div class="search" role="search" aria-disabled="true">
-        <span aria-hidden="true">⌕</span>
-        <span class="search__text">{{ 'topbar.search' | transloco }}</span>
-        <kbd>Ctrl K</kbd>
+      <div
+        class="flex max-w-[560px] flex-1 cursor-not-allowed items-center gap-2.5 rounded-[9px] border border-line bg-panel px-3 py-2.5 text-[0.82rem] text-ink-muted max-sm:hidden"
+        role="search"
+        aria-disabled="true"
+      >
+        <app-icon name="search" [size]="16" />
+        <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+          {{ 'topbar.search' | transloco }}
+        </span>
+        <kbd
+          class="whitespace-nowrap rounded-[5px] border border-line bg-panel-muted px-2 py-0.5 font-mono text-[0.62rem] text-ink-muted"
+        >
+          Ctrl K
+        </kbd>
       </div>
 
-      <div class="topbar__actions">
-        <label class="language">
+      <div class="ml-auto flex items-center gap-2">
+        <label>
           <span class="sr-only">{{ 'topbar.language' | transloco }}</span>
           <select
+            class="cursor-pointer rounded-lg border border-line bg-panel px-2 py-1.5 font-mono text-[0.7rem] text-ink-soft"
             [value]="language()"
             (change)="setLanguage($any($event.target).value)"
             [attr.aria-label]="'topbar.language' | transloco"
@@ -68,28 +104,29 @@
         </label>
 
         <button
-          class="icon-button"
+          class="grid size-9 place-items-center rounded-lg border border-line bg-panel text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
           type="button"
           [attr.aria-label]="themeLabelKey() | transloco"
           [title]="themeLabelKey() | transloco"
           (click)="toggleTheme()"
         >
           @if (theme.resolved() === 'dark') {
-            <span aria-hidden="true">☀</span>
+            <app-icon name="sun" [size]="18" />
           } @else {
-            <span aria-hidden="true">☾</span>
+            <app-icon name="moon" [size]="18" />
           }
         </button>
       </div>
     </header>
 
-    <main class="content">
+    <main class="flex-1">
       <router-outlet />
     </main>
 
-    <footer class="footer">
+    <footer
+      class="flex items-center justify-between gap-4 border-t border-line px-6 py-[18px] text-[0.7rem] text-ink-muted max-sm:flex-col max-sm:items-start max-sm:gap-1"
+    >
       <span>© {{ year }} Dexorium</span>
-      <span>{{ 'footer.builtWith' | transloco }}</span>
     </footer>
   </div>
 </div>

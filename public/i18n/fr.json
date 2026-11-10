@@ -26,11 +26,7 @@
     "switchToDark": "Passer au thème sombre"
   },
   "sidebar": {
-    "build": "Version",
     "license": "100 % local. Aucun compte. Aucune télémétrie."
-  },
-  "footer": {
-    "builtWith": "Tauri · Rust · Angular · SQLite"
   },
   "home": {
     "hero": {
@@ -38,15 +34,6 @@
       "titleLine1": "Tous les Pokémon.",
       "titleLine2": "Zéro réseau.",
       "description": "Dexorium est l’outil de référence des joueurs, collectionneurs et compétiteurs : espèces, attaques, talents, objets, lieux, chaînes d’évolution et outils d’équipe — le tout embarqué dans une application native qui fonctionne en avion, en tournoi ou dans une salle sans Wi-Fi."
-    },
-    "runtime": {
-      "title": "Runtime de l’application",
-      "connected": "Pont desktop connecté",
-      "browser": "Aperçu navigateur — IPC désactivé",
-      "error": "Pont desktop indisponible",
-      "loading": "Vérification du runtime…",
-      "version": "Version",
-      "platform": "Plateforme"
     },
     "foundation": {
       "eyebrow": "Socle du projet",
@@ -66,7 +53,7 @@
           "description": "Les commandes Tauri restent fines, renvoient des payloads typés et passent par une façade Angular unique."
         },
         "ui": {
-          "title": "Interface Angular 20",
+          "title": "Interface réactive",
           "description": "Composants standalone, signals, détection de changement zoneless et changement de langue à chaud."
         },
         "data": {

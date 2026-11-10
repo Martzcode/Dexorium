@@ -26,11 +26,7 @@
     "switchToDark": "Switch to dark theme"
   },
   "sidebar": {
-    "build": "Build",
     "license": "Local-first. No account. No telemetry."
-  },
-  "footer": {
-    "builtWith": "Tauri · Rust · Angular · SQLite"
   },
   "home": {
     "hero": {
@@ -38,15 +34,6 @@
       "titleLine1": "Every Pokémon.",
       "titleLine2": "Zero network.",
       "description": "Dexorium is the reference desk for players, collectors and competitive trainers: species, moves, abilities, items, locations, evolution chains and team tools — all embedded in a native application that works in a plane, at a tournament or in a room with no Wi-Fi."
-    },
-    "runtime": {
-      "title": "Application runtime",
-      "connected": "Desktop bridge connected",
-      "browser": "Browser preview — IPC disabled",
-      "error": "Desktop bridge unavailable",
-      "loading": "Checking runtime…",
-      "version": "Version",
-      "platform": "Platform"
     },
     "foundation": {
       "eyebrow": "Project foundation",
@@ -66,7 +53,7 @@
           "description": "Tauri commands stay thin, return typed payloads and are reached through a single Angular facade."
         },
         "ui": {
-          "title": "Angular 20 interface",
+          "title": "Reactive interface",
           "description": "Standalone components, signals, zoneless change detection and runtime language switching."
         },
         "data": {

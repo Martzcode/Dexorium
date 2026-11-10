@@ -39,6 +39,7 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@jsverse/transloco": "^8.4.0",
+    "@lucide/angular": "^1.71.0",
     "@ngrx/signals": "^20.1.0",
     "@tauri-apps/api": "^2.12.4",
     "rxjs": "~7.8.0",
@@ -48,6 +49,7 @@
     "@angular/build": "^20.3.42",
     "@angular/cli": "^20.3.42",
     "@angular/compiler-cli": "^20.3.0",
+    "@tailwindcss/postcss": "^4.3.5",
     "@tauri-apps/cli": "^2.12.4",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
@@ -56,7 +58,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.5.32",
     "prettier": "^3.9.10",
+    "tailwindcss": "^4.3.5",
     "typescript": "~5.9.2"
   }
 }

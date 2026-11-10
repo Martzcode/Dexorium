@@ -1,35 +1,34 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppInfoService, type AppInfoStatus } from '../../core/app-info/app-info.service';
+import { AppIcon, type IconName } from '../../shared/icon/app-icon';
 
 interface FoundationItem {
   readonly key: string;
-  readonly icon: string;
+  readonly icon: IconName;
 }
+
+type RoadmapStatus = 'current' | 'next' | 'planned';
 
 interface RoadmapItem {
   readonly version: string;
   readonly key: string;
-  readonly status: 'current' | 'next' | 'planned';
+  readonly status: RoadmapStatus;
 }
 
 @Component({
   selector: 'app-home',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, AppIcon],
   templateUrl: './home.page.html',
-  styleUrl: './home.page.scss',
 })
 export class HomePage {
-  protected readonly appInfo = inject(AppInfoService);
-
   protected readonly foundation: readonly FoundationItem[] = [
-    { key: 'shell', icon: '▣' },
-    { key: 'rust', icon: '⚙' },
-    { key: 'ipc', icon: '⇄' },
-    { key: 'ui', icon: '◈' },
-    { key: 'data', icon: '◫' },
-    { key: 'offline', icon: '⊘' },
+    { key: 'shell', icon: 'app-window' },
+    { key: 'rust', icon: 'cpu' },
+    { key: 'ipc', icon: 'arrow-left-right' },
+    { key: 'ui', icon: 'layout-dashboard' },
+    { key: 'data', icon: 'database' },
+    { key: 'offline', icon: 'wifi-off' },
   ];
 
   protected readonly roadmap: readonly RoadmapItem[] = [
@@ -38,16 +37,17 @@ export class HomePage {
     { version: 'v1.2', key: 'v12', status: 'planned' },
   ];
 
-  protected statusLabelKey(status: AppInfoStatus): string {
-    switch (status) {
-      case 'ready':
-        return 'home.runtime.connected';
-      case 'browser':
-        return 'home.runtime.browser';
-      case 'error':
-        return 'home.runtime.error';
-      default:
-        return 'home.runtime.loading';
-    }
+  protected roadmapItemClass(status: RoadmapStatus): string {
+    const base = 'rounded-2xl border p-[22px]';
+    return status === 'current'
+      ? `${base} border-accent/45 bg-[linear-gradient(150deg,color-mix(in_srgb,var(--accent)_8%,transparent),transparent_60%),var(--surface)]`
+      : `${base} border-line bg-panel`;
+  }
+
+  protected roadmapStatusClass(status: RoadmapStatus): string {
+    const base = 'rounded-full px-2 py-0.5 font-mono text-[0.62rem] uppercase tracking-[0.08em]';
+    return status === 'current'
+      ? `${base} bg-accent/15 text-accent`
+      : `${base} bg-panel-muted text-ink-muted`;
   }
 }

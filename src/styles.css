@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+@import './styles/tokens.css';
+@import './styles/base.css';
+
+@source './app';
+@source './index.html';
+
+@theme inline {
+  --color-canvas: var(--bg);
+  --color-panel: var(--surface);
+  --color-panel-muted: var(--surface-muted);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-soft: var(--text-soft);
+  --color-ink-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-orb: var(--orb-border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+}

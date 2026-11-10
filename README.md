@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/branding/banner.svg" alt="Dexorium — offline Pokémon desktop encyclopedia" width="100%" />
+<img src="./assets/branding/banner.svg" alt="Dexorium, offline Pokémon desktop encyclopedia" width="100%" />
 
 # Dexorium
 
@@ -29,11 +29,11 @@
 
 ## 🌐 What is Dexorium?
 
-**Dexorium** is a native desktop Pokédex and Pokémon reference application that works with **zero internet connection**. Species, forms, base stats, types, abilities, moves, items, evolution chains, learnsets and competitive tools are bundled locally and queried through an embedded SQLite database — no account, no ads, no telemetry and no silent network calls.
+**Dexorium** is a native desktop Pokédex and Pokémon reference application that works with **zero internet connection**. Species, forms, base stats, types, abilities, moves, items, evolution chains, learnsets and competitive tools are bundled locally and queried through an embedded SQLite database: no account, no ads, no telemetry and no silent network calls.
 
-It is built for people who need reliable data **right now**: at a tournament with unreliable Wi-Fi, on a plane, in a venue basement, or simply when the major reference wikis are slow. The interface targets professional-tool ergonomics — instant search, full keyboard navigation, a command palette, cross-linked pages and a light/dark theme that follows the OS.
+It is built for people who need reliable data **right now**: at a tournament with unreliable Wi-Fi, on a plane, in a venue basement, or simply when the major reference wikis are slow. The interface targets professional-tool ergonomics: instant search, full keyboard navigation, a command palette, cross-linked pages and a light/dark theme that follows the OS.
 
-> **Project status:** Phase 0 — technical foundation. The Tauri shell, layered Rust workspace, typed IPC bridge and Angular 20 interface are in place. The Pokédex dataset and feature modules are actively being built. See the [roadmap](#-roadmap).
+> **Project status:** Phase 0: technical foundation. The Tauri shell, layered Rust workspace, typed IPC bridge and Angular 20 interface are in place. The Pokédex dataset and feature modules are actively being built. See the [roadmap](#-roadmap).
 
 ---
 
@@ -49,18 +49,18 @@ It is built for people who need reliable data **right now**: at a tournament wit
 
 **Design goals**
 
-- **Offline absolute** — the full database ships with the binary. No network dependency at runtime.
-- **Native performance** — cold start below 1.5 s, search over 1,000+ species and 900+ moves in under 50 ms.
-- **Data depth** — moves, abilities, items, encounters, evolution conditions, learnsets per version group and competitive calculators.
-- **Accessibility** — WCAG 2.1 AA target, full keyboard navigation, visible focus and reduced-motion support.
-- **Auditability** — every dataset field can be traced back to its source and game version.
-- **Privacy first** — local user data only. No account, no analytics, no telemetry.
+- **Offline absolute.** The full database ships with the binary. No network dependency at runtime.
+- **Native performance.** Cold start below 1.5 s, search over 1,000+ species and 900+ moves in under 50 ms.
+- **Data depth.** Moves, abilities, items, encounters, evolution conditions, learnsets per version group and competitive calculators.
+- **Accessibility.** WCAG 2.1 AA target, full keyboard navigation, visible focus and reduced-motion support.
+- **Auditability.** Every dataset field can be traced back to its source and game version.
+- **Privacy first.** Local user data only. No account, no analytics, no telemetry.
 
 ---
 
 ## ✨ Features
 
-### Available now — foundation
+### Available now: foundation
 
 - [x] Native **Tauri 2** window with a strict Content Security Policy and a minimal ACL
 - [x] **Angular 20** standalone shell, signals, zoneless change detection, lazy routes
@@ -70,7 +70,7 @@ It is built for people who need reliable data **right now**: at a tournament wit
 - [x] Layered **Rust workspace**: `pdx-domain`, `pdx-app`, `pdx-infra`
 - [x] Domain smoke tests and a clean dependency direction
 
-### In progress — offline Pokédex MVP (v1.0)
+### In progress: offline Pokédex MVP (v1.0)
 
 - [ ] Embedded SQLite reference database with FTS5 search
 - [ ] National and regional Pokédex with virtual scrolling
@@ -180,13 +180,13 @@ Dexorium/
 
 ---
 
-## 🚀 Getting started
+## 🏁 Getting started
 
 ### Prerequisites
 
 - **Node.js** 20+ and npm
 - **Rust** stable with Cargo
-- **Tauri system dependencies** — see the [official prerequisites](https://tauri.app/start/prerequisites/)
+- **Tauri system dependencies:** see the [official prerequisites](https://tauri.app/start/prerequisites/)
   - Windows: WebView2 (bundled with Windows 10/11) and MSVC Build Tools
   - macOS: Xcode Command Line Tools
   - Linux: `libwebkit2gtk-4.1-dev`, `build-essential`, `libssl-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`
@@ -240,8 +240,8 @@ The installer is written to `src-tauri/target/release/bundle/` (MSI/NSIS on Wind
 
 | Platform    | Targets                                         |
 | ----------- | ----------------------------------------------- |
-| **Windows** | Windows 10+ x64 / ARM64 — MSI + NSIS            |
-| **macOS**   | macOS 12+ Intel / Apple Silicon — notarized DMG |
+| **Windows** | Windows 10+ x64 / ARM64 (MSI + NSIS)            |
+| **macOS**   | macOS 12+ Intel / Apple Silicon (notarized DMG) |
 | **Linux**   | deb, rpm, AppImage                              |
 
 The Tauri 2 foundation also keeps a native mobile build possible in a later phase, but mobile is not a current priority.
@@ -250,15 +250,15 @@ The Tauri 2 foundation also keeps a native mobile build possible in a later phas
 
 ## 🗺 Roadmap
 
-| Milestone                      | Scope                                                                          | Status         |
-| ------------------------------ | ------------------------------------------------------------------------------ | -------------- |
-| **Phase 0 — Foundation**       | Tauri shell, Rust workspace, IPC, Angular shell, themes, i18n                  | ✅ Done        |
-| **v1.0 — Offline Pokédex MVP** | Dataset, species pages, evolution, learnsets, search, filters, command palette | 🚧 In progress |
-| **v1.1 — Data & comfort**      | Abilities, items, saved filters, comparison, exports, shortcuts                | Planned        |
-| **v1.2 — Competitive toolkit** | Damage/stat calculators, team builder, coverage, encounters, Showdown I/O      | Planned        |
-| **v1.3 — Collection**          | Profiles, living dex, tags, notes, dashboard                                   | Planned        |
-| **v1.4 — Extensibility**       | Signed data packs, custom themes, diagnostics                                  | Planned        |
-| **v2.0 — Platform**            | Plugin system, local read-only API, companion CLI                              | Backlog        |
+| Milestone                     | Scope                                                                          | Status         |
+| ----------------------------- | ------------------------------------------------------------------------------ | -------------- |
+| **Phase 0: Foundation**       | Tauri shell, Rust workspace, IPC, Angular shell, themes, i18n                  | ✅ Done        |
+| **v1.0: Offline Pokédex MVP** | Dataset, species pages, evolution, learnsets, search, filters, command palette | 🚧 In progress |
+| **v1.1: Data & comfort**      | Abilities, items, saved filters, comparison, exports, shortcuts                | Planned        |
+| **v1.2: Competitive toolkit** | Damage/stat calculators, team builder, coverage, encounters, Showdown I/O      | Planned        |
+| **v1.3: Collection**          | Profiles, living dex, tags, notes, dashboard                                   | Planned        |
+| **v1.4: Extensibility**       | Signed data packs, custom themes, diagnostics                                  | Planned        |
+| **v2.0: Platform**            | Plugin system, local read-only API, companion CLI                              | Backlog        |
 
 Detailed product specifications and the data-source annex are maintained privately during development and will be published alongside the first public release.
 
@@ -278,15 +278,15 @@ Detailed product specifications and the data-source annex are maintained private
 
 Dexorium is an **unofficial, non-commercial reference tool**. It is not affiliated with, endorsed by or sponsored by Nintendo, Creatures Inc., GAME FREAK Inc. or The Pokémon Company.
 
-Pokémon and Pokémon character names are trademarks of their respective owners. Official sprites and artwork are **not** distributed in the base binary; media packs are optional and user-provided where required by the applicable rights. The source code is licensed under the **GNU Affero General Public License v3.0** — see [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
+Pokémon and Pokémon character names are trademarks of their respective owners. Official sprites and artwork are **not** distributed in the base binary; media packs are optional and user-provided where required by the applicable rights. The source code is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome — bug reports, UI polish, documentation, translations and Rust/Angular improvements. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
+Contributions are welcome: bug reports, UI polish, documentation, translations and Rust/Angular improvements. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
 
-If Dexorium is useful to you, **star the repository** — it helps the project reach other players and trainers.
+If Dexorium is useful to you, **star the repository**; it helps the project reach other players and trainers.
 
 ---
 
