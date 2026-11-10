@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Dexorium — offline Pokémon desktop encyclopedia">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1016"/>
+      <stop offset="0.62" stop-color="#11141d"/>
+      <stop offset="1" stop-color="#1a1220"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#e8402a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#e8402a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff6a4d"/>
+      <stop offset="1" stop-color="#d92d1b"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#c9cfdd"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="orbGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="320" rx="22" fill="url(#bg)"/>
+  <circle cx="1090" cy="40" r="260" fill="url(#glow)"/>
+
+  <g opacity="0.5" stroke="#2a3042" stroke-width="1" fill="none">
+    <circle cx="1092" cy="160" r="132"/>
+    <circle cx="1092" cy="160" r="104" stroke-dasharray="4 8"/>
+    <circle cx="1092" cy="160" r="176" stroke-dasharray="2 12"/>
+  </g>
+
+  <g filter="url(#orbGlow)" transform="translate(1092 160)">
+    <circle r="82" fill="#1b1d26" stroke="#343a4c" stroke-width="4"/>
+    <path d="M -82 0 A 82 82 0 0 1 82 0 Z" fill="url(#top)"/>
+    <rect x="-82" y="-8" width="164" height="16" fill="#1b1d26"/>
+    <path d="M -82 0 A 82 82 0 0 0 82 0 Z" fill="#eef0f6"/>
+    <circle r="31" fill="#eef0f6" stroke="#1b1d26" stroke-width="9"/>
+    <circle r="13" fill="url(#top)" opacity="0.92"/>
+    <ellipse cx="-24" cy="-34" rx="15" ry="9" fill="#ffffff" opacity="0.35" transform="rotate(-22)"/>
+  </g>
+
+  <g transform="translate(72 70)">
+    <rect x="0" y="0" width="220" height="26" rx="13" fill="#1b2030" stroke="#2a3042"/>
+    <circle cx="16" cy="13" r="5" fill="#21c07a"/>
+    <text x="30" y="17" fill="#aeb6c8" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="11" letter-spacing="2.2">FOUNDATION · v0.1.0</text>
+
+    <text x="0" y="112" fill="url(#title)" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="74" font-weight="800" letter-spacing="-2.5">Dexorium</text>
+    <text x="3" y="150" fill="#e8402a" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="17" letter-spacing="5.4" font-weight="700">OFFLINE POKÉMON ENCYCLOPEDIA</text>
+    <text x="2" y="190" fill="#b6bdcd" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18">Species · Moves · Abilities · Items · Evolution · Teams</text>
+
+    <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="12" letter-spacing="0.8">
+      <rect x="0" y="216" width="94" height="28" rx="14" fill="#161b27" stroke="#2f3648"/>
+      <text x="18" y="234" fill="#c8cfdd">Tauri 2</text>
+      <rect x="104" y="216" width="74" height="28" rx="14" fill="#161b27" stroke="#2f3648"/>
+      <text x="123" y="234" fill="#c8cfdd">Rust</text>
+      <rect x="188" y="216" width="118" height="28" rx="14" fill="#161b27" stroke="#2f3648"/>
+      <text x="203" y="234" fill="#c8cfdd">Angular 20</text>
+      <rect x="316" y="216" width="126" height="28" rx="14" fill="#161b27" stroke="#2f3648"/>
+      <text x="331" y="234" fill="#c8cfdd">SQLite FTS5</text>
+    </g>
+  </g>
+</svg>

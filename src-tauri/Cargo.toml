@@ -1,0 +1,41 @@
+[workspace]
+members = ["crates/pdx-domain", "crates/pdx-app", "crates/pdx-infra"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/Martzcode/Dexorium"
+authors = ["Martzcode"]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+
+[package]
+name = "dexorium"
+version = "0.1.0"
+description = "Offline-first Pokémon desktop encyclopedia built with Tauri, Rust and Angular."
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "dexorium_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+pdx-app = { path = "crates/pdx-app" }
+pdx-domain = { path = "crates/pdx-domain" }
+pdx-infra = { path = "crates/pdx-infra" }
+serde = { workspace = true }
+serde_json = "1.0"
+log = "0.4"
+tauri = { version = "2.12.5", features = [] }
+tauri-plugin-log = "2"

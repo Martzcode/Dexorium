@@ -1,0 +1,62 @@
+{
+  "name": "dexorium",
+  "version": "0.1.0",
+  "description": "Offline-first Pokémon desktop encyclopedia built with Tauri, Rust and Angular.",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
+    "check:rust": "cargo check --workspace --manifest-path src-tauri/Cargo.toml",
+    "test:rust": "cargo test --workspace --manifest-path src-tauri/Cargo.toml",
+    "check": "npm run format:check && npm run build && npm run check:rust && npm run test:rust"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/cdk": "^20.2.14",
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "@jsverse/transloco": "^8.4.0",
+    "@ngrx/signals": "^20.1.0",
+    "@tauri-apps/api": "^2.12.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.42",
+    "@angular/cli": "^20.3.42",
+    "@angular/compiler-cli": "^20.3.0",
+    "@tauri-apps/cli": "^2.12.4",
+    "@types/jasmine": "~5.1.0",
+    "jasmine-core": "~5.9.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "prettier": "^3.9.10",
+    "typescript": "~5.9.2"
+  }
+}

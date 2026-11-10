@@ -1,0 +1,95 @@
+<div class="shell">
+  <aside class="sidebar" [class.sidebar--open]="mobileNavOpen()">
+    <a class="brand" href="/" aria-label="Dexorium home">
+      <span class="brand__mark" aria-hidden="true">
+        <span class="brand__lens"></span>
+      </span>
+      <span class="brand__text">
+        <strong>Dexorium</strong>
+        <small>{{ 'app.tagline' | transloco }}</small>
+      </span>
+    </a>
+
+    <nav class="nav" [attr.aria-label]="'nav.ariaLabel' | transloco">
+      <p class="nav__label">{{ 'nav.section' | transloco }}</p>
+      @for (item of navItems; track item.labelKey) {
+        @if (item.ready) {
+          <a class="nav__item nav__item--active" [routerLink]="item.route">
+            <span class="nav__icon" aria-hidden="true">{{ item.icon }}</span>
+            {{ item.labelKey | transloco }}
+          </a>
+        } @else {
+          <span class="nav__item nav__item--soon" aria-disabled="true">
+            <span class="nav__icon" aria-hidden="true">{{ item.icon }}</span>
+            {{ item.labelKey | transloco }}
+            <span class="nav__badge">{{ 'nav.soon' | transloco }}</span>
+          </span>
+        }
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="build">
+        <span class="build__dot"></span>
+        <span>{{ 'sidebar.build' | transloco }} {{ appInfo.info()?.version ?? '0.1.0' }}</span>
+      </div>
+      <p>{{ 'sidebar.license' | transloco }}</p>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button
+        class="icon-button menu-button"
+        type="button"
+        [attr.aria-label]="'nav.toggle' | transloco"
+        (click)="toggleMobileNav()"
+      >
+        ☰
+      </button>
+
+      <div class="search" role="search" aria-disabled="true">
+        <span aria-hidden="true">⌕</span>
+        <span class="search__text">{{ 'topbar.search' | transloco }}</span>
+        <kbd>Ctrl K</kbd>
+      </div>
+
+      <div class="topbar__actions">
+        <label class="language">
+          <span class="sr-only">{{ 'topbar.language' | transloco }}</span>
+          <select
+            [value]="language()"
+            (change)="setLanguage($any($event.target).value)"
+            [attr.aria-label]="'topbar.language' | transloco"
+          >
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+          </select>
+        </label>
+
+        <button
+          class="icon-button"
+          type="button"
+          [attr.aria-label]="themeLabelKey() | transloco"
+          [title]="themeLabelKey() | transloco"
+          (click)="toggleTheme()"
+        >
+          @if (theme.resolved() === 'dark') {
+            <span aria-hidden="true">☀</span>
+          } @else {
+            <span aria-hidden="true">☾</span>
+          }
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+
+    <footer class="footer">
+      <span>© {{ year }} Dexorium</span>
+      <span>{{ 'footer.builtWith' | transloco }}</span>
+    </footer>
+  </div>
+</div>

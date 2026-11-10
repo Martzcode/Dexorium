@@ -1,0 +1,55 @@
+/* Dexorium global theme tokens. */
+
+:root {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono:
+    ui-monospace, 'Cascadia Code', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --success: #21c07a;
+  --warning: #f0a020;
+  --danger: #ef5350;
+
+  --accent: #e8402a;
+  --accent-soft: #ff8a65;
+  --orb-border: #1b1d26;
+
+  --bg: #0e1016;
+  --surface: #141823;
+  --surface-muted: #1b2030;
+  --border: #252b3b;
+  --border-strong: #374059;
+  --text: #f4f5f8;
+  --text-soft: #b6bdcd;
+  --text-muted: #7d8599;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.28);
+
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --accent: #d92d1b;
+  --accent-soft: #ff7a59;
+  --orb-border: #24262f;
+
+  --bg: #f6f6fa;
+  --surface: #ffffff;
+  --surface-muted: #eef0f6;
+  --border: #e1e4ed;
+  --border-strong: #c8cddc;
+  --text: #15171f;
+  --text-soft: #4e5568;
+  --text-muted: #7c8497;
+
+  --shadow-sm: 0 1px 2px rgba(24, 28, 45, 0.05);
+  --shadow-md: 0 18px 44px rgba(24, 28, 45, 0.1);
+
+  color-scheme: light;
+}

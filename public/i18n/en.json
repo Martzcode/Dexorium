@@ -1,0 +1,108 @@
+{
+  "app": {
+    "tagline": "Offline Pokémon encyclopedia"
+  },
+  "nav": {
+    "ariaLabel": "Main navigation",
+    "section": "Workspace",
+    "overview": "Overview",
+    "pokedex": "Pokédex",
+    "moves": "Moves",
+    "abilities": "Abilities",
+    "items": "Items",
+    "teams": "Teams",
+    "tools": "Tools",
+    "collection": "Collection",
+    "settings": "Settings",
+    "soon": "Soon",
+    "toggle": "Toggle navigation"
+  },
+  "topbar": {
+    "search": "Search Pokémon, moves, items…",
+    "language": "Language"
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "sidebar": {
+    "build": "Build",
+    "license": "Local-first. No account. No telemetry."
+  },
+  "footer": {
+    "builtWith": "Tauri · Rust · Angular · SQLite"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Offline-first desktop encyclopedia",
+      "titleLine1": "Every Pokémon.",
+      "titleLine2": "Zero network.",
+      "description": "Dexorium is the reference desk for players, collectors and competitive trainers: species, moves, abilities, items, locations, evolution chains and team tools — all embedded in a native application that works in a plane, at a tournament or in a room with no Wi-Fi."
+    },
+    "runtime": {
+      "title": "Application runtime",
+      "connected": "Desktop bridge connected",
+      "browser": "Browser preview — IPC disabled",
+      "error": "Desktop bridge unavailable",
+      "loading": "Checking runtime…",
+      "version": "Version",
+      "platform": "Platform"
+    },
+    "foundation": {
+      "eyebrow": "Project foundation",
+      "title": "A native shell, a trustworthy core",
+      "description": "The project is structured around strict dependency rules so features can grow without turning the codebase into a monolith.",
+      "items": {
+        "shell": {
+          "title": "Native Tauri shell",
+          "description": "Lightweight system WebView, signed installers and a strict content security policy from day one."
+        },
+        "rust": {
+          "title": "Layered Rust core",
+          "description": "pdx-domain, pdx-app and pdx-infra keep business rules pure and isolate every I/O concern."
+        },
+        "ipc": {
+          "title": "Typed IPC bridge",
+          "description": "Tauri commands stay thin, return typed payloads and are reached through a single Angular facade."
+        },
+        "ui": {
+          "title": "Angular 20 interface",
+          "description": "Standalone components, signals, zoneless change detection and runtime language switching."
+        },
+        "data": {
+          "title": "Local SQLite storage",
+          "description": "A read-only reference database is separated from user data, so dataset updates never touch your collection."
+        },
+        "offline": {
+          "title": "Offline by design",
+          "description": "No account, no telemetry and no silent network calls. Everything you need ships with the application."
+        }
+      }
+    },
+    "roadmap": {
+      "eyebrow": "Roadmap",
+      "title": "From foundation to full Pokédex",
+      "description": "The first release focuses on a complete, instant Pokédex. Competitive and collection tools follow in incremental milestones.",
+      "status": {
+        "current": "In progress",
+        "next": "Next",
+        "planned": "Planned"
+      },
+      "mvp": {
+        "title": "Offline Pokédex MVP",
+        "description": "Species and forms, stats, types, evolution chains, learnsets, global search, filters, light/dark themes and FR/EN localization."
+      },
+      "v11": {
+        "title": "Data & comfort",
+        "description": "Abilities, items, saved filters, species comparison, export, shortcuts and update checks on demand."
+      },
+      "v12": {
+        "title": "Competitive toolkit",
+        "description": "Damage and stat calculators, team builder, type coverage, speed tiers, locations and Showdown import/export."
+      }
+    },
+    "footer": {
+      "disclaimer": "Dexorium is an unofficial, non-commercial reference tool. Pokémon and Pokémon character names are trademarks of Nintendo, Creatures Inc. and GAME FREAK Inc. This project is not affiliated with or endorsed by them."
+    }
+  }
+}

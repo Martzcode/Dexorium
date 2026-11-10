@@ -1,0 +1,48 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Dexorium",
+  "version": "0.1.0",
+  "identifier": "com.martzcode.dexorium",
+  "build": {
+    "frontendDist": "../dist/dexorium/browser",
+    "devUrl": "http://localhost:4200",
+    "beforeDevCommand": "npm run start",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Dexorium",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 640,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost ws://localhost:4200 http://localhost:4200"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Education",
+    "shortDescription": "Offline-first Pokémon desktop encyclopedia",
+    "longDescription": "Dexorium is a fast, fully offline Pokémon desktop encyclopedia for players, collectors and competitive trainers. Built with Tauri, Rust and Angular.",
+    "copyright": "Copyright © 2026 Martzcode",
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  }
+}

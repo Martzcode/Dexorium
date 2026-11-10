@@ -1,0 +1,91 @@
+<section class="hero">
+  <div class="hero__copy">
+    <p class="eyebrow">{{ 'home.hero.eyebrow' | transloco }}</p>
+    <h1>
+      {{ 'home.hero.titleLine1' | transloco }}<br />
+      <span>{{ 'home.hero.titleLine2' | transloco }}</span>
+    </h1>
+    <p class="hero__description">{{ 'home.hero.description' | transloco }}</p>
+
+    <div class="hero__chips" aria-label="Technical stack">
+      @for (tech of ['Tauri 2', 'Rust', 'Angular 20', 'SQLite FTS5']; track tech) {
+        <span class="chip">{{ tech }}</span>
+      }
+    </div>
+
+    <div class="runtime" [class.runtime--ready]="appInfo.status() === 'ready'">
+      <span class="runtime__pulse" aria-hidden="true"></span>
+      <div class="runtime__text">
+        <strong>{{ 'home.runtime.title' | transloco }}</strong>
+        <span>{{ statusLabelKey(appInfo.status()) | transloco }}</span>
+      </div>
+      @if (appInfo.info(); as info) {
+        <dl class="runtime__meta">
+          <div>
+            <dt>{{ 'home.runtime.version' | transloco }}</dt>
+            <dd>{{ info.version }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'home.runtime.platform' | transloco }}</dt>
+            <dd>{{ info.platform }} · {{ info.arch }}</dd>
+          </div>
+        </dl>
+      }
+    </div>
+  </div>
+
+  <div class="hero__visual" aria-hidden="true">
+    <div class="orbit orbit--outer"></div>
+    <div class="orbit orbit--inner"></div>
+    <div class="dex-orb">
+      <span class="dex-orb__lens"></span>
+    </div>
+    <span class="visual-label visual-label--top">OFFLINE</span>
+    <span class="visual-label visual-label--bottom">LOCAL FIRST</span>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__heading">
+    <p class="eyebrow">{{ 'home.foundation.eyebrow' | transloco }}</p>
+    <h2>{{ 'home.foundation.title' | transloco }}</h2>
+    <p>{{ 'home.foundation.description' | transloco }}</p>
+  </div>
+
+  <div class="grid">
+    @for (item of foundation; track item.key) {
+      <article class="card">
+        <span class="card__icon" aria-hidden="true">{{ item.icon }}</span>
+        <h3>{{ 'home.foundation.items.' + item.key + '.title' | transloco }}</h3>
+        <p>{{ 'home.foundation.items.' + item.key + '.description' | transloco }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__heading">
+    <p class="eyebrow">{{ 'home.roadmap.eyebrow' | transloco }}</p>
+    <h2>{{ 'home.roadmap.title' | transloco }}</h2>
+    <p>{{ 'home.roadmap.description' | transloco }}</p>
+  </div>
+
+  <ol class="roadmap">
+    @for (item of roadmap; track item.version) {
+      <li class="roadmap__item" [class]="'roadmap__item roadmap__item--' + item.status">
+        <div class="roadmap__top">
+          <span class="roadmap__version">{{ item.version }}</span>
+          <span class="roadmap__status">
+            {{ 'home.roadmap.status.' + item.status | transloco }}
+          </span>
+        </div>
+        <h3>{{ 'home.roadmap.' + item.key + '.title' | transloco }}</h3>
+        <p>{{ 'home.roadmap.' + item.key + '.description' | transloco }}</p>
+      </li>
+    }
+  </ol>
+</section>
+
+<footer class="disclaimer">
+  {{ 'home.footer.disclaimer' | transloco }}
+</footer>
