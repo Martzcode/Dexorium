@@ -16,10 +16,13 @@ pub trait SpeciesRepository {
 }
 
 /// Default maximum number of results returned by the list endpoint.
-pub const DEFAULT_SEARCH_LIMIT: usize = 60;
+///
+/// The MVP reference dataset holds ~1,025 species; the whole national dex is
+/// returned in one call. Virtual scrolling replaces this cap in a later sprint.
+pub const DEFAULT_SEARCH_LIMIT: usize = 1300;
 
 /// Upper bound accepted from the IPC boundary.
-pub const MAX_SEARCH_LIMIT: usize = 200;
+pub const MAX_SEARCH_LIMIT: usize = 2000;
 
 /// Searches species by localized name, English name, slug or national number.
 pub fn search_species(
@@ -78,7 +81,7 @@ mod tests {
         ) -> Result<Vec<SpeciesSummary>, String> {
             assert_eq!(lang, "fr");
             assert_eq!(query, "dracaufeu");
-            assert_eq!(limit, 200);
+            assert_eq!(limit, 2000);
 
             Ok(vec![SpeciesSummary {
                 id: 6,

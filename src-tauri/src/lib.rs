@@ -14,8 +14,8 @@ pub fn run() {
             commands::species::get_species,
         ])
         .setup(|app| {
-            let state =
-                AppState::load().map_err(|error| -> Box<dyn std::error::Error> { error.into() })?;
+            let state = AppState::load(app.handle())
+                .map_err(|error| -> Box<dyn std::error::Error> { error.into() })?;
             app.manage(state);
 
             if cfg!(debug_assertions) {

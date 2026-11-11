@@ -6,7 +6,7 @@ import { invokeCommand, isTauriRuntime } from '../../core/ipc/tauri-ipc';
 import type { FixtureSpecies, SpeciesDetail, SpeciesSummary } from './pokedex.models';
 
 const FIXTURE_URL = '/fixtures/species.json';
-const DEFAULT_LIMIT = 60;
+const DEFAULT_LIMIT = 1300;
 
 /**
  * Facade consumed by the Pokédex pages.

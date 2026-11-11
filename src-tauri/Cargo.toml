@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/pdx-domain", "crates/pdx-app", "crates/pdx-infra"]
+members = ["crates/pdx-domain", "crates/pdx-app", "crates/pdx-infra", "crates/pdx-dataset"]
 resolver = "3"
 
 [workspace.package]
@@ -14,6 +14,8 @@ authors = ["Martzcode"]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rusqlite = { version = "0.41", features = ["bundled"] }
+sha2 = "0.10"
+toml = "0.9"
 
 [package]
 name = "dexorium"

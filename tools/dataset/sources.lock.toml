@@ -1,0 +1,19 @@
+# Pinned data sources for the Dexorium reference dataset.
+#
+# Generated and maintained by hand: every change must go through a dedicated
+# pull request. `pdx-dataset lock --check-licenses` fails when a source is
+# missing a permissive license or still marked TO_VERIFY.
+lockfile_version = 1
+generated_at = "2026-11-11T00:00:00Z"
+
+[[source]]
+id = "pokeapi"
+kind = "git"
+repo = "https://github.com/PokeAPI/api-data"
+# Pinned commit. This is the integrity anchor: `pdx-dataset fetch` checks out
+# exactly this commit and refuses to build when HEAD does not match.
+commit = "447bd5c378bf87da964bfe4dd7487a7bf1d97cbd"
+subpath = "data/api/v2"
+license = "BSD-3-Clause"
+bundled = true
+note = "Species, forms, moves, abilities, learnsets, evolution chains, type chart and FR/EN localisation."

@@ -6,14 +6,17 @@
 //! the query code.
 
 use std::collections::HashMap;
+use std::path::Path;
 
 use pdx_app::SpeciesRepository;
 use pdx_domain::{BaseStats, SpeciesDetail, SpeciesSummary};
-use rusqlite::{Connection, OptionalExtension, Row, params};
+use rusqlite::{Connection, OpenFlags, OptionalExtension, Row, params};
 use serde::Deserialize;
 
 const FIXTURE_JSON: &str = include_str!("../../fixtures/species.json");
-const SCHEMA_SQL: &str = include_str!("schema.sql");
+
+/// Canonical reference schema shared with the `pdx-dataset` builder.
+pub const REFERENCE_SCHEMA: &str = include_str!("schema.sql");
 
 /// Supported generations, in national order.
 const GENERATIONS: &[(&str, &str)] = &[
@@ -128,8 +131,26 @@ impl SqliteSpeciesRepository {
             .map_err(|error| format!("invalid species fixture: {error}"))?;
 
         let mut connection = Connection::open_in_memory().map_err(db_error)?;
-        connection.execute_batch(SCHEMA_SQL).map_err(db_error)?;
+        connection
+            .execute_batch(REFERENCE_SCHEMA)
+            .map_err(db_error)?;
         seed(&mut connection, &species)?;
+
+        Ok(Self { connection })
+    }
+
+    /// Opens a generated reference database in read-only mode.
+    ///
+    /// # Errors
+    ///
+    /// Returns a message when the file cannot be opened. The caller is
+    /// responsible for falling back to the bundled fixture during development.
+    pub fn open(path: &Path) -> Result<Self, String> {
+        let connection = Connection::open_with_flags(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(db_error)?;
 
         Ok(Self { connection })
     }
@@ -290,12 +311,14 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
         transaction
             .execute(
                 "INSERT INTO pokemon_form (
-                    id, species_id, slug, form_order, is_default, height_dm, weight_hg
-                 ) VALUES (?1, ?2, ?3, 1, 1, ?4, ?5)",
+                    id, species_id, slug, form_order, is_default,
+                    introduced_generation_id, height_dm, weight_hg
+                 ) VALUES (?1, ?2, ?3, 1, 1, ?4, ?5, ?6)",
                 params![
                     entry.id,
                     entry.id,
                     entry.slug,
+                    entry.generation,
                     entry.height_dm,
                     entry.weight_hg,
                 ],

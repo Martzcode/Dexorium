@@ -1,0 +1,16 @@
+# Expected row counts for the MVP reference dataset (VAL-13).
+# Ranges are intentionally generous: sources gain forms and moves over time,
+# but a large drop always signals a broken extraction.
+
+[counts]
+species = { min = 1025, max = 1200 }
+pokemon_form = { min = 1300, max = 1800 }
+form_type = { min = 1400, max = 3500 }
+form_stat = { min = 7800, max = 10800 }
+ability = { min = 300, max = 500 }
+move_ = { min = 900, max = 1200 }
+form_move = { min = 100000, max = 3000000 }
+evolution_step = { min = 400, max = 1200 }
+translation = { min = 8000, max = 40000 }
+flavor_text = { min = 10000, max = 100000 }
+type_efficacy = { min = 2916, max = 2916 }

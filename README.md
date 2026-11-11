@@ -213,6 +213,27 @@ Useful for UI work. The Tauri IPC bridge is disabled in this mode, so the shell 
 npm run desktop:dev
 ```
 
+### Build the reference dataset
+
+The SQLite reference database is **not committed** to the repository. It is
+produced by the `pdx-dataset` crate from a pinned source snapshot (see
+`tools/dataset/sources.lock.toml`):
+
+```bash
+# Fetch the pinned source snapshot (cached in ~/.cache/pdx-dataset)
+cargo run --manifest-path src-tauri/Cargo.toml -p pdx-dataset --release -- fetch
+
+# Build, validate the 14 rules, then install src-tauri/resources/reference.db
+cargo run --manifest-path src-tauri/Cargo.toml -p pdx-dataset --release -- \
+  release --version 2026.11.0 --install-resource
+```
+
+The application opens `reference.db` at startup (resource directory, then
+`src-tauri/resources/`, then `DEXORIUM_REFERENCE_DB`). When the file is absent
+it falls back to the small bundled fixture so the interface remains usable.
+`reference.db` is read-only and replaced wholesale on dataset upgrades; user
+data lives in a separate `user.db`.
+
 ### Build a production desktop bundle
 
 ```bash

@@ -18,13 +18,13 @@
 # Angular CLI and build artefacts
 /.angular-cli.json
 /.ng/
-
-# TypeScript cache
 *.tsbuildinfo
 
 # Rust / Tauri
 /src-tauri/target/
 /src-tauri/gen/
+/src-tauri/resources/reference.db
+/src-tauri/resources/reference.db.sha256
 
 # Logs
 npm-debug.log*

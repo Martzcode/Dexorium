@@ -2,7 +2,7 @@
 
 mod repository;
 
-pub use repository::SqliteSpeciesRepository;
+pub use repository::{REFERENCE_SCHEMA, SqliteSpeciesRepository};
 
 #[cfg(test)]
 mod tests {
@@ -121,6 +121,53 @@ mod tests {
                 .species_detail(9_999, "en")
                 .expect("detail should succeed")
                 .is_none()
+        );
+    }
+
+    /// Smoke test for the generated dataset. It only runs when
+    /// `src-tauri/resources/reference.db` exists, so CI (which does not build
+    /// the dataset) still passes.
+    #[test]
+    fn opens_the_generated_reference_database_when_present() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("resources")
+            .join("reference.db");
+        if !path.is_file() {
+            return;
+        }
+
+        let repository =
+            SqliteSpeciesRepository::open(&path).expect("generated database should open");
+
+        let results = repository
+            .search_species("", "fr", 2_000)
+            .expect("search should succeed");
+        assert_eq!(results.len(), 1_025);
+        assert_eq!(results[0].national_dex_number, 1);
+
+        let detail = repository
+            .species_detail(6, "fr")
+            .expect("detail should succeed")
+            .expect("charizard should exist");
+        assert_eq!(detail.name, "Dracaufeu");
+        assert_eq!(detail.bst, 534);
+        assert_eq!(detail.types, vec!["fire".to_owned(), "flying".to_owned()]);
+
+        assert!(
+            repository
+                .search_species("dracaufeu", "fr", 10)
+                .expect("search should succeed")
+                .iter()
+                .any(|species| species.national_dex_number == 6)
+        );
+        assert!(
+            repository
+                .search_species("evoli", "fr", 10)
+                .expect("search should succeed")
+                .iter()
+                .any(|species| species.national_dex_number == 133)
         );
     }
 }

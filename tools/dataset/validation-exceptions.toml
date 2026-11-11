@@ -1,0 +1,44 @@
+# Explicit exceptions to VAL-06 ("every form has at least one ability").
+#
+# Add an entry only when the source genuinely models an ability-less form, and
+# always document why. Each entry is printed in the validation report.
+
+# The pinned PokeAPI snapshot ships the new Legends: Z-A mega forms without any
+# ability (the endpoint returns an empty `abilities` array). The mega stones and
+# their abilities are not modelled upstream yet, so no ability can be extracted.
+# Remove these entries as soon as the source exposes the abilities.
+[[form]]
+slug = "zygarde-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "heatran-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "darkrai-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "magearna-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "magearna-original-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "zeraora-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "tatsugiri-curly-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "tatsugiri-droopy-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
+
+[[form]]
+slug = "tatsugiri-stretchy-mega"
+reason = "No ability in the pinned source (Legends: Z-A mega form)."
