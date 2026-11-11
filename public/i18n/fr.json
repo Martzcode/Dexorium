@@ -35,5 +35,76 @@
       "titleLine2": "Zéro réseau.",
       "description": "Dexorium est l’outil de référence des joueurs, collectionneurs et compétiteurs : espèces, attaques, talents, objets, lieux, chaînes d’évolution et outils d’équipe — le tout embarqué dans une application native qui fonctionne en avion, en tournoi ou dans une salle sans Wi-Fi."
     }
+  },
+  "pokedex": {
+    "eyebrow": "Base de données embarquée",
+    "title": "Pokédex",
+    "description": "Parcourez les espèces embarquées, recherchez par nom, slug ou numéro national et consultez leurs types et statistiques de base.",
+    "searchLabel": "Rechercher une espèce",
+    "searchPlaceholder": "Nom ou numéro national…",
+    "results": "Espèces affichées : {{ count }}",
+    "loading": "Chargement du Pokédex…",
+    "bst": "Total",
+    "empty": {
+      "title": "Aucun résultat",
+      "description": "Essayez un autre nom ou un numéro national."
+    },
+    "error": {
+      "title": "Le Pokédex n’a pas pu être chargé",
+      "description": "La base de référence locale est indisponible.",
+      "retry": "Réessayer"
+    },
+    "detail": {
+      "back": "Retour au Pokédex",
+      "loading": "Chargement de la fiche…",
+      "notFound": {
+        "title": "Espèce introuvable",
+        "description": "Cette espèce n’existe pas dans le jeu de données actuel."
+      },
+      "error": {
+        "title": "Fiche indisponible",
+        "description": "La base de référence locale est indisponible.",
+        "retry": "Réessayer"
+      },
+      "measurements": "Mesures",
+      "height": "Taille",
+      "weight": "Poids",
+      "captureRate": "Taux de capture",
+      "baseHappiness": "Bonheur de base",
+      "legendary": "Légendaire",
+      "mythical": "Fabuleux",
+      "stats": {
+        "title": "Statistiques de base"
+      }
+    },
+    "stats": {
+      "hp": "PV",
+      "attack": "Attaque",
+      "defense": "Défense",
+      "spAtk": "Att. Spé.",
+      "spDef": "Déf. Spé.",
+      "speed": "Vitesse",
+      "bst": "Total"
+    },
+    "types": {
+      "normal": "Normal",
+      "fire": "Feu",
+      "water": "Eau",
+      "electric": "Électrik",
+      "grass": "Plante",
+      "ice": "Glace",
+      "fighting": "Combat",
+      "poison": "Poison",
+      "ground": "Sol",
+      "flying": "Vol",
+      "psychic": "Psy",
+      "bug": "Insecte",
+      "rock": "Roche",
+      "ghost": "Spectre",
+      "dragon": "Dragon",
+      "dark": "Ténèbres",
+      "steel": "Acier",
+      "fairy": "Fée"
+    }
   }
 }

@@ -12,6 +12,8 @@ authors = ["Martzcode"]
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.41", features = ["bundled"] }
 
 [package]
 name = "dexorium"
@@ -35,7 +37,7 @@ pdx-app = { path = "crates/pdx-app" }
 pdx-domain = { path = "crates/pdx-domain" }
 pdx-infra = { path = "crates/pdx-infra" }
 serde = { workspace = true }
-serde_json = "1.0"
+serde_json = { workspace = true }
 log = "0.4"
 tauri = { version = "2.12.5", features = [] }
 tauri-plugin-log = "2"

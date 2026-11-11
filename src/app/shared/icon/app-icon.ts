@@ -1,6 +1,7 @@
 import { NgComponentOutlet } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import {
+  LucideArrowLeft,
   LucideBookOpen,
   LucideBrain,
   LucideLayoutDashboard,
@@ -17,6 +18,7 @@ import {
 } from '@lucide/angular';
 
 const ICONS = {
+  'arrow-left': LucideArrowLeft,
   'book-open': LucideBookOpen,
   brain: LucideBrain,
   'layout-dashboard': LucideLayoutDashboard,

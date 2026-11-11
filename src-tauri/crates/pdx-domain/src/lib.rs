@@ -5,4 +5,4 @@
 
 pub mod species;
 
-pub use species::NationalDexNumber;
+pub use species::{BaseStats, NationalDexNumber, SpeciesDetail, SpeciesSummary};

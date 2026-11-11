@@ -1,0 +1,180 @@
+<section class="mx-auto max-w-[1240px] px-5 py-10 sm:px-10 sm:py-14">
+  <a
+    class="inline-flex items-center gap-2 text-sm font-semibold text-ink-soft no-underline transition-colors hover:text-ink"
+    routerLink="/pokedex"
+  >
+    <app-icon name="arrow-left" [size]="16" />
+    {{ 'pokedex.detail.back' | transloco }}
+  </a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="mt-8 text-sm text-ink-soft" role="status">
+        {{ 'pokedex.detail.loading' | transloco }}
+      </p>
+      <div class="mt-6 grid gap-5 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]" aria-hidden="true">
+        <div class="h-[220px] animate-pulse rounded-xl border border-line bg-panel/60"></div>
+        <div class="h-[280px] animate-pulse rounded-xl border border-line bg-panel/60"></div>
+      </div>
+    }
+
+    @case ('notFound') {
+      <div class="mt-8 rounded-xl border border-dashed border-line bg-panel/50 p-8 text-center">
+        <h1 class="m-0 text-xl font-semibold text-ink">
+          {{ 'pokedex.detail.notFound.title' | transloco }}
+        </h1>
+        <p class="mt-1.5 text-sm text-ink-soft">
+          {{ 'pokedex.detail.notFound.description' | transloco }}
+        </p>
+        <a
+          class="mt-4 inline-flex rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink no-underline transition-colors hover:border-line-strong"
+          routerLink="/pokedex"
+        >
+          {{ 'pokedex.detail.back' | transloco }}
+        </a>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="mt-8 rounded-xl border border-danger/30 bg-danger/5 p-6">
+        <h1 class="m-0 text-base font-semibold text-ink">
+          {{ 'pokedex.detail.error.title' | transloco }}
+        </h1>
+        <p class="mt-1.5 text-sm text-ink-soft">
+          {{ 'pokedex.detail.error.description' | transloco }}
+        </p>
+        <button
+          class="mt-4 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="retry()"
+        >
+          {{ 'pokedex.detail.error.retry' | transloco }}
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @if (species(); as entry) {
+        <header
+          class="mt-6 flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between"
+        >
+          <div>
+            <p class="m-0 font-mono text-[0.72rem] tracking-[0.12em] text-ink-muted">
+              {{ formatDexNumber(entry.nationalDexNumber) }}
+            </p>
+            <h1
+              class="mb-0 mt-2 text-[clamp(2.2rem,4vw,3.6rem)] font-bold leading-none tracking-[-0.04em]"
+            >
+              {{ entry.name }}
+            </h1>
+            <div class="mt-4 flex flex-wrap gap-1.5">
+              @for (type of entry.types; track type) {
+                <span [class]="typeBadgeClass(type)">
+                  {{ 'pokedex.types.' + type | transloco }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            @if (entry.isLegendary) {
+              <span
+                class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-amber-700 dark:text-amber-300"
+              >
+                {{ 'pokedex.detail.legendary' | transloco }}
+              </span>
+            }
+            @if (entry.isMythical) {
+              <span
+                class="rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 px-2.5 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-fuchsia-700 dark:text-fuchsia-300"
+              >
+                {{ 'pokedex.detail.mythical' | transloco }}
+              </span>
+            }
+          </div>
+        </header>
+
+        <div class="mt-6 grid gap-5 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+          <section class="rounded-xl border border-line bg-panel p-5">
+            <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
+              {{ 'pokedex.detail.measurements' | transloco }}
+            </h2>
+
+            <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-5">
+              <div>
+                <dt class="text-[0.75rem] text-ink-muted">
+                  {{ 'pokedex.detail.height' | transloco }}
+                </dt>
+                <dd class="m-0 mt-1 text-lg font-semibold">
+                  {{ formatHeight(entry.heightDm) }}
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[0.75rem] text-ink-muted">
+                  {{ 'pokedex.detail.weight' | transloco }}
+                </dt>
+                <dd class="m-0 mt-1 text-lg font-semibold">
+                  {{ formatWeight(entry.weightHg) }}
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[0.75rem] text-ink-muted">
+                  {{ 'pokedex.detail.captureRate' | transloco }}
+                </dt>
+                <dd class="m-0 mt-1 text-lg font-semibold">{{ entry.captureRate }}</dd>
+              </div>
+              <div>
+                <dt class="text-[0.75rem] text-ink-muted">
+                  {{ 'pokedex.detail.baseHappiness' | transloco }}
+                </dt>
+                <dd class="m-0 mt-1 text-lg font-semibold">
+                  @if (entry.baseHappiness !== null) {
+                    {{ entry.baseHappiness }}
+                  } @else {
+                    —
+                  }
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="rounded-xl border border-line bg-panel p-5">
+            <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
+              {{ 'pokedex.detail.stats.title' | transloco }}
+            </h2>
+
+            <dl class="mt-4 flex flex-col gap-3">
+              @for (stat of statRows(); track stat.key) {
+                <div class="grid grid-cols-[86px_minmax(0,1fr)_40px] items-center gap-3">
+                  <dt class="text-[0.78rem] text-ink-soft">
+                    {{ stat.labelKey | transloco }}
+                  </dt>
+                  <dd class="m-0 h-2 overflow-hidden rounded-full bg-panel-muted">
+                    <span
+                      class="block h-full rounded-full bg-accent"
+                      [style.width.%]="statPercent(stat.value)"
+                    ></span>
+                  </dd>
+                  <dd class="m-0 text-right font-mono text-[0.78rem] font-semibold">
+                    {{ stat.value }}
+                  </dd>
+                </div>
+              }
+
+              <div
+                class="mt-1 grid grid-cols-[86px_minmax(0,1fr)_40px] items-center gap-3 border-t border-line pt-3"
+              >
+                <dt class="text-[0.78rem] font-semibold text-ink">
+                  {{ 'pokedex.stats.bst' | transloco }}
+                </dt>
+                <dd class="col-span-2 m-0 text-right font-mono text-[0.85rem] font-bold">
+                  {{ entry.bst }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+      }
+    }
+  }
+</section>

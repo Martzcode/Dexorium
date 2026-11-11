@@ -2,8 +2,9 @@
   <aside [class]="sidebarClass()">
     <a
       class="flex items-center gap-3 px-2 py-1 text-ink no-underline"
-      href="/"
+      routerLink="/"
       aria-label="Dexorium home"
+      (click)="closeMobileNav()"
     >
       <span
         class="grid size-[38px] place-items-center overflow-hidden rounded-full border-2 border-orb bg-[linear-gradient(180deg,var(--accent)_0_46%,var(--orb-border)_46%_54%,#eef0f6_54%)] shadow-[0_8px_20px_color-mix(in_srgb,var(--accent)_22%,transparent)]"
@@ -28,8 +29,12 @@
       @for (item of navItems; track item.labelKey) {
         @if (item.ready) {
           <a
-            class="flex items-center gap-2.5 rounded-lg bg-accent/10 px-2.5 py-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-accent/15"
+            #link="routerLinkActive"
+            [class]="navClass(item, link.isActive)"
             [routerLink]="item.route"
+            [routerLinkActive]="[]"
+            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+            (click)="closeMobileNav()"
           >
             <span class="grid w-5 place-items-center text-accent" aria-hidden="true">
               <app-icon [name]="item.icon" [size]="17" />

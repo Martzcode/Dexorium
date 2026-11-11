@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -15,7 +15,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, TranslocoPipe, AppIcon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslocoPipe, AppIcon],
   templateUrl: './app-shell.html',
 })
 export class AppShell {
@@ -25,7 +25,7 @@ export class AppShell {
 
   protected readonly navItems: readonly NavItem[] = [
     { labelKey: 'nav.overview', icon: 'layout-dashboard', route: '/', ready: true },
-    { labelKey: 'nav.pokedex', icon: 'book-open' },
+    { labelKey: 'nav.pokedex', icon: 'book-open', route: '/pokedex', ready: true },
     { labelKey: 'nav.moves', icon: 'swords' },
     { labelKey: 'nav.abilities', icon: 'brain' },
     { labelKey: 'nav.items', icon: 'package' },
@@ -66,5 +66,18 @@ export class AppShell {
 
   protected toggleMobileNav(): void {
     this.mobileNavOpen.update((open) => !open);
+  }
+
+  protected closeMobileNav(): void {
+    this.mobileNavOpen.set(false);
+  }
+
+  protected navClass(item: NavItem, active: boolean): string {
+    const base =
+      'flex items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-sm no-underline transition-colors';
+
+    return active
+      ? `${base} bg-accent/10 font-semibold text-ink`
+      : `${base} text-ink-soft hover:bg-panel-muted hover:text-ink`;
   }
 }

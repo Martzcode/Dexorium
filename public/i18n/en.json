@@ -35,5 +35,76 @@
       "titleLine2": "Zero network.",
       "description": "Dexorium is the reference desk for players, collectors and competitive trainers: species, moves, abilities, items, locations, evolution chains and team tools — all embedded in a native application that works in a plane, at a tournament or in a room with no Wi-Fi."
     }
+  },
+  "pokedex": {
+    "eyebrow": "Embedded database",
+    "title": "Pokédex",
+    "description": "Browse the embedded species, search by name, slug or national number, and inspect their types and base stats.",
+    "searchLabel": "Search for a species",
+    "searchPlaceholder": "Name or national number…",
+    "results": "Species shown: {{ count }}",
+    "loading": "Loading Pokédex…",
+    "bst": "Total",
+    "empty": {
+      "title": "No results",
+      "description": "Try another name or a national number."
+    },
+    "error": {
+      "title": "The Pokédex could not be loaded",
+      "description": "The local reference database is unavailable.",
+      "retry": "Retry"
+    },
+    "detail": {
+      "back": "Back to the Pokédex",
+      "loading": "Loading species…",
+      "notFound": {
+        "title": "Species not found",
+        "description": "This species does not exist in the current dataset."
+      },
+      "error": {
+        "title": "Species unavailable",
+        "description": "The local reference database is unavailable.",
+        "retry": "Retry"
+      },
+      "measurements": "Measurements",
+      "height": "Height",
+      "weight": "Weight",
+      "captureRate": "Capture rate",
+      "baseHappiness": "Base happiness",
+      "legendary": "Legendary",
+      "mythical": "Mythical",
+      "stats": {
+        "title": "Base stats"
+      }
+    },
+    "stats": {
+      "hp": "HP",
+      "attack": "Attack",
+      "defense": "Defense",
+      "spAtk": "Sp. Atk",
+      "spDef": "Sp. Def",
+      "speed": "Speed",
+      "bst": "Total"
+    },
+    "types": {
+      "normal": "Normal",
+      "fire": "Fire",
+      "water": "Water",
+      "electric": "Electric",
+      "grass": "Grass",
+      "ice": "Ice",
+      "fighting": "Fighting",
+      "poison": "Poison",
+      "ground": "Ground",
+      "flying": "Flying",
+      "psychic": "Psychic",
+      "bug": "Bug",
+      "rock": "Rock",
+      "ghost": "Ghost",
+      "dragon": "Dragon",
+      "dark": "Dark",
+      "steel": "Steel",
+      "fairy": "Fairy"
+    }
   }
 }
