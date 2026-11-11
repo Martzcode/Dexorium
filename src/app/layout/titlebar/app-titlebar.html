@@ -1,0 +1,93 @@
+<header
+  class="fixed inset-x-0 top-0 z-50 flex h-9 select-none items-center border-b border-line bg-canvas/90 backdrop-blur-xl"
+  data-tauri-drag-region="deep"
+>
+  <div class="flex min-w-0 items-center gap-2.5 pl-3">
+    <span
+      class="grid size-5 place-items-center overflow-hidden rounded-full border border-orb bg-[linear-gradient(180deg,var(--accent)_0_46%,var(--orb-border)_46%_54%,#eef0f6_54%)]"
+      aria-hidden="true"
+    >
+      <span class="size-1.5 rounded-full border-2 border-orb bg-[#eef0f6]"></span>
+    </span>
+    <span class="font-mono text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-ink-soft">
+      Dexorium
+    </span>
+  </div>
+
+  <div class="ml-auto flex h-full items-center gap-2 px-2">
+    <div
+      class="flex items-center gap-0.5 rounded-md border border-line bg-panel-muted/60 p-0.5"
+      role="group"
+      [attr.aria-label]="'theme.label' | transloco"
+    >
+      @for (option of themeOptions; track option.value) {
+        <button
+          type="button"
+          [class]="themeOptionClass(theme.preference() === option.value)"
+          [attr.aria-pressed]="theme.preference() === option.value"
+          [attr.aria-label]="option.labelKey | transloco"
+          [title]="option.labelKey | transloco"
+          (click)="theme.set(option.value)"
+        >
+          <app-icon [name]="option.icon" [size]="14" />
+        </button>
+      }
+    </div>
+
+    <div
+      class="flex items-center gap-0.5 rounded-md border border-line bg-panel-muted/60 p-0.5"
+      role="group"
+      [attr.aria-label]="'topbar.language' | transloco"
+    >
+      @for (option of languageOptions; track option.code) {
+        <button
+          type="button"
+          [class]="languageOptionClass(language.current() === option.code)"
+          [attr.aria-pressed]="language.current() === option.code"
+          [attr.aria-label]="option.label"
+          (click)="language.setLanguage(option.code)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (isDesktop) {
+    <div class="flex h-full items-stretch border-l border-line">
+      <button
+        class="grid h-full w-[46px] place-items-center text-ink-soft transition-colors hover:bg-panel-muted hover:text-ink"
+        type="button"
+        [attr.aria-label]="'titlebar.minimize' | transloco"
+        [title]="'titlebar.minimize' | transloco"
+        (click)="minimize()"
+      >
+        <app-icon name="minus" [size]="15" />
+      </button>
+
+      <button
+        class="grid h-full w-[46px] place-items-center text-ink-soft transition-colors hover:bg-panel-muted hover:text-ink"
+        type="button"
+        [attr.aria-label]="(maximized() ? 'titlebar.restore' : 'titlebar.maximize') | transloco"
+        [title]="(maximized() ? 'titlebar.restore' : 'titlebar.maximize') | transloco"
+        (click)="toggleMaximize()"
+      >
+        @if (maximized()) {
+          <app-icon name="copy" [size]="13" />
+        } @else {
+          <app-icon name="square" [size]="13" />
+        }
+      </button>
+
+      <button
+        class="grid h-full w-[46px] place-items-center text-ink-soft transition-colors hover:bg-[#e81123] hover:text-white"
+        type="button"
+        [attr.aria-label]="'titlebar.close' | transloco"
+        [title]="'titlebar.close' | transloco"
+        (click)="close()"
+      >
+        <app-icon name="x" [size]="15" />
+      </button>
+    </div>
+  }
+</header>

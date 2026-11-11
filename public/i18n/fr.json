@@ -22,8 +22,16 @@
     "language": "Langue"
   },
   "theme": {
-    "switchToLight": "Passer au thème clair",
-    "switchToDark": "Passer au thème sombre"
+    "label": "Thème",
+    "auto": "Automatique (système)",
+    "light": "Thème clair",
+    "dark": "Thème sombre"
+  },
+  "titlebar": {
+    "minimize": "Réduire",
+    "maximize": "Agrandir",
+    "restore": "Restaurer",
+    "close": "Fermer"
   },
   "sidebar": {
     "license": "100 % local. Aucun compte. Aucune télémétrie."

@@ -22,8 +22,16 @@
     "language": "Language"
   },
   "theme": {
-    "switchToLight": "Switch to light theme",
-    "switchToDark": "Switch to dark theme"
+    "label": "Theme",
+    "auto": "Automatic (system)",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "titlebar": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "close": "Close"
   },
   "sidebar": {
     "license": "Local-first. No account. No telemetry."
