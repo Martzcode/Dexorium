@@ -284,8 +284,6 @@ Pokémon and Pokémon character names are trademarks of their respective owners.
 
 ## 🤝 Contributing
 
-Contributions are welcome: bug reports, UI polish, documentation, translations and Rust/Angular improvements. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
-
 If Dexorium is useful to you, **star the repository**; it helps the project reach other players and trainers.
 
 ---
