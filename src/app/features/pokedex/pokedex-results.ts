@@ -72,9 +72,7 @@ export class PokedexResults {
     return rows;
   });
 
-  protected readonly singleRows = computed(() =>
-    this.items().map((species) => [species] as const),
-  );
+  protected readonly singleRows = computed(() => this.items().map((species) => [species] as const));
 
   protected trackRow(index: number, row: readonly SpeciesSummary[]): number {
     return row[0]?.id ?? index;

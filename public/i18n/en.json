@@ -122,6 +122,85 @@
       "baseHappiness": "Base happiness",
       "legendary": "Legendary",
       "mythical": "Mythical",
+      "noData": "No data available.",
+      "navigation": "Species navigation",
+      "previous": "Previous species",
+      "next": "Next species",
+      "form": {
+        "label": "Form",
+        "default": "Default form",
+        "mega": "Mega",
+        "gigantamax": "Gigantamax",
+        "regional": "Regional"
+      },
+      "breeding": {
+        "title": "Breeding",
+        "gender": "Gender ratio",
+        "male": "Male",
+        "female": "Female",
+        "genderless": "Genderless",
+        "eggGroups": "Egg groups",
+        "hatchCycles": "Hatch cycles",
+        "growthRate": "Growth rate",
+        "habitat": "Habitat"
+      },
+      "abilities": {
+        "title": "Abilities",
+        "hidden": "Hidden"
+      },
+      "effectiveness": {
+        "title": "Defensive effectiveness",
+        "generation": "Gen. {{ number }}",
+        "weaknesses": "Weaknesses",
+        "resistances": "Resistances",
+        "immunities": "Immunities"
+      },
+      "evolutions": {
+        "title": "Evolutions",
+        "trigger": {
+          "level": "Level {{ level }}",
+          "item": "Item: {{ item }}",
+          "trade": "Trade",
+          "tradeSpecies": "With {{ species }}",
+          "shed": "Shed (empty slot)",
+          "heldItem": "Holding {{ item }}",
+          "happiness": "Happiness ≥ {{ value }}",
+          "affection": "Affection ≥ {{ value }}",
+          "beauty": "Beauty ≥ {{ value }}",
+          "time": {
+            "day": "During the day",
+            "night": "At night",
+            "dusk": "At dusk"
+          },
+          "male": "Male",
+          "female": "Female",
+          "move": "Knows {{ move }}",
+          "moveType": "Knows a {{ type }}-type move",
+          "location": "At {{ location }}",
+          "rain": "While raining",
+          "upsideDown": "Console upside down",
+          "atkGtDef": "Attack > Defense",
+          "atkEqDef": "Attack = Defense",
+          "atkLtDef": "Attack < Defense",
+          "partySpecies": "With {{ species }} in the party",
+          "partyType": "With a {{ type }}-type in the party",
+          "other": "Special condition"
+        }
+      },
+      "flavor": {
+        "title": "Pokédex descriptions",
+        "generation": "Generation {{ number }}"
+      },
+      "forms": {
+        "title": "Forms"
+      },
+      "identity": {
+        "title": "Identity",
+        "color": "Color",
+        "shape": "Shape",
+        "generation": "Generation",
+        "slug": "Slug"
+      },
       "stats": {
         "title": "Base stats"
       }

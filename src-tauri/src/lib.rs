@@ -11,6 +11,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::app_info::get_app_info,
             commands::species::list_pokemon,
+            commands::species::get_pokemon_detail,
             commands::species::search_species,
             commands::species::get_species,
         ])

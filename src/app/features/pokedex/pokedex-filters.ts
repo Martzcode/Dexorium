@@ -90,9 +90,11 @@ export class PokedexFilters {
     this.store.setTypeMatch(value as 'any' | 'exact' | 'mono');
   }
 
-  protected updateBound(stat: SpeciesStat, bound: 'min' | 'max', raw: string): void {    const current = this.bounds(stat);
+  protected updateBound(stat: SpeciesStat, bound: 'min' | 'max', raw: string): void {
+    const current = this.bounds(stat);
     const parsed = raw.trim() === '' ? null : Number(raw);
-    const value = parsed !== null && Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
+    const value =
+      parsed !== null && Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
 
     this.store.setStatRange(
       stat,

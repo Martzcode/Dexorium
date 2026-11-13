@@ -1,4 +1,4 @@
-use pdx_domain::{SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary};
+use pdx_domain::{PokemonDetail, SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary};
 use tauri::State;
 
 use crate::state::AppState;
@@ -11,6 +11,19 @@ pub fn list_pokemon(
 ) -> Result<SpeciesPage, String> {
     let repository = state.species()?;
     pdx_app::list_species(&*repository, &query)
+}
+
+/// Returns the aggregated detail payload for one species and one of its forms.
+#[tauri::command]
+pub fn get_pokemon_detail(
+    state: State<'_, AppState>,
+    species_id: i64,
+    form_id: Option<i64>,
+    lang: String,
+    generation: Option<u16>,
+) -> Result<Option<PokemonDetail>, String> {
+    let repository = state.species()?;
+    pdx_app::pokemon_detail(&*repository, species_id, form_id, &lang, generation)
 }
 
 /// Searches species by localized name, English name, slug or national number.

@@ -10,8 +10,9 @@ use std::path::Path;
 
 use pdx_app::SpeciesRepository;
 use pdx_domain::{
-    BaseStats, SortCriterion, SortDirection, SpeciesDetail, SpeciesListQuery, SpeciesPage,
-    SpeciesSortField, SpeciesStat, SpeciesSummary, TypeMatchMode,
+    AbilityRef, BaseStats, EvolutionStepView, FlavorTextEntry, FormSummary, PokemonDetail,
+    SortCriterion, SortDirection, SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSortField,
+    SpeciesStat, SpeciesSummary, TypeEffectiveness, TypeMatchMode,
 };
 use rusqlite::types::Value;
 use rusqlite::{Connection, OpenFlags, OptionalExtension, Row, params, params_from_iter};
@@ -289,6 +290,635 @@ impl SpeciesRepository for SqliteSpeciesRepository {
             is_mythical,
         }))
     }
+
+    fn pokemon_detail(
+        &self,
+        species_id: i64,
+        form_id: Option<i64>,
+        lang: &str,
+        generation: Option<u16>,
+    ) -> Result<Option<PokemonDetail>, String> {
+        let Some(identity) = load_species_identity(&self.connection, species_id, lang)? else {
+            return Ok(None);
+        };
+
+        let forms = load_forms(&self.connection, species_id, lang)?;
+        let Some(form) = select_form(&forms, form_id).cloned() else {
+            return Ok(None);
+        };
+
+        let abilities = load_abilities(&self.connection, form.id, lang)?;
+        let egg_groups = load_egg_groups(&self.connection, species_id, lang)?;
+        let flavor_texts = load_flavor_texts(&self.connection, species_id, lang)?;
+        let evolutions = match identity.evolution_chain_id {
+            Some(chain_id) => load_evolutions(&self.connection, chain_id, lang)?,
+            None => Vec::new(),
+        };
+        let effectiveness_generation_id = generation.unwrap_or(identity.generation_id);
+        let effectiveness =
+            load_effectiveness(&self.connection, &form.types, effectiveness_generation_id)?;
+
+        Ok(Some(PokemonDetail {
+            species_id: identity.species_id,
+            national_dex_number: identity.national_dex_number,
+            slug: identity.slug,
+            name: identity.name,
+            genus: identity.genus,
+            generation_id: identity.generation_id,
+            is_legendary: identity.is_legendary,
+            is_mythical: identity.is_mythical,
+            is_baby: identity.is_baby,
+            is_ultra_beast: identity.is_ultra_beast,
+            capture_rate: identity.capture_rate,
+            base_happiness: identity.base_happiness,
+            hatch_counter: identity.hatch_counter,
+            gender_rate: identity.gender_rate,
+            growth_rate: identity.growth_rate,
+            color: identity.color,
+            shape: identity.shape,
+            habitat: identity.habitat,
+            egg_groups,
+            form,
+            forms,
+            abilities,
+            evolution_chain_id: identity.evolution_chain_id,
+            evolutions,
+            flavor_texts,
+            effectiveness,
+            effectiveness_generation_id,
+        }))
+    }
+}
+
+/// Species-level columns shared by every form of the requested species.
+struct SpeciesIdentity {
+    species_id: i64,
+    national_dex_number: u16,
+    slug: String,
+    name: String,
+    genus: Option<String>,
+    generation_id: u16,
+    is_legendary: bool,
+    is_mythical: bool,
+    is_baby: bool,
+    is_ultra_beast: bool,
+    capture_rate: u16,
+    base_happiness: Option<u16>,
+    hatch_counter: Option<u16>,
+    gender_rate: i16,
+    growth_rate: String,
+    color: Option<String>,
+    shape: Option<String>,
+    habitat: Option<String>,
+    evolution_chain_id: Option<i64>,
+}
+
+const IDENTITY_SQL: &str = r"
+SELECT s.id,
+       s.national_dex_number,
+       s.slug,
+       COALESCE(t.value, t_en.value, s.slug) AS name,
+       COALESCE(tg.value, tg_en.value) AS genus,
+       s.generation_id,
+       s.is_legendary,
+       s.is_mythical,
+       s.is_baby,
+       s.is_ultra_beast,
+       s.capture_rate,
+       s.base_happiness,
+       s.hatch_counter,
+       s.gender_rate,
+       s.growth_rate_slug,
+       s.color_slug,
+       s.shape_slug,
+       s.habitat_slug,
+       s.evolution_chain_id
+FROM species s
+LEFT JOIN translation t
+       ON t.entity_type = 'species'
+      AND t.entity_id = s.id
+      AND t.lang = ?2
+      AND t.field = 'name'
+LEFT JOIN translation t_en
+       ON t_en.entity_type = 'species'
+      AND t_en.entity_id = s.id
+      AND t_en.lang = 'en'
+      AND t_en.field = 'name'
+LEFT JOIN translation tg
+       ON tg.entity_type = 'species'
+      AND tg.entity_id = s.id
+      AND tg.lang = ?2
+      AND tg.field = 'genus'
+LEFT JOIN translation tg_en
+       ON tg_en.entity_type = 'species'
+      AND tg_en.entity_id = s.id
+      AND tg_en.lang = 'en'
+      AND tg_en.field = 'genus'
+WHERE s.id = ?1
+";
+
+fn load_species_identity(
+    connection: &Connection,
+    species_id: i64,
+    lang: &str,
+) -> Result<Option<SpeciesIdentity>, String> {
+    let mut statement = connection.prepare(IDENTITY_SQL).map_err(db_error)?;
+    let identity = statement
+        .query_row(params![species_id, lang], |row| {
+            Ok(SpeciesIdentity {
+                species_id: row.get(0)?,
+                national_dex_number: get_u16(row, 1)?,
+                slug: row.get(2)?,
+                name: row.get(3)?,
+                genus: row.get::<_, Option<String>>(4)?,
+                generation_id: get_u16(row, 5)?,
+                is_legendary: row.get::<_, i64>(6)? != 0,
+                is_mythical: row.get::<_, i64>(7)? != 0,
+                is_baby: row.get::<_, i64>(8)? != 0,
+                is_ultra_beast: row.get::<_, i64>(9)? != 0,
+                capture_rate: get_u16(row, 10)?,
+                base_happiness: get_optional_u16(row, 11)?,
+                hatch_counter: get_optional_u16(row, 12)?,
+                gender_rate: i16::try_from(row.get::<_, i64>(13)?).unwrap_or(0),
+                growth_rate: row.get(14)?,
+                color: row.get::<_, Option<String>>(15)?,
+                shape: row.get::<_, Option<String>>(16)?,
+                habitat: row.get::<_, Option<String>>(17)?,
+                evolution_chain_id: row.get::<_, Option<i64>>(18)?,
+            })
+        })
+        .optional()
+        .map_err(db_error)?;
+
+    Ok(identity)
+}
+
+const FORMS_SQL: &str = r"
+SELECT f.id,
+       f.slug,
+       COALESCE(tf.value, tf_en.value, ts.value, ts_en.value, f.slug) AS name,
+       f.is_default,
+       f.is_mega,
+       f.is_gigantamax,
+       f.is_regional,
+       f.region_slug,
+       f.introduced_generation_id,
+       f.height_dm,
+       f.weight_hg,
+       fs.hp,
+       fs.attack,
+       fs.defense,
+       fs.sp_atk,
+       fs.sp_def,
+       fs.speed,
+       fs.bst
+FROM pokemon_form f
+JOIN species s ON s.id = f.species_id
+JOIN form_stat_summary fs ON fs.form_id = f.id
+LEFT JOIN translation tf
+       ON tf.entity_type = 'form'
+      AND tf.entity_id = f.id
+      AND tf.lang = ?2
+      AND tf.field = 'name'
+LEFT JOIN translation tf_en
+       ON tf_en.entity_type = 'form'
+      AND tf_en.entity_id = f.id
+      AND tf_en.lang = 'en'
+      AND tf_en.field = 'name'
+LEFT JOIN translation ts
+       ON ts.entity_type = 'species'
+      AND ts.entity_id = s.id
+      AND ts.lang = ?2
+      AND ts.field = 'name'
+LEFT JOIN translation ts_en
+       ON ts_en.entity_type = 'species'
+      AND ts_en.entity_id = s.id
+      AND ts_en.lang = 'en'
+      AND ts_en.field = 'name'
+WHERE f.species_id = ?1
+ORDER BY f.is_default DESC, f.form_order, f.id
+";
+
+fn load_forms(
+    connection: &Connection,
+    species_id: i64,
+    lang: &str,
+) -> Result<Vec<FormSummary>, String> {
+    let mut statement = connection.prepare(FORMS_SQL).map_err(db_error)?;
+    let rows = statement
+        .query_map(params![species_id, lang], |row| {
+            Ok(FormSummary {
+                id: row.get(0)?,
+                slug: row.get(1)?,
+                name: row.get(2)?,
+                is_default: row.get::<_, i64>(3)? != 0,
+                is_mega: row.get::<_, i64>(4)? != 0,
+                is_gigantamax: row.get::<_, i64>(5)? != 0,
+                is_regional: row.get::<_, i64>(6)? != 0,
+                region: row.get::<_, Option<String>>(7)?,
+                generation_id: get_u16(row, 8)?,
+                types: Vec::new(),
+                stats: BaseStats {
+                    hp: get_u16(row, 11)?,
+                    attack: get_u16(row, 12)?,
+                    defense: get_u16(row, 13)?,
+                    sp_atk: get_u16(row, 14)?,
+                    sp_def: get_u16(row, 15)?,
+                    speed: get_u16(row, 16)?,
+                },
+                bst: get_u16(row, 17)?,
+                height_dm: get_u16(row, 9)?,
+                weight_hg: get_u16(row, 10)?,
+            })
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)?;
+
+    let mut forms = Vec::with_capacity(rows.len());
+    for mut form in rows {
+        form.types = load_types(connection, form.id)?;
+        forms.push(form);
+    }
+
+    Ok(forms)
+}
+
+fn select_form(forms: &[FormSummary], form_id: Option<i64>) -> Option<&FormSummary> {
+    form_id
+        .and_then(|id| forms.iter().find(|form| form.id == id))
+        .or_else(|| forms.iter().find(|form| form.is_default))
+        .or_else(|| forms.first())
+}
+
+const ABILITIES_SQL: &str = r"
+SELECT a.id,
+       a.slug,
+       COALESCE(t.value, t_en.value, a.slug) AS name,
+       fa.slot,
+       fa.is_hidden
+FROM form_ability fa
+JOIN ability a ON a.id = fa.ability_id
+LEFT JOIN translation t
+       ON t.entity_type = 'ability'
+      AND t.entity_id = a.id
+      AND t.lang = ?2
+      AND t.field = 'name'
+LEFT JOIN translation t_en
+       ON t_en.entity_type = 'ability'
+      AND t_en.entity_id = a.id
+      AND t_en.lang = 'en'
+      AND t_en.field = 'name'
+WHERE fa.form_id = ?1
+ORDER BY fa.is_hidden, fa.slot
+";
+
+fn load_abilities(
+    connection: &Connection,
+    form_id: i64,
+    lang: &str,
+) -> Result<Vec<AbilityRef>, String> {
+    let mut statement = connection.prepare(ABILITIES_SQL).map_err(db_error)?;
+
+    statement
+        .query_map(params![form_id, lang], |row| {
+            Ok(AbilityRef {
+                id: row.get(0)?,
+                slug: row.get(1)?,
+                name: row.get(2)?,
+                slot: u8::try_from(row.get::<_, i64>(3)?).unwrap_or(1),
+                is_hidden: row.get::<_, i64>(4)? != 0,
+            })
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)
+}
+
+fn load_egg_groups(
+    connection: &Connection,
+    species_id: i64,
+    lang: &str,
+) -> Result<Vec<String>, String> {
+    let mut statement = connection
+        .prepare(
+            "SELECT COALESCE(t.value, t_en.value, eg.slug)
+               FROM species_egg_group seg
+               JOIN egg_group eg ON eg.id = seg.egg_group_id
+               LEFT JOIN translation t
+                      ON t.entity_type = 'egg_group'
+                     AND t.entity_id = eg.id
+                     AND t.lang = ?2
+                     AND t.field = 'name'
+               LEFT JOIN translation t_en
+                      ON t_en.entity_type = 'egg_group'
+                     AND t_en.entity_id = eg.id
+                     AND t_en.lang = 'en'
+                     AND t_en.field = 'name'
+              WHERE seg.species_id = ?1
+              ORDER BY eg.id",
+        )
+        .map_err(db_error)?;
+
+    statement
+        .query_map(params![species_id, lang], |row| row.get::<_, String>(0))
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)
+}
+
+fn load_flavor_texts(
+    connection: &Connection,
+    species_id: i64,
+    lang: &str,
+) -> Result<Vec<FlavorTextEntry>, String> {
+    let mut statement = connection
+        .prepare(
+            "SELECT ft.version_id,
+                    gv.slug,
+                    vg.generation_id,
+                    ft.text
+               FROM flavor_text ft
+               JOIN game_version gv ON gv.id = ft.version_id
+               JOIN version_group vg ON vg.id = gv.version_group_id
+              WHERE ft.species_id = ?1
+                AND ft.lang = ?2
+              ORDER BY vg.generation_id DESC, ft.version_id DESC",
+        )
+        .map_err(db_error)?;
+
+    statement
+        .query_map(params![species_id, lang], |row| {
+            Ok(FlavorTextEntry {
+                version_id: row.get(0)?,
+                version_slug: row.get(1)?,
+                generation_id: get_u16(row, 2)?,
+                text: row.get(3)?,
+            })
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)
+}
+
+const EVOLUTIONS_SQL: &str = r"
+SELECT es.from_species_id,
+       es.to_species_id,
+       sto.slug,
+       sto.national_dex_number,
+       es.trigger_slug,
+       es.min_level,
+       es.trigger_item_slug,
+       es.held_item_slug,
+       es.time_of_day,
+       es.location_slug,
+       es.known_move_id,
+       es.known_move_type_id,
+       es.min_happiness,
+       es.min_affection,
+       es.min_beauty,
+       es.gender,
+       es.needs_overworld_rain,
+       es.turn_upside_down,
+       es.relative_physical_stats,
+       es.condition_expression,
+       es.extra_condition_json,
+       es.trade_species_id,
+       es.party_species_id,
+       es.party_type_id
+FROM evolution_step es
+JOIN species sto ON sto.id = es.to_species_id
+WHERE es.chain_id = ?1
+ORDER BY es.id
+";
+
+fn load_evolutions(
+    connection: &Connection,
+    chain_id: i64,
+    lang: &str,
+) -> Result<Vec<EvolutionStepView>, String> {
+    let mut statement = connection.prepare(EVOLUTIONS_SQL).map_err(db_error)?;
+    let rows = statement
+        .query_map([chain_id], |row| {
+            Ok((
+                row.get::<_, Option<i64>>(0)?,
+                row.get::<_, i64>(1)?,
+                row.get::<_, String>(2)?,
+                get_u16(row, 3)?,
+                row.get::<_, String>(4)?,
+                get_optional_u16(row, 5)?,
+                row.get::<_, Option<String>>(6)?,
+                row.get::<_, Option<String>>(7)?,
+                row.get::<_, Option<String>>(8)?,
+                row.get::<_, Option<String>>(9)?,
+                row.get::<_, Option<i64>>(10)?,
+                row.get::<_, Option<i64>>(11)?,
+                get_optional_u16(row, 12)?,
+                get_optional_u16(row, 13)?,
+                get_optional_u16(row, 14)?,
+                row.get::<_, Option<String>>(15)?,
+                row.get::<_, i64>(16)? != 0,
+                row.get::<_, i64>(17)? != 0,
+                row.get::<_, Option<i16>>(18)?,
+                row.get::<_, Option<String>>(19)?,
+                row.get::<_, Option<String>>(20)?,
+                row.get::<_, Option<i64>>(21)?,
+                row.get::<_, Option<i64>>(22)?,
+                row.get::<_, Option<i64>>(23)?,
+            ))
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)?;
+
+    rows.into_iter()
+        .map(
+            |(
+                from_species_id,
+                to_species_id,
+                to_slug,
+                to_national_dex_number,
+                trigger,
+                min_level,
+                trigger_item,
+                held_item,
+                time_of_day,
+                location,
+                known_move_id,
+                known_move_type_id,
+                min_happiness,
+                min_affection,
+                min_beauty,
+                gender,
+                needs_overworld_rain,
+                turn_upside_down,
+                relative_physical_stats,
+                condition_expression,
+                extra_condition_json,
+                trade_species_id,
+                party_species_id,
+                party_type_id,
+            )| {
+                Ok(EvolutionStepView {
+                    from_species_id,
+                    from_name: match from_species_id {
+                        Some(id) => species_name(connection, id, lang)?,
+                        None => None,
+                    },
+                    to_species_id,
+                    to_name: species_name(connection, to_species_id, lang)?.unwrap_or(to_slug),
+                    to_national_dex_number,
+                    trigger,
+                    min_level,
+                    trigger_item,
+                    held_item,
+                    time_of_day,
+                    location,
+                    known_move: match known_move_id {
+                        Some(id) => move_name(connection, id, lang)?,
+                        None => None,
+                    },
+                    known_move_type: match known_move_type_id {
+                        Some(id) => type_name(connection, id, lang)?,
+                        None => None,
+                    },
+                    min_happiness,
+                    min_affection,
+                    min_beauty,
+                    gender,
+                    needs_overworld_rain,
+                    turn_upside_down,
+                    relative_physical_stats,
+                    condition_expression,
+                    extra_condition_json,
+                    trade_species: match trade_species_id {
+                        Some(id) => species_name(connection, id, lang)?,
+                        None => None,
+                    },
+                    party_species: match party_species_id {
+                        Some(id) => species_name(connection, id, lang)?,
+                        None => None,
+                    },
+                    party_type: match party_type_id {
+                        Some(id) => type_name(connection, id, lang)?,
+                        None => None,
+                    },
+                })
+            },
+        )
+        .collect()
+}
+
+/// Multiplies the per-type defensive multipliers of every defending type.
+///
+/// A dual type can stack two weaknesses (400 %), two resistances (25 %) or a
+/// weakness and a resistance (100 %), hence the product divided by 100.
+fn load_effectiveness(
+    connection: &Connection,
+    defending_types: &[String],
+    generation_id: u16,
+) -> Result<Vec<TypeEffectiveness>, String> {
+    if defending_types.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let mut sql = String::from(
+        "SELECT at.slug, te.multiplier_x100
+           FROM type_efficacy te
+           JOIN poke_type at ON at.id = te.attacking_type
+           JOIN poke_type dt ON dt.id = te.defending_type
+          WHERE te.generation_id = ?
+            AND dt.slug IN ",
+    );
+    let mut params = vec![Value::Integer(i64::from(generation_id))];
+    push_in_clause(&mut sql, &mut params, &dedupe_slugs(defending_types));
+    sql.push_str(" ORDER BY at.id");
+
+    let mut statement = connection.prepare(&sql).map_err(db_error)?;
+    let rows = statement
+        .query_map(params_from_iter(params.iter()), |row| {
+            Ok((row.get::<_, String>(0)?, get_u16(row, 1)?))
+        })
+        .map_err(db_error)?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(db_error)?;
+
+    let mut effectiveness: Vec<TypeEffectiveness> = Vec::with_capacity(rows.len());
+    for (attacking_type, multiplier_percent) in rows {
+        match effectiveness
+            .iter_mut()
+            .find(|entry| entry.attacking_type == attacking_type)
+        {
+            Some(entry) => {
+                let product = u32::from(entry.multiplier_percent) * u32::from(multiplier_percent);
+                entry.multiplier_percent = u16::try_from(product / 100).unwrap_or(u16::MAX);
+            }
+            None => effectiveness.push(TypeEffectiveness {
+                attacking_type,
+                multiplier_percent,
+            }),
+        }
+    }
+
+    Ok(effectiveness)
+}
+
+fn translation_value(
+    connection: &Connection,
+    entity_type: &str,
+    entity_id: i64,
+    lang: &str,
+    field: &str,
+) -> Result<Option<String>, String> {
+    connection
+        .query_row(
+            "SELECT value
+               FROM translation
+              WHERE entity_type = ?1
+                AND entity_id = ?2
+                AND lang = ?3
+                AND field = ?4",
+            params![entity_type, entity_id, lang, field],
+            |row| row.get(0),
+        )
+        .optional()
+        .map_err(db_error)
+}
+
+fn species_name(
+    connection: &Connection,
+    species_id: i64,
+    lang: &str,
+) -> Result<Option<String>, String> {
+    translation_value(connection, "species", species_id, lang, "name")
+}
+
+fn move_name(connection: &Connection, move_id: i64, lang: &str) -> Result<Option<String>, String> {
+    if let Some(name) = translation_value(connection, "move", move_id, lang, "name")? {
+        return Ok(Some(name));
+    }
+
+    connection
+        .query_row("SELECT slug FROM move_ WHERE id = ?1", [move_id], |row| {
+            row.get(0)
+        })
+        .optional()
+        .map_err(db_error)
+}
+
+fn type_name(connection: &Connection, type_id: i64, lang: &str) -> Result<Option<String>, String> {
+    if let Some(name) = translation_value(connection, "type", type_id, lang, "name")? {
+        return Ok(Some(name));
+    }
+
+    connection
+        .query_row(
+            "SELECT slug FROM poke_type WHERE id = ?1",
+            [type_id],
+            |row| row.get(0),
+        )
+        .optional()
+        .map_err(db_error)
 }
 
 struct ListSql {

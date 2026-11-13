@@ -495,4 +495,120 @@ mod tests {
                 .all(|pair| pair[0].bst >= pair[1].bst)
         );
     }
+
+    #[test]
+    fn pokemon_detail_falls_back_to_the_default_form_in_the_fixture() {
+        let repository = repository();
+
+        let detail = repository
+            .pokemon_detail(6, Some(9_999), "fr", Some(9))
+            .expect("detail should succeed")
+            .expect("charizard should exist");
+
+        assert_eq!(detail.name, "Dracaufeu");
+        assert_eq!(detail.form.id, detail.species_id);
+        assert!(detail.form.is_default);
+        assert_eq!(detail.form.types, vec!["fire", "flying"]);
+        assert_eq!(detail.form.stats.attack, 84);
+        assert_eq!(detail.forms.len(), 1);
+        assert!(detail.abilities.is_empty());
+        assert!(detail.egg_groups.is_empty());
+        assert!(detail.flavor_texts.is_empty());
+        assert!(detail.evolutions.is_empty());
+        assert_eq!(detail.effectiveness_generation_id, 9);
+    }
+
+    #[test]
+    fn pokemon_detail_returns_none_for_unknown_species() {
+        let repository = repository();
+
+        assert!(
+            repository
+                .pokemon_detail(9_999, None, "en", None)
+                .expect("detail should succeed")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn generated_database_exposes_a_complete_detail_payload() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("resources")
+            .join("reference.db");
+        if !path.is_file() {
+            return;
+        }
+
+        let repository =
+            SqliteSpeciesRepository::open(&path).expect("generated database should open");
+
+        let detail = repository
+            .pokemon_detail(6, None, "fr", Some(6))
+            .expect("detail should succeed")
+            .expect("charizard should exist");
+
+        assert_eq!(detail.name, "Dracaufeu");
+        assert_eq!(detail.national_dex_number, 6);
+        assert!(detail.genus.is_some());
+        assert_eq!(detail.form.types, vec!["fire", "flying"]);
+        assert!(detail.forms.len() > 1);
+        assert!(
+            detail
+                .forms
+                .iter()
+                .any(|form| form.slug == "charizard-mega-x" && form.is_mega)
+        );
+
+        assert!(!detail.abilities.is_empty());
+        assert!(!detail.egg_groups.is_empty());
+        assert!(!detail.flavor_texts.is_empty());
+        assert!(
+            detail
+                .flavor_texts
+                .iter()
+                .all(|entry| !entry.text.is_empty() && entry.generation_id >= 1)
+        );
+
+        assert_eq!(detail.evolution_chain_id, Some(2));
+        assert!(
+            detail
+                .evolutions
+                .iter()
+                .any(|step| step.to_national_dex_number == 6)
+        );
+        assert!(
+            detail
+                .evolutions
+                .iter()
+                .any(|step| step.from_species_id == Some(4))
+        );
+
+        let multiplier = |slug: &str| {
+            detail
+                .effectiveness
+                .iter()
+                .find(|entry| entry.attacking_type == slug)
+                .map(|entry| entry.multiplier_percent)
+                .unwrap_or(100)
+        };
+        assert_eq!(multiplier("rock"), 400);
+        assert_eq!(multiplier("electric"), 200);
+        assert_eq!(multiplier("ground"), 0);
+        assert_eq!(multiplier("grass"), 25);
+
+        let mega = detail
+            .forms
+            .iter()
+            .find(|form| form.slug == "charizard-mega-x")
+            .expect("mega charizard x should exist");
+        let mega_detail = repository
+            .pokemon_detail(6, Some(mega.id), "fr", Some(6))
+            .expect("detail should succeed")
+            .expect("mega charizard should exist");
+        assert_eq!(mega_detail.form.id, mega.id);
+        assert_eq!(mega_detail.form.types, vec!["fire", "dragon"]);
+        assert_ne!(mega_detail.form.stats.attack, detail.form.stats.attack);
+    }
 }

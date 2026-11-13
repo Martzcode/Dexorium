@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { invokeCommand, isTauriRuntime } from '../../core/ipc/tauri-ipc';
 import type {
   FixtureSpecies,
+  PokemonDetail,
   SpeciesDetail,
   SpeciesListQuery,
   SpeciesPage,
@@ -52,6 +53,27 @@ export class PokedexService {
     const match = species.find((entry) => entry.id === id);
 
     return match ? toDetail(match, lang) : null;
+  }
+
+  async pokemonDetail(
+    speciesId: number,
+    formId: number | null,
+    lang: string,
+    generation: number | null,
+  ): Promise<PokemonDetail | null> {
+    if (isTauriRuntime()) {
+      return invokeCommand<PokemonDetail | null>('get_pokemon_detail', {
+        speciesId,
+        formId,
+        lang,
+        generation,
+      });
+    }
+
+    const species = await this.fixtureSpecies();
+    const match = species.find((entry) => entry.id === speciesId);
+
+    return match ? toPokemonDetail(match, lang) : null;
   }
 
   private fixtureSpecies(): Promise<readonly FixtureSpecies[]> {
@@ -135,10 +157,7 @@ function matchesStatRange(
   return (range.min === null || value >= range.min) && (range.max === null || value <= range.max);
 }
 
-function matchesFlags(
-  species: FixtureSpecies,
-  flags: SpeciesListQuery['flags'],
-): boolean {
+function matchesFlags(species: FixtureSpecies, flags: SpeciesListQuery['flags']): boolean {
   const selected = [
     flags.legendary && species.isLegendary,
     flags.mythical && species.isMythical,
@@ -248,6 +267,55 @@ function toDetail(species: FixtureSpecies, lang: string): SpeciesDetail {
     baseHappiness: species.baseHappiness,
     isLegendary: species.isLegendary,
     isMythical: species.isMythical,
+  };
+}
+
+function toPokemonDetail(species: FixtureSpecies, lang: string): PokemonDetail {
+  const form = {
+    id: species.id,
+    slug: species.slug,
+    name: lang === 'fr' ? species.names.fr : species.names.en,
+    isDefault: true,
+    isMega: false,
+    isGigantamax: false,
+    isRegional: false,
+    region: null,
+    generationId: species.generation,
+    types: species.types,
+    stats: species.stats,
+    bst: statsTotal(species),
+    heightDm: species.heightDm,
+    weightHg: species.weightHg,
+  };
+
+  return {
+    speciesId: species.id,
+    nationalDexNumber: species.nationalDexNumber,
+    slug: species.slug,
+    name: form.name,
+    genus: null,
+    generationId: species.generation,
+    isLegendary: species.isLegendary,
+    isMythical: species.isMythical,
+    isBaby: false,
+    isUltraBeast: false,
+    captureRate: species.captureRate,
+    baseHappiness: species.baseHappiness,
+    hatchCounter: null,
+    genderRate: -1,
+    growthRate: 'medium',
+    color: null,
+    shape: null,
+    habitat: null,
+    eggGroups: [],
+    form,
+    forms: [form],
+    abilities: [],
+    evolutionChainId: null,
+    evolutions: [],
+    flavorTexts: [],
+    effectiveness: [],
+    effectivenessGenerationId: species.generation,
   };
 }
 

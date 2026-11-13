@@ -122,6 +122,85 @@
       "baseHappiness": "Bonheur de base",
       "legendary": "Légendaire",
       "mythical": "Fabuleux",
+      "noData": "Aucune donnée disponible.",
+      "navigation": "Navigation entre les espèces",
+      "previous": "Espèce précédente",
+      "next": "Espèce suivante",
+      "form": {
+        "label": "Forme",
+        "default": "Forme de base",
+        "mega": "Méga",
+        "gigantamax": "Gigamax",
+        "regional": "Régionale"
+      },
+      "breeding": {
+        "title": "Reproduction",
+        "gender": "Répartition des sexes",
+        "male": "Mâle",
+        "female": "Femelle",
+        "genderless": "Asexué",
+        "eggGroups": "Groupes d’œufs",
+        "hatchCycles": "Cycles d’éclosion",
+        "growthRate": "Courbe de croissance",
+        "habitat": "Habitat"
+      },
+      "abilities": {
+        "title": "Talents",
+        "hidden": "Caché"
+      },
+      "effectiveness": {
+        "title": "Efficacité défensive",
+        "generation": "Gén. {{ number }}",
+        "weaknesses": "Faiblesses",
+        "resistances": "Résistances",
+        "immunities": "Immunités"
+      },
+      "evolutions": {
+        "title": "Évolutions",
+        "trigger": {
+          "level": "Niveau {{ level }}",
+          "item": "Objet : {{ item }}",
+          "trade": "Échange",
+          "tradeSpecies": "Avec {{ species }}",
+          "shed": "Mue (emplacement libre)",
+          "heldItem": "Tient {{ item }}",
+          "happiness": "Bonheur ≥ {{ value }}",
+          "affection": "Affection ≥ {{ value }}",
+          "beauty": "Beauté ≥ {{ value }}",
+          "time": {
+            "day": "De jour",
+            "night": "De nuit",
+            "dusk": "Au crépuscule"
+          },
+          "male": "Mâle",
+          "female": "Femelle",
+          "move": "Connaît {{ move }}",
+          "moveType": "Connaît une capacité {{ type }}",
+          "location": "À {{ location }}",
+          "rain": "Sous la pluie",
+          "upsideDown": "Console retournée",
+          "atkGtDef": "Attaque > Défense",
+          "atkEqDef": "Attaque = Défense",
+          "atkLtDef": "Attaque < Défense",
+          "partySpecies": "Avec {{ species }} dans l’équipe",
+          "partyType": "Avec un type {{ type }} dans l’équipe",
+          "other": "Condition spéciale"
+        }
+      },
+      "flavor": {
+        "title": "Descriptions du Pokédex",
+        "generation": "Génération {{ number }}"
+      },
+      "forms": {
+        "title": "Formes"
+      },
+      "identity": {
+        "title": "Identité",
+        "color": "Couleur",
+        "shape": "Silhouette",
+        "generation": "Génération",
+        "slug": "Identifiant"
+      },
       "stats": {
         "title": "Statistiques de base"
       }

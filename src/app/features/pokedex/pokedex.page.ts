@@ -17,12 +17,14 @@ export class PokedexPage {
 
   protected readonly store = inject(PokedexStore);
   protected readonly placeholders = [1, 2, 3, 4, 5, 6];
-  protected readonly views: readonly { key: PokedexView; icon: 'layout-grid' | 'list' | 'table' }[] =
-    [
-      { key: 'grid', icon: 'layout-grid' },
-      { key: 'list', icon: 'list' },
-      { key: 'table', icon: 'table' },
-    ];
+  protected readonly views: readonly {
+    key: PokedexView;
+    icon: 'layout-grid' | 'list' | 'table';
+  }[] = [
+    { key: 'grid', icon: 'layout-grid' },
+    { key: 'list', icon: 'list' },
+    { key: 'table', icon: 'table' },
+  ];
 
   protected readonly resultCount = computed(() => {
     const shown = this.store.items().length;

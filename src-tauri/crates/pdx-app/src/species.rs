@@ -1,4 +1,4 @@
-use pdx_domain::{SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary};
+use pdx_domain::{PokemonDetail, SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary};
 
 /// Persistence port consumed by Pokédex use cases.
 ///
@@ -16,6 +16,15 @@ pub trait SpeciesRepository {
     fn list_species(&self, query: &SpeciesListQuery) -> Result<SpeciesPage, String>;
 
     fn species_detail(&self, id: i64, lang: &str) -> Result<Option<SpeciesDetail>, String>;
+
+    /// Returns the full detail payload for one species and one of its forms.
+    fn pokemon_detail(
+        &self,
+        species_id: i64,
+        form_id: Option<i64>,
+        lang: &str,
+        generation: Option<u16>,
+    ) -> Result<Option<PokemonDetail>, String>;
 }
 
 /// Default maximum number of results returned by the list endpoint.
@@ -97,6 +106,37 @@ pub fn species_detail(
     repository.species_detail(id, normalize_language(lang))
 }
 
+/// Latest generation handled by the MVP dataset.
+pub const LATEST_GENERATION: u16 = 9;
+
+/// Loads the aggregated detail payload, optionally for a specific form.
+///
+/// A zero or negative form identifier means "the default form". An unknown
+/// generation falls back to the latest one so the type chart always resolves.
+pub fn pokemon_detail(
+    repository: &dyn SpeciesRepository,
+    species_id: i64,
+    form_id: Option<i64>,
+    lang: &str,
+    generation: Option<u16>,
+) -> Result<Option<PokemonDetail>, String> {
+    if species_id <= 0 {
+        return Ok(None);
+    }
+
+    let form_id = form_id.filter(|id| *id > 0);
+    let generation = generation
+        .filter(|value| (1..=LATEST_GENERATION).contains(value))
+        .unwrap_or(LATEST_GENERATION);
+
+    repository.pokemon_detail(
+        species_id,
+        form_id,
+        normalize_language(lang),
+        Some(generation),
+    )
+}
+
 fn sanitize_query(query: &str) -> String {
     query.trim().chars().take(80).collect()
 }
@@ -148,7 +188,8 @@ mod tests {
     use std::cell::RefCell;
 
     use pdx_domain::{
-        BaseStats, SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary, TypeMatchMode,
+        BaseStats, PokemonDetail, SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary,
+        TypeMatchMode,
     };
 
     use super::{
@@ -208,6 +249,16 @@ mod tests {
                 is_mythical: false,
             }))
         }
+
+        fn pokemon_detail(
+            &self,
+            _species_id: i64,
+            _form_id: Option<i64>,
+            _lang: &str,
+            _generation: Option<u16>,
+        ) -> Result<Option<PokemonDetail>, String> {
+            Ok(None)
+        }
     }
 
     #[test]
@@ -248,6 +299,16 @@ mod tests {
                 _id: i64,
                 _lang: &str,
             ) -> Result<Option<SpeciesDetail>, String> {
+                Ok(None)
+            }
+
+            fn pokemon_detail(
+                &self,
+                _species_id: i64,
+                _form_id: Option<i64>,
+                _lang: &str,
+                _generation: Option<u16>,
+            ) -> Result<Option<PokemonDetail>, String> {
                 Ok(None)
             }
         }
@@ -296,6 +357,16 @@ mod tests {
                 _id: i64,
                 _lang: &str,
             ) -> Result<Option<SpeciesDetail>, String> {
+                Ok(None)
+            }
+
+            fn pokemon_detail(
+                &self,
+                _species_id: i64,
+                _form_id: Option<i64>,
+                _lang: &str,
+                _generation: Option<u16>,
+            ) -> Result<Option<PokemonDetail>, String> {
                 Ok(None)
             }
         }
