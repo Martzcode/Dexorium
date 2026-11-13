@@ -8,5 +8,6 @@ pub mod species;
 
 pub use app_info::{AppInfo, app_info};
 pub use species::{
-    DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT, SpeciesRepository, search_species, species_detail,
+    DEFAULT_PAGE_SIZE, DEFAULT_SEARCH_LIMIT, MAX_PAGE_SIZE, MAX_SEARCH_LIMIT, SpeciesRepository,
+    list_species, search_species, species_detail,
 };

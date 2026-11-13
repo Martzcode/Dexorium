@@ -5,4 +5,8 @@
 
 pub mod species;
 
-pub use species::{BaseStats, NationalDexNumber, SpeciesDetail, SpeciesSummary};
+pub use species::{
+    BaseStats, NationalDexNumber, SortCriterion, SortDirection, SpeciesDetail, SpeciesFlags,
+    SpeciesListQuery, SpeciesPage, SpeciesSortField, SpeciesStat, SpeciesSummary, StatRange,
+    TypeMatchMode,
+};

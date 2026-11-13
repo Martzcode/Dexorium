@@ -9,8 +9,12 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use pdx_app::SpeciesRepository;
-use pdx_domain::{BaseStats, SpeciesDetail, SpeciesSummary};
-use rusqlite::{Connection, OpenFlags, OptionalExtension, Row, params};
+use pdx_domain::{
+    BaseStats, SortCriterion, SortDirection, SpeciesDetail, SpeciesListQuery, SpeciesPage,
+    SpeciesSortField, SpeciesStat, SpeciesSummary, TypeMatchMode,
+};
+use rusqlite::types::Value;
+use rusqlite::{Connection, OpenFlags, OptionalExtension, Row, params, params_from_iter};
 use serde::Deserialize;
 
 const FIXTURE_JSON: &str = include_str!("../../fixtures/species.json");
@@ -53,20 +57,14 @@ const TYPES: &[(&str, i64)] = &[
     ("fairy", 6),
 ];
 
-const SUMMARY_COLUMNS: &str = r"
-SELECT s.id,
-       s.national_dex_number,
-       s.slug,
-       COALESCE(t.value, t_en.value, s.slug) AS name,
-       fs.bst,
-       f.id AS form_id
+const LIST_FROM: &str = r"
 FROM species s
 JOIN pokemon_form f ON f.species_id = s.id AND f.is_default = 1
 JOIN form_stat_summary fs ON fs.form_id = f.id
 LEFT JOIN translation t
        ON t.entity_type = 'species'
       AND t.entity_id = s.id
-      AND t.lang = ?1
+      AND t.lang = ?
       AND t.field = 'name'
 LEFT JOIN translation t_en
        ON t_en.entity_type = 'species'
@@ -75,7 +73,14 @@ LEFT JOIN translation t_en
       AND t_en.field = 'name'
 ";
 
-const SUMMARY_SEARCH: &str = " WHERE s.id IN (SELECT CAST(entity_id AS INTEGER) FROM search_index WHERE search_index MATCH ?2 AND entity_type = 'species')";
+const LIST_COLUMNS: &str = r"
+SELECT s.id,
+       s.national_dex_number,
+       s.slug,
+       COALESCE(t.value, t_en.value, s.slug) AS name,
+       fs.bst,
+       f.id AS form_id
+";
 
 const DETAIL_SQL: &str = r"
 SELECT s.id,
@@ -155,37 +160,41 @@ impl SqliteSpeciesRepository {
         Ok(Self { connection })
     }
 
-    fn query_summaries(
-        &self,
-        lang: &str,
-        fts_query: Option<&str>,
-        limit: usize,
-    ) -> Result<Vec<SpeciesSummary>, String> {
-        let sql = match fts_query {
-            Some(_) => {
-                format!("{SUMMARY_COLUMNS}{SUMMARY_SEARCH} ORDER BY s.national_dex_number LIMIT ?3")
-            }
-            None => format!("{SUMMARY_COLUMNS} ORDER BY s.national_dex_number LIMIT ?2"),
+    fn query_page(&self, query: &SpeciesListQuery) -> Result<SpeciesPage, String> {
+        let Some(sql) = build_list_sql(query) else {
+            return Ok(SpeciesPage {
+                items: Vec::new(),
+                total: 0,
+                offset: query.offset,
+                limit: query.limit,
+            });
         };
 
-        let lang_value = lang.to_owned();
-        let query_value = fts_query.map(str::to_owned);
-        let limit_value = i64::try_from(limit).unwrap_or(i64::MAX);
+        let count_sql = format!("SELECT COUNT(*) {LIST_FROM}{}", sql.where_clause);
+        let total: i64 = self
+            .connection
+            .query_row(&count_sql, params_from_iter(sql.params.iter()), |row| {
+                row.get(0)
+            })
+            .map_err(db_error)?;
 
-        let mut parameters: Vec<&dyn rusqlite::ToSql> = vec![&lang_value];
-        if let Some(value) = query_value.as_ref() {
-            parameters.push(value);
-        }
-        parameters.push(&limit_value);
+        let mut page_params = sql.params;
+        page_params.push(Value::Integer(i64::from(query.limit)));
+        page_params.push(Value::Integer(i64::from(query.offset)));
 
-        let mut statement = self.connection.prepare(&sql).map_err(db_error)?;
+        let page_sql = format!(
+            "{LIST_COLUMNS}{LIST_FROM}{}{} LIMIT ? OFFSET ?",
+            sql.where_clause, sql.order_clause
+        );
+        let mut statement = self.connection.prepare(&page_sql).map_err(db_error)?;
         let rows = statement
-            .query_map(parameters.as_slice(), map_summary_row)
+            .query_map(params_from_iter(page_params.iter()), map_summary_row)
             .map_err(db_error)?
             .collect::<rusqlite::Result<Vec<_>>>()
             .map_err(db_error)?;
 
-        rows.into_iter()
+        let items = rows
+            .into_iter()
             .map(|(id, national_dex_number, slug, name, bst, form_id)| {
                 Ok(SpeciesSummary {
                     id,
@@ -196,7 +205,14 @@ impl SqliteSpeciesRepository {
                     bst,
                 })
             })
-            .collect()
+            .collect::<Result<Vec<_>, String>>()?;
+
+        Ok(SpeciesPage {
+            items,
+            total: u32::try_from(total).unwrap_or(u32::MAX),
+            offset: query.offset,
+            limit: query.limit,
+        })
     }
 }
 
@@ -208,14 +224,18 @@ impl SpeciesRepository for SqliteSpeciesRepository {
         limit: usize,
     ) -> Result<Vec<SpeciesSummary>, String> {
         let trimmed = query.trim();
-        if trimmed.is_empty() {
-            return self.query_summaries(lang, None, limit);
-        }
+        let list_query = SpeciesListQuery {
+            search: (!trimmed.is_empty()).then(|| trimmed.to_owned()),
+            lang: lang.to_owned(),
+            limit: u32::try_from(limit).unwrap_or(u32::MAX),
+            ..SpeciesListQuery::default()
+        };
 
-        match fts_query(trimmed) {
-            Some(query) => self.query_summaries(lang, Some(&query), limit),
-            None => Ok(Vec::new()),
-        }
+        Ok(self.query_page(&list_query)?.items)
+    }
+
+    fn list_species(&self, query: &SpeciesListQuery) -> Result<SpeciesPage, String> {
+        self.query_page(query)
     }
 
     fn species_detail(&self, id: i64, lang: &str) -> Result<Option<SpeciesDetail>, String> {
@@ -260,6 +280,237 @@ impl SpeciesRepository for SqliteSpeciesRepository {
             is_mythical,
         }))
     }
+}
+
+struct ListSql {
+    where_clause: String,
+    order_clause: String,
+    params: Vec<Value>,
+}
+
+/// Builds the shared `WHERE`/`ORDER BY` fragments of a list query.
+///
+/// Returns `None` when the search term cannot produce a valid FTS5 query: the
+/// caller then answers with an empty page instead of silently dropping the
+/// search filter. Every identifier interpolated into the SQL comes from a
+/// closed set (`match` over domain enums), so user input only ever travels as a
+/// bound parameter.
+fn build_list_sql(query: &SpeciesListQuery) -> Option<ListSql> {
+    let mut params = Vec::new();
+    params.push(Value::Text(query.lang.clone()));
+
+    let mut where_clause = String::from(" WHERE 1 = 1");
+
+    if let Some(search) = query.search.as_deref() {
+        let trimmed = search.trim();
+        if !trimmed.is_empty() {
+            let fts = fts_query(trimmed)?;
+            where_clause.push_str(
+                " AND s.id IN (
+                    SELECT CAST(entity_id AS INTEGER)
+                      FROM search_index
+                     WHERE search_index MATCH ?
+                       AND entity_type = 'species'
+                  )",
+            );
+            params.push(Value::Text(fts));
+        }
+    }
+
+    let types = dedupe_slugs(&query.types);
+    if !types.is_empty() {
+        match query.type_match {
+            TypeMatchMode::Any => {
+                where_clause.push_str(
+                    " AND EXISTS (
+                        SELECT 1
+                          FROM form_type ft
+                          JOIN poke_type pt ON pt.id = ft.type_id
+                         WHERE ft.form_id = f.id
+                           AND pt.slug IN ",
+                );
+                push_in_clause(&mut where_clause, &mut params, &types);
+                where_clause.push(')');
+            }
+            TypeMatchMode::Exact => {
+                where_clause.push_str(
+                    " AND (SELECT COUNT(*) FROM form_type ft WHERE ft.form_id = f.id) = ?",
+                );
+                params.push(Value::Integer(
+                    i64::try_from(types.len()).unwrap_or(i64::MAX),
+                ));
+                where_clause.push_str(
+                    " AND (SELECT COUNT(*)
+                             FROM form_type ft
+                             JOIN poke_type pt ON pt.id = ft.type_id
+                            WHERE ft.form_id = f.id
+                              AND pt.slug IN ",
+                );
+                push_in_clause(&mut where_clause, &mut params, &types);
+                where_clause.push_str(") = ?");
+                params.push(Value::Integer(
+                    i64::try_from(types.len()).unwrap_or(i64::MAX),
+                ));
+            }
+            TypeMatchMode::Mono => {
+                where_clause.push_str(
+                    " AND (SELECT COUNT(*) FROM form_type ft WHERE ft.form_id = f.id) = 1
+                      AND EXISTS (
+                        SELECT 1
+                          FROM form_type ft
+                          JOIN poke_type pt ON pt.id = ft.type_id
+                         WHERE ft.form_id = f.id
+                           AND pt.slug IN ",
+                );
+                push_in_clause(&mut where_clause, &mut params, &types);
+                where_clause.push(')');
+            }
+        }
+    }
+
+    let generations = dedupe_generations(&query.generations);
+    if !generations.is_empty() {
+        where_clause.push_str(" AND s.generation_id IN ");
+        where_clause.push('(');
+        for (index, generation) in generations.iter().enumerate() {
+            if index > 0 {
+                where_clause.push_str(", ");
+            }
+            where_clause.push('?');
+            params.push(Value::Integer(i64::from(*generation)));
+        }
+        where_clause.push(')');
+    }
+
+    for range in &query.stat_ranges {
+        let column = stat_column(range.stat);
+        if let Some(min) = range.min {
+            where_clause.push_str(" AND ");
+            where_clause.push_str(column);
+            where_clause.push_str(" >= ?");
+            params.push(Value::Integer(i64::from(min)));
+        }
+        if let Some(max) = range.max {
+            where_clause.push_str(" AND ");
+            where_clause.push_str(column);
+            where_clause.push_str(" <= ?");
+            params.push(Value::Integer(i64::from(max)));
+        }
+    }
+
+    if query.flags.any() {
+        let mut clauses = Vec::new();
+        if query.flags.legendary {
+            clauses.push("s.is_legendary = 1");
+        }
+        if query.flags.mythical {
+            clauses.push("s.is_mythical = 1");
+        }
+        if query.flags.baby {
+            clauses.push("s.is_baby = 1");
+        }
+        if query.flags.ultra_beast {
+            clauses.push("s.is_ultra_beast = 1");
+        }
+
+        where_clause.push_str(" AND (");
+        where_clause.push_str(&clauses.join(" OR "));
+        where_clause.push(')');
+    }
+
+    let order_clause = build_order_clause(&query.sort);
+
+    Some(ListSql {
+        where_clause,
+        order_clause,
+        params,
+    })
+}
+
+fn build_order_clause(sort: &[SortCriterion]) -> String {
+    let mut parts = Vec::with_capacity(sort.len() + 1);
+
+    for criterion in sort {
+        let expression = sort_expression(criterion.field);
+        let direction = match criterion.direction {
+            SortDirection::Asc => "ASC",
+            SortDirection::Desc => "DESC",
+        };
+        parts.push(format!("{expression} {direction}"));
+    }
+
+    // A stable tie-breaker keeps pagination deterministic across pages.
+    if !matches!(
+        sort.last().map(|criterion| criterion.field),
+        Some(SpeciesSortField::DexNumber)
+    ) {
+        parts.push("s.national_dex_number ASC".to_owned());
+    }
+
+    format!(" ORDER BY {}", parts.join(", "))
+}
+
+const fn sort_expression(field: SpeciesSortField) -> &'static str {
+    match field {
+        SpeciesSortField::DexNumber => "s.national_dex_number",
+        SpeciesSortField::Name => "name COLLATE NOCASE",
+        SpeciesSortField::Bst => "fs.bst",
+        SpeciesSortField::Hp => "fs.hp",
+        SpeciesSortField::Attack => "fs.attack",
+        SpeciesSortField::Defense => "fs.defense",
+        SpeciesSortField::SpAtk => "fs.sp_atk",
+        SpeciesSortField::SpDef => "fs.sp_def",
+        SpeciesSortField::Speed => "fs.speed",
+    }
+}
+
+const fn stat_column(stat: SpeciesStat) -> &'static str {
+    match stat {
+        SpeciesStat::Hp => "fs.hp",
+        SpeciesStat::Attack => "fs.attack",
+        SpeciesStat::Defense => "fs.defense",
+        SpeciesStat::SpAtk => "fs.sp_atk",
+        SpeciesStat::SpDef => "fs.sp_def",
+        SpeciesStat::Speed => "fs.speed",
+        SpeciesStat::Bst => "fs.bst",
+    }
+}
+
+fn push_in_clause(clause: &mut String, params: &mut Vec<Value>, values: &[String]) {
+    clause.push('(');
+    for (index, value) in values.iter().enumerate() {
+        if index > 0 {
+            clause.push_str(", ");
+        }
+        clause.push('?');
+        params.push(Value::Text(value.clone()));
+    }
+    clause.push(')');
+}
+
+fn dedupe_slugs(values: &[String]) -> Vec<String> {
+    let mut deduped: Vec<String> = Vec::with_capacity(values.len());
+
+    for value in values {
+        let slug = value.trim().to_lowercase();
+        if !slug.is_empty() && !deduped.contains(&slug) {
+            deduped.push(slug);
+        }
+    }
+
+    deduped
+}
+
+fn dedupe_generations(values: &[u16]) -> Vec<u16> {
+    let mut deduped: Vec<u16> = Vec::with_capacity(values.len());
+
+    for value in values {
+        if *value > 0 && !deduped.contains(value) {
+            deduped.push(*value);
+        }
+    }
+
+    deduped
 }
 
 fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), String> {

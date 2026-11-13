@@ -36,9 +36,7 @@ impl AppState {
         let species = match reference_repository(app) {
             Some(repository) => repository,
             None => {
-                log::warn!(
-                    "no usable reference.db found; falling back to the bundled fixture"
-                );
+                log::warn!("no usable reference.db found; falling back to the bundled fixture");
                 SqliteSpeciesRepository::from_fixture()?
             }
         };
