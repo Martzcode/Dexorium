@@ -1,0 +1,178 @@
+<div class="flex flex-col gap-2">
+  @switch (view()) {
+    @case ('grid') {
+      <cdk-virtual-scroll-viewport
+        [itemSize]="gridRowHeight"
+        class="h-[calc(100vh-330px)] min-h-[420px]"
+      >
+        <div
+          *cdkVirtualFor="let row of gridRows(); trackBy: trackRow"
+          class="grid gap-3 pb-3"
+          [style.grid-template-columns]="'repeat(' + gridColumns() + ', minmax(0, 1fr))'"
+        >
+          @for (species of row; track species.id) {
+            <a
+              class="group flex h-[144px] flex-col justify-between rounded-xl border border-line bg-panel p-3.5 no-underline transition-colors hover:border-line-strong hover:bg-panel-muted"
+              [routerLink]="['/pokedex', species.id]"
+            >
+              <div class="flex items-center gap-3">
+                <app-pokemon-sprite
+                  [dexNumber]="species.nationalDexNumber"
+                  [name]="species.name"
+                  [types]="species.types"
+                  [size]="52"
+                />
+                <div class="min-w-0 flex-1">
+                  <span class="font-mono text-[0.66rem] tracking-[0.08em] text-ink-muted">
+                    {{ formatDexNumber(species.nationalDexNumber) }}
+                  </span>
+                  <h3
+                    class="m-0 truncate text-[1rem] font-semibold tracking-[-0.01em] text-ink transition-colors group-hover:text-accent"
+                  >
+                    {{ species.name }}
+                  </h3>
+                </div>
+                <span class="font-mono text-[0.68rem] font-semibold text-ink-soft">
+                  {{ species.bst }}
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5">
+                @for (type of species.types; track type) {
+                  <span [class]="typeBadgeClass(type)">
+                    {{ 'pokedex.types.' + type | transloco }}
+                  </span>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      </cdk-virtual-scroll-viewport>
+    }
+
+    @case ('list') {
+      <cdk-virtual-scroll-viewport
+        [itemSize]="listRowHeight"
+        class="h-[calc(100vh-330px)] min-h-[420px]"
+      >
+        <div *cdkVirtualFor="let row of singleRows(); trackBy: trackRow" class="pb-2">
+          @for (species of row; track species.id) {
+            <a
+              class="group flex h-[68px] items-center gap-3 rounded-lg border border-line bg-panel px-3 no-underline transition-colors hover:border-line-strong hover:bg-panel-muted"
+              [routerLink]="['/pokedex', species.id]"
+            >
+              <app-pokemon-sprite
+                [dexNumber]="species.nationalDexNumber"
+                [name]="species.name"
+                [types]="species.types"
+                [size]="44"
+              />
+              <span class="w-14 font-mono text-[0.68rem] text-ink-muted">
+                {{ formatDexNumber(species.nationalDexNumber) }}
+              </span>
+              <span
+                class="min-w-0 flex-1 truncate text-[0.95rem] font-semibold text-ink transition-colors group-hover:text-accent"
+              >
+                {{ species.name }}
+              </span>
+              <span class="hidden flex-wrap gap-1.5 sm:flex">
+                @for (type of species.types; track type) {
+                  <span [class]="typeBadgeClass(type)">
+                    {{ 'pokedex.types.' + type | transloco }}
+                  </span>
+                }
+              </span>
+              <span class="w-12 text-right font-mono text-[0.72rem] font-semibold text-ink-soft">
+                {{ species.bst }}
+              </span>
+            </a>
+          }
+        </div>
+      </cdk-virtual-scroll-viewport>
+    }
+
+    @case ('table') {
+      <div class="overflow-x-auto rounded-xl border border-line">
+        <div class="min-w-[800px]">
+          <div
+            class="grid grid-cols-[64px_minmax(160px,1fr)_130px_repeat(6,54px)_58px] items-center gap-2 border-b border-line bg-panel-muted px-3 py-2 font-mono text-[0.62rem] uppercase tracking-[0.08em] text-ink-muted"
+          >
+            <button class="text-left hover:text-ink" type="button" (click)="onSort('dexNumber')">
+              № {{ sortIndicator('dexNumber') }}
+            </button>
+            <button class="text-left hover:text-ink" type="button" (click)="onSort('name')">
+              {{ 'pokedex.table.name' | transloco }} {{ sortIndicator('name') }}
+            </button>
+            <span>{{ 'pokedex.table.types' | transloco }}</span>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('hp')">
+              PV {{ sortIndicator('hp') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('attack')">
+              Atk {{ sortIndicator('attack') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('defense')">
+              Déf {{ sortIndicator('defense') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('spAtk')">
+              A.Sp {{ sortIndicator('spAtk') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('spDef')">
+              D.Sp {{ sortIndicator('spDef') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('speed')">
+              Vit {{ sortIndicator('speed') }}
+            </button>
+            <button class="text-right hover:text-ink" type="button" (click)="onSort('bst')">
+              Total {{ sortIndicator('bst') }}
+            </button>
+          </div>
+
+          <cdk-virtual-scroll-viewport
+            [itemSize]="tableRowHeight"
+            class="h-[calc(100vh-370px)] min-h-[380px]"
+          >
+            <div *cdkVirtualFor="let row of singleRows(); trackBy: trackRow">
+              @for (species of row; track species.id) {
+                <a
+                  class="grid h-[44px] grid-cols-[64px_minmax(160px,1fr)_130px_repeat(6,54px)_58px] items-center gap-2 border-b border-line/70 px-3 text-[0.82rem] no-underline transition-colors hover:bg-panel-muted"
+                  [routerLink]="['/pokedex', species.id]"
+                >
+                  <span class="font-mono text-[0.68rem] text-ink-muted">
+                    {{ formatDexNumber(species.nationalDexNumber) }}
+                  </span>
+                  <span class="flex min-w-0 items-center gap-2">
+                    <app-pokemon-sprite
+                      [dexNumber]="species.nationalDexNumber"
+                      [name]="species.name"
+                      [types]="species.types"
+                      [size]="26"
+                    />
+                    <span class="truncate font-semibold text-ink">{{ species.name }}</span>
+                  </span>
+                  <span class="flex gap-1">
+                    @for (type of species.types; track type) {
+                      <span [class]="typeBadgeClass(type)">
+                        {{ 'pokedex.types.' + type | transloco }}
+                      </span>
+                    }
+                  </span>
+                  <span class="text-right font-mono">{{ species.stats.hp }}</span>
+                  <span class="text-right font-mono">{{ species.stats.attack }}</span>
+                  <span class="text-right font-mono">{{ species.stats.defense }}</span>
+                  <span class="text-right font-mono">{{ species.stats.spAtk }}</span>
+                  <span class="text-right font-mono">{{ species.stats.spDef }}</span>
+                  <span class="text-right font-mono">{{ species.stats.speed }}</span>
+                  <span class="text-right font-mono font-semibold">{{ species.bst }}</span>
+                </a>
+              }
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </div>
+      </div>
+    }
+  }
+
+  @if (hasMore()) {
+    <p class="sr-only" role="status">{{ 'pokedex.loadingMore' | transloco }}</p>
+  }
+</div>

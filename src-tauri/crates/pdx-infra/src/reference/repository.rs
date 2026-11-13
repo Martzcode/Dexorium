@@ -78,6 +78,12 @@ SELECT s.id,
        s.national_dex_number,
        s.slug,
        COALESCE(t.value, t_en.value, s.slug) AS name,
+       fs.hp,
+       fs.attack,
+       fs.defense,
+       fs.sp_atk,
+       fs.sp_def,
+       fs.speed,
        fs.bst,
        f.id AS form_id
 ";
@@ -117,7 +123,7 @@ LEFT JOIN translation t_en
 WHERE s.id = ?1
 ";
 
-type SummaryRow = (i64, u16, String, String, u16, i64);
+type SummaryRow = (i64, u16, String, String, BaseStats, u16, i64);
 
 /// Species repository backed by a SQLite reference database.
 pub struct SqliteSpeciesRepository {
@@ -195,16 +201,19 @@ impl SqliteSpeciesRepository {
 
         let items = rows
             .into_iter()
-            .map(|(id, national_dex_number, slug, name, bst, form_id)| {
-                Ok(SpeciesSummary {
-                    id,
-                    national_dex_number,
-                    slug,
-                    name,
-                    types: load_types(&self.connection, form_id)?,
-                    bst,
-                })
-            })
+            .map(
+                |(id, national_dex_number, slug, name, stats, bst, form_id)| {
+                    Ok(SpeciesSummary {
+                        id,
+                        national_dex_number,
+                        slug,
+                        name,
+                        types: load_types(&self.connection, form_id)?,
+                        stats,
+                        bst,
+                    })
+                },
+            )
             .collect::<Result<Vec<_>, String>>()?;
 
         Ok(SpeciesPage {
@@ -690,8 +699,9 @@ fn map_summary_row(row: &Row<'_>) -> rusqlite::Result<SummaryRow> {
         get_u16(row, 1)?,
         row.get(2)?,
         row.get(3)?,
-        get_u16(row, 4)?,
-        row.get(5)?,
+        read_stats(row)?,
+        get_u16(row, 10)?,
+        row.get(11)?,
     ))
 }
 

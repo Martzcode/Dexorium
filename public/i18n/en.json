@@ -51,7 +51,48 @@
     "searchLabel": "Search for a species",
     "searchPlaceholder": "Name or national number…",
     "results": "Species shown: {{ count }}",
+    "resultsCount": "{{ count }} results",
+    "loadingMore": "Loading more species…",
     "loading": "Loading Pokédex…",
+    "views": {
+      "label": "Display mode",
+      "grid": "Grid",
+      "list": "List",
+      "table": "Table"
+    },
+    "table": {
+      "name": "Name",
+      "types": "Types"
+    },
+    "filters": {
+      "sort": "Sort",
+      "sortDexAsc": "National № ascending",
+      "sortDexDesc": "National № descending",
+      "sortNameAsc": "Name A → Z",
+      "sortNameDesc": "Name Z → A",
+      "sortBstDesc": "Base stat total ↓",
+      "sortBstAsc": "Base stat total ↑",
+      "sortSpeedDesc": "Speed ↓",
+      "sortHpDesc": "HP ↓",
+      "sortAttackDesc": "Attack ↓",
+      "active": "{{ count }} active",
+      "clear": "Clear filters",
+      "types": "Types",
+      "typeMode": {
+        "label": "Mode",
+        "any": "Contains",
+        "exact": "Exactly",
+        "mono": "Mono-type"
+      },
+      "advanced": "Advanced filters",
+      "generations": "Generations",
+      "generation": "Gen {{ number }}",
+      "flags": "Status",
+      "baby": "Baby",
+      "ultraBeast": "Ultra Beast",
+      "stats": "Stat ranges",
+      "resetStats": "Reset stats"
+    },
     "bst": "Total",
     "empty": {
       "title": "No results",

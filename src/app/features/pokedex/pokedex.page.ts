@@ -1,69 +1,58 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppIcon } from '../../shared/icon/app-icon';
-import { formatDexNumber, typeBadgeClass } from './pokedex-format';
-import type { SpeciesSummary } from './pokedex.models';
-import { PokedexService } from './pokedex.service';
-
-type LoadState = 'loading' | 'ready' | 'error';
+import { PokedexFilters } from './pokedex-filters';
+import { PokedexResults } from './pokedex-results';
+import { PokedexStore, type PokedexView } from './pokedex.store';
 
 @Component({
   selector: 'app-pokedex',
-  imports: [RouterLink, TranslocoPipe, AppIcon],
+  imports: [TranslocoPipe, AppIcon, PokedexFilters, PokedexResults],
   templateUrl: './pokedex.page.html',
 })
 export class PokedexPage {
-  private readonly pokedex = inject(PokedexService);
   private readonly transloco = inject(TranslocoService);
 
-  protected readonly query = signal('');
-  protected readonly results = signal<readonly SpeciesSummary[]>([]);
-  protected readonly state = signal<LoadState>('loading');
+  protected readonly store = inject(PokedexStore);
   protected readonly placeholders = [1, 2, 3, 4, 5, 6];
+  protected readonly views: readonly { key: PokedexView; icon: 'layout-grid' | 'list' | 'table' }[] =
+    [
+      { key: 'grid', icon: 'layout-grid' },
+      { key: 'list', icon: 'list' },
+      { key: 'table', icon: 'table' },
+    ];
 
-  protected readonly formatDexNumber = formatDexNumber;
-  protected readonly typeBadgeClass = typeBadgeClass;
+  protected readonly resultCount = computed(() => {
+    const shown = this.store.items().length;
+    const total = this.store.total();
+    return shown < total ? `${shown} / ${total}` : String(total);
+  });
 
   private readonly language = toSignal(this.transloco.langChanges$, {
     initialValue: this.transloco.getActiveLang(),
   });
 
-  private requestId = 0;
-
   constructor() {
     effect(() => {
-      const query = this.query();
-      const language = this.language();
-
-      void this.load(query, language);
+      this.store.setLanguage(this.language());
     });
   }
 
-  protected retry(): void {
-    void this.load(this.query(), this.language());
+  protected onSearch(event: Event): void {
+    this.store.setSearch((event.target as HTMLInputElement).value);
   }
 
-  private async load(query: string, language: string): Promise<void> {
-    const requestId = ++this.requestId;
-    this.state.set('loading');
+  protected retry(): void {
+    this.store.retry();
+  }
 
-    try {
-      const results = await this.pokedex.search(query, language);
-      if (requestId !== this.requestId) {
-        return;
-      }
+  protected loadMore(): void {
+    void this.store.loadMore();
+  }
 
-      this.results.set(results);
-      this.state.set('ready');
-    } catch {
-      if (requestId !== this.requestId) {
-        return;
-      }
-
-      this.state.set('error');
-    }
+  protected sortField(field: Parameters<PokedexStore['cycleSort']>[0]): void {
+    this.store.cycleSort(field);
   }
 }

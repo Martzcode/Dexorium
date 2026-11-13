@@ -51,7 +51,48 @@
     "searchLabel": "Rechercher une espèce",
     "searchPlaceholder": "Nom ou numéro national…",
     "results": "Espèces affichées : {{ count }}",
+    "resultsCount": "{{ count }} résultats",
+    "loadingMore": "Chargement d’espèces supplémentaires…",
     "loading": "Chargement du Pokédex…",
+    "views": {
+      "label": "Mode d’affichage",
+      "grid": "Grille",
+      "list": "Liste",
+      "table": "Tableau"
+    },
+    "table": {
+      "name": "Nom",
+      "types": "Types"
+    },
+    "filters": {
+      "sort": "Tri",
+      "sortDexAsc": "N° national croissant",
+      "sortDexDesc": "N° national décroissant",
+      "sortNameAsc": "Nom A → Z",
+      "sortNameDesc": "Nom Z → A",
+      "sortBstDesc": "Total des stats ↓",
+      "sortBstAsc": "Total des stats ↑",
+      "sortSpeedDesc": "Vitesse ↓",
+      "sortHpDesc": "PV ↓",
+      "sortAttackDesc": "Attaque ↓",
+      "active": "{{ count }} actif(s)",
+      "clear": "Effacer les filtres",
+      "types": "Types",
+      "typeMode": {
+        "label": "Mode",
+        "any": "Contient",
+        "exact": "Exactement",
+        "mono": "Monotype"
+      },
+      "advanced": "Filtres avancés",
+      "generations": "Générations",
+      "generation": "Gén. {{ number }}",
+      "flags": "Statut",
+      "baby": "Bébé",
+      "ultraBeast": "Ultra-Chimère",
+      "stats": "Plages de statistiques",
+      "resetStats": "Réinitialiser les stats"
+    },
     "bst": "Total",
     "empty": {
       "title": "Aucun résultat",

@@ -338,6 +338,14 @@ mod tests {
             slug: "charizard".to_owned(),
             name: "Dracaufeu".to_owned(),
             types: vec!["fire".to_owned(), "flying".to_owned()],
+            stats: BaseStats {
+                hp: 78,
+                attack: 84,
+                defense: 78,
+                sp_atk: 109,
+                sp_def: 85,
+                speed: 100,
+            },
             bst: 534,
         }
     }

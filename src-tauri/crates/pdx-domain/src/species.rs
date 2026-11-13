@@ -45,6 +45,8 @@ pub struct SpeciesSummary {
     pub name: String,
     /// Type slugs in slot order.
     pub types: Vec<String>,
+    /// Base stats of the default form.
+    pub stats: BaseStats,
     /// Base stat total.
     pub bst: u16,
 }

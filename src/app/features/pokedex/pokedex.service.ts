@@ -3,7 +3,13 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { invokeCommand, isTauriRuntime } from '../../core/ipc/tauri-ipc';
-import type { FixtureSpecies, SpeciesDetail, SpeciesSummary } from './pokedex.models';
+import type {
+  FixtureSpecies,
+  SpeciesDetail,
+  SpeciesListQuery,
+  SpeciesPage,
+  SpeciesSummary,
+} from './pokedex.models';
 
 const FIXTURE_URL = '/fixtures/species.json';
 const DEFAULT_LIMIT = 1300;
@@ -13,12 +19,21 @@ const DEFAULT_LIMIT = 1300;
  *
  * Inside Tauri the SQLite-backed commands answer; in a regular browser the
  * shared JSON fixture is loaded so UI work does not require the desktop
- * runtime.
+ * runtime. The fixture fallback implements the same filters, sort and
+ * pagination contract as the Rust repository.
  */
 @Injectable({ providedIn: 'root' })
 export class PokedexService {
   private readonly http = inject(HttpClient);
   private fixture?: Promise<readonly FixtureSpecies[]>;
+
+  async list(query: SpeciesListQuery): Promise<SpeciesPage> {
+    if (isTauriRuntime()) {
+      return invokeCommand<SpeciesPage>('list_pokemon', { query });
+    }
+
+    return listFixture(await this.fixtureSpecies(), query);
+  }
 
   async search(query: string, lang: string, limit = DEFAULT_LIMIT): Promise<SpeciesSummary[]> {
     if (isTauriRuntime()) {
@@ -50,6 +65,121 @@ export class PokedexService {
     }
 
     return this.fixture;
+  }
+}
+
+function listFixture(species: readonly FixtureSpecies[], query: SpeciesListQuery): SpeciesPage {
+  const tokens = tokenize(query.search ?? '');
+  const types = query.types.map((type) => type.toLowerCase());
+
+  const filtered = species.filter((entry) => {
+    if (!tokens.every((token) => matches(entry, token))) {
+      return false;
+    }
+
+    if (types.length > 0 && !matchesTypes(entry, types, query.typeMatch)) {
+      return false;
+    }
+
+    if (query.generations.length > 0 && !query.generations.includes(entry.generation)) {
+      return false;
+    }
+
+    if (!query.statRanges.every((range) => matchesStatRange(entry, range))) {
+      return false;
+    }
+
+    if (!matchesFlags(entry, query.flags)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const sorted = [...filtered].sort((left, right) => compare(left, right, query));
+  const start = Math.max(0, query.offset);
+  const end = start + Math.max(0, query.limit);
+
+  return {
+    items: sorted.slice(start, end).map((entry) => toSummary(entry, query.lang)),
+    total: sorted.length,
+    offset: start,
+    limit: query.limit,
+  };
+}
+
+function matchesTypes(
+  species: FixtureSpecies,
+  selected: readonly string[],
+  mode: SpeciesListQuery['typeMatch'],
+): boolean {
+  const types = species.types.map((type) => type.toLowerCase());
+
+  switch (mode) {
+    case 'exact':
+      return types.length === selected.length && selected.every((type) => types.includes(type));
+    case 'mono':
+      return types.length === 1 && selected.includes(types[0]);
+    case 'any':
+    default:
+      return selected.some((type) => types.includes(type));
+  }
+}
+
+function matchesStatRange(
+  species: FixtureSpecies,
+  range: SpeciesListQuery['statRanges'][number],
+): boolean {
+  const value = range.stat === 'bst' ? statsTotal(species) : species.stats[range.stat];
+
+  return (range.min === null || value >= range.min) && (range.max === null || value <= range.max);
+}
+
+function matchesFlags(
+  species: FixtureSpecies,
+  flags: SpeciesListQuery['flags'],
+): boolean {
+  const selected = [
+    flags.legendary && species.isLegendary,
+    flags.mythical && species.isMythical,
+    flags.baby && false,
+    flags.ultraBeast && false,
+  ];
+
+  if (!flags.legendary && !flags.mythical && !flags.baby && !flags.ultraBeast) {
+    return true;
+  }
+
+  return selected.some(Boolean);
+}
+
+function compare(left: FixtureSpecies, right: FixtureSpecies, query: SpeciesListQuery): number {
+  for (const criterion of query.sort) {
+    const direction = criterion.direction === 'desc' ? -1 : 1;
+    const result = compareField(left, right, criterion.field);
+
+    if (result !== 0) {
+      return result * direction;
+    }
+  }
+
+  return left.nationalDexNumber - right.nationalDexNumber;
+}
+
+function compareField(
+  left: FixtureSpecies,
+  right: FixtureSpecies,
+  field: SpeciesListQuery['sort'][number]['field'],
+): number {
+  switch (field) {
+    case 'name':
+      return left.names.en.localeCompare(right.names.en, undefined, { sensitivity: 'base' });
+    case 'dexNumber':
+      return left.nationalDexNumber - right.nationalDexNumber;
+    case 'bst':
+      return statsTotal(left) - statsTotal(right);
+    default:
+      return left.stats[field] - right.stats[field];
   }
 }
 
@@ -103,6 +233,7 @@ function toSummary(species: FixtureSpecies, lang: string): SpeciesSummary {
     slug: species.slug,
     name: lang === 'fr' ? species.names.fr : species.names.en,
     types: species.types,
+    stats: species.stats,
     bst: statsTotal(species),
   };
 }

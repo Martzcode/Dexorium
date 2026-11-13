@@ -1,7 +1,17 @@
-use pdx_domain::{SpeciesDetail, SpeciesSummary};
+use pdx_domain::{SpeciesDetail, SpeciesListQuery, SpeciesPage, SpeciesSummary};
 use tauri::State;
 
 use crate::state::AppState;
+
+/// Returns one filtered, sorted and paginated page of species.
+#[tauri::command]
+pub fn list_pokemon(
+    state: State<'_, AppState>,
+    query: SpeciesListQuery,
+) -> Result<SpeciesPage, String> {
+    let repository = state.species()?;
+    pdx_app::list_species(&*repository, &query)
+}
 
 /// Searches species by localized name, English name, slug or national number.
 #[tauri::command]
