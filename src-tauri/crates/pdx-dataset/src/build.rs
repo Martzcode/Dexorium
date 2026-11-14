@@ -599,14 +599,7 @@ fn insert_types(
             }
         }
 
-        index_entity(
-            tx,
-            "type",
-            type_.id,
-            localized_name(&type_.names, "en").unwrap_or(type_.name.as_str()),
-            &type_.name,
-            &type_.name,
-        )?;
+        index_localized(tx, "type", type_.id, &type_.names, &type_.name)?;
     }
 
     Ok(())
@@ -830,14 +823,7 @@ fn insert_abilities(
             }
         }
 
-        index_entity(
-            tx,
-            "ability",
-            ability.id,
-            localized_name(&ability.names, "en").unwrap_or(ability.name.as_str()),
-            &ability.name,
-            &ability.name,
-        )?;
+        index_localized(tx, "ability", ability.id, &ability.names, &ability.name)?;
 
         context.abilities.insert(ability.name, ability.id);
     }
@@ -979,14 +965,7 @@ fn insert_moves(
             }
         }
 
-        index_entity(
-            tx,
-            "move",
-            move_data.id,
-            localized_name(&move_data.names, "en").unwrap_or(move_data.name.as_str()),
-            &move_data.name,
-            &move_data.name,
-        )?;
+        index_localized(tx, "move", move_data.id, &move_data.names, &move_data.name)?;
 
         context.moves.insert(move_data.name, move_data.id);
     }
@@ -1722,6 +1701,24 @@ fn localized_name<'a>(names: &'a [LocalizedName], lang: &str) -> Option<&'a str>
         .iter()
         .find(|name| name.language.name == lang)
         .map(|name| name.name.as_str())
+}
+
+/// Indexes an entity with every localized name so the federated search works
+/// in French as well as in English.
+fn index_localized(
+    tx: &rusqlite::Transaction<'_>,
+    entity_type: &str,
+    entity_id: i64,
+    names: &[LocalizedName],
+    slug: &str,
+) -> Result<(), String> {
+    let english = localized_name(names, "en").unwrap_or(slug);
+    let mut values: Vec<&str> = names.iter().map(|name| name.name.as_str()).collect();
+    values.push(slug);
+
+    let normalized = normalize(&values.join(" "));
+
+    index_entity(tx, entity_type, entity_id, english, &normalized, &normalized)
 }
 
 fn last_flavor<T: FlavorEntry>(entries: &[T], lang: &str) -> Option<String> {

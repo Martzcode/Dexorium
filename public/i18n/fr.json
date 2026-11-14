@@ -205,6 +205,27 @@
         "title": "Statistiques de base"
       }
     },
+    "learnset": {
+      "title": "Capacités apprises",
+      "versionGroup": "Version",
+      "generation": "Gén. {{ number }}",
+      "loading": "Chargement des capacités.",
+      "error": "Impossible de charger les capacités.",
+      "empty": "Aucune capacité enregistrée pour cette forme.",
+      "noMatch": "Aucune capacité ne correspond au filtre.",
+      "allMethods": "Toutes",
+      "search": "Rechercher une capacité",
+      "searchPlaceholder": "Filtrer…",
+      "clearSearch": "Effacer la recherche",
+      "showing": "{{ shown }} sur {{ total }} capacités affichées",
+      "level": "Niv. {{ level }}",
+      "columnMove": "Capacité",
+      "columnType": "Type",
+      "columnCategory": "Catégorie",
+      "columnPower": "Puis.",
+      "columnAccuracy": "Préc.",
+      "columnMethod": "Apprentissage"
+    },
     "stats": {
       "hp": "PV",
       "attack": "Attaque",
@@ -233,6 +254,147 @@
       "dark": "Ténèbres",
       "steel": "Acier",
       "fairy": "Fée"
+    }
+  },
+  "moves": {
+    "eyebrow": "Catalogue",
+    "title": "Attaques",
+    "description": "Toutes les capacités du jeu, filtrables par type, catégorie, génération et puissance.",
+    "count": "{{ total }} attaques",
+    "loading": "Chargement des attaques.",
+    "loadingMore": "Chargement…",
+    "loadMore": "Afficher plus",
+    "showing": "{{ shown }} sur {{ total }} attaques",
+    "empty": {
+      "title": "Aucune attaque",
+      "description": "Aucune capacité ne correspond à ces filtres."
+    },
+    "error": {
+      "title": "Catalogue indisponible",
+      "description": "La base de référence locale est indisponible.",
+      "retry": "Réessayer"
+    },
+    "filters": {
+      "search": "Rechercher une attaque",
+      "searchPlaceholder": "Nom de l’attaque…",
+      "clearSearch": "Effacer la recherche",
+      "sort": "Tri",
+      "reset": "Réinitialiser",
+      "types": "Types",
+      "category": "Catégorie",
+      "generations": "Générations",
+      "power": "Puissance",
+      "min": "Min",
+      "max": "Max",
+      "minPower": "Puissance minimale",
+      "maxPower": "Puissance maximale"
+    },
+    "sort": {
+      "id": "Numéro",
+      "name": "Nom",
+      "powerDesc": "Puissance décroissante",
+      "powerAsc": "Puissance croissante",
+      "accuracy": "Précision",
+      "pp": "PP"
+    },
+    "categories": {
+      "physical": "Physique",
+      "special": "Spéciale",
+      "status": "Statut"
+    },
+    "methods": {
+      "level-up": "Niveau",
+      "machine": "CT/CS",
+      "egg": "Œuf",
+      "tutor": "Tuteur",
+      "other": "Autre"
+    },
+    "columns": {
+      "name": "Attaque",
+      "type": "Type",
+      "category": "Catégorie",
+      "power": "Puis.",
+      "accuracy": "Préc.",
+      "pp": "PP",
+      "generation": "Gén."
+    },
+    "detail": {
+      "back": "Retour aux attaques",
+      "loading": "Chargement de la fiche.",
+      "eyebrow": "Attaque",
+      "notFound": {
+        "title": "Attaque introuvable",
+        "description": "Cette attaque n’existe pas dans le jeu de données actuel."
+      },
+      "error": {
+        "title": "Fiche indisponible",
+        "description": "La base de référence locale est indisponible.",
+        "retry": "Réessayer"
+      },
+      "power": "Puissance",
+      "accuracy": "Précision",
+      "pp": "PP",
+      "priority": "Priorité",
+      "effectChance": "Chance d’effet",
+      "generation": "Génération",
+      "effect": "Effet",
+      "target": "Cible",
+      "ailment": "Altération",
+      "drain": "Drain",
+      "healing": "Soin",
+      "learners": {
+        "title": "Pokémon apprenant cette attaque",
+        "versionGroup": "Version",
+        "species": "Pokémon",
+        "methods": "Méthodes",
+        "level": "Niveau"
+      }
+    }
+  },
+  "abilities": {
+    "eyebrow": "Catalogue",
+    "title": "Talents",
+    "description": "Les talents disponibles, leur effet et les Pokémon qui les possèdent.",
+    "count": "{{ total }} talents",
+    "loading": "Chargement des talents.",
+    "loadingMore": "Chargement…",
+    "loadMore": "Afficher plus",
+    "showing": "{{ shown }} sur {{ total }} talents",
+    "generation": "Gén. {{ number }}",
+    "holders": "{{ count }} Pokémon",
+    "empty": {
+      "title": "Aucun talent",
+      "description": "Aucun talent ne correspond à ces filtres."
+    },
+    "error": {
+      "title": "Catalogue indisponible",
+      "description": "La base de référence locale est indisponible.",
+      "retry": "Réessayer"
+    },
+    "filters": {
+      "search": "Rechercher un talent",
+      "searchPlaceholder": "Nom du talent…",
+      "clearSearch": "Effacer la recherche",
+      "generations": "Générations",
+      "reset": "Réinitialiser"
+    },
+    "detail": {
+      "back": "Retour aux talents",
+      "loading": "Chargement de la fiche.",
+      "eyebrow": "Talent",
+      "notFound": {
+        "title": "Talent introuvable",
+        "description": "Ce talent n’existe pas dans le jeu de données actuel."
+      },
+      "error": {
+        "title": "Fiche indisponible",
+        "description": "La base de référence locale est indisponible.",
+        "retry": "Réessayer"
+      },
+      "effect": "Effet",
+      "holders": {
+        "title": "Pokémon possédant ce talent"
+      }
     }
   }
 }

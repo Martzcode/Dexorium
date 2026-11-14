@@ -6,6 +6,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AppIcon } from '../../shared/icon/app-icon';
 import { PokemonSprite } from '../../shared/pokemon-sprite/pokemon-sprite';
 import { formatDexNumber, typeBadgeClass } from './pokedex-format';
+import { SpeciesLearnset } from './species-learnset';
 import type {
   EvolutionStep,
   FlavorTextEntry,
@@ -49,7 +50,7 @@ const GENDER_KEYS: Readonly<Record<string, string>> = {
 
 @Component({
   selector: 'app-species-detail',
-  imports: [RouterLink, TranslocoPipe, AppIcon, PokemonSprite],
+  imports: [RouterLink, TranslocoPipe, AppIcon, PokemonSprite, SpeciesLearnset],
   templateUrl: './species-detail.page.html',
 })
 export class SpeciesDetailPage {

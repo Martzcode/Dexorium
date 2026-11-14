@@ -128,7 +128,7 @@ type SummaryRow = (i64, u16, String, String, BaseStats, u16, i64);
 
 /// Species repository backed by a SQLite reference database.
 pub struct SqliteSpeciesRepository {
-    connection: Connection,
+    pub(crate) connection: Connection,
 }
 
 impl SqliteSpeciesRepository {
@@ -863,7 +863,7 @@ fn load_effectiveness(
     Ok(effectiveness)
 }
 
-fn translation_value(
+pub(crate) fn translation_value(
     connection: &Connection,
     entity_type: &str,
     entity_id: i64,
@@ -1380,12 +1380,12 @@ fn read_stats(row: &Row<'_>) -> rusqlite::Result<BaseStats> {
     })
 }
 
-fn get_u16(row: &Row<'_>, index: usize) -> rusqlite::Result<u16> {
+pub(crate) fn get_u16(row: &Row<'_>, index: usize) -> rusqlite::Result<u16> {
     let value: i64 = row.get(index)?;
     u16::try_from(value).map_err(|_| rusqlite::Error::IntegralValueOutOfRange(index, value))
 }
 
-fn get_optional_u16(row: &Row<'_>, index: usize) -> rusqlite::Result<Option<u16>> {
+pub(crate) fn get_optional_u16(row: &Row<'_>, index: usize) -> rusqlite::Result<Option<u16>> {
     let value: Option<i64> = row.get(index)?;
     value
         .map(|value| {
@@ -1399,7 +1399,7 @@ fn get_optional_u16(row: &Row<'_>, index: usize) -> rusqlite::Result<Option<u16>
 /// Punctuation is dropped instead of escaped: user input never reaches the
 /// FTS5 grammar verbatim, so operators such as `NOT` or `NEAR` cannot break the
 /// query.
-fn fts_query(query: &str) -> Option<String> {
+pub(crate) fn fts_query(query: &str) -> Option<String> {
     let normalized = normalize(query);
     let cleaned: String = normalized
         .chars()
@@ -1428,7 +1428,7 @@ fn fts_query(query: &str) -> Option<String> {
 ///
 /// FTS5 already removes diacritics, but the same normalization is used for
 /// indexing and for user queries so prefixes behave consistently.
-fn normalize(value: &str) -> String {
+pub(crate) fn normalize(value: &str) -> String {
     let mut normalized = String::with_capacity(value.len());
 
     for character in value.chars().flat_map(char::to_lowercase) {
@@ -1450,7 +1450,7 @@ fn normalize(value: &str) -> String {
     normalized
 }
 
-fn db_error(error: rusqlite::Error) -> String {
+pub(crate) fn db_error(error: rusqlite::Error) -> String {
     format!("reference database error: {error}")
 }
 

@@ -19,6 +19,29 @@ export const routes: Routes = [
       import('./features/pokedex/species-detail.page').then((module) => module.SpeciesDetailPage),
   },
   {
+    path: 'moves',
+    title: 'Attaques — Dexorium',
+    loadComponent: () => import('./features/moves/moves.page').then((module) => module.MovesPage),
+  },
+  {
+    path: 'moves/:id',
+    title: 'Attaque — Dexorium',
+    loadComponent: () =>
+      import('./features/moves/move-detail.page').then((module) => module.MoveDetailPage),
+  },
+  {
+    path: 'abilities',
+    title: 'Talents — Dexorium',
+    loadComponent: () =>
+      import('./features/abilities/abilities.page').then((module) => module.AbilitiesPage),
+  },
+  {
+    path: 'abilities/:id',
+    title: 'Talent — Dexorium',
+    loadComponent: () =>
+      import('./features/abilities/ability-detail.page').then((module) => module.AbilityDetailPage),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

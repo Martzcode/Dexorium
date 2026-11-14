@@ -10,6 +10,13 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::app_info::get_app_info,
+            commands::catalog::list_moves,
+            commands::catalog::get_move_detail,
+            commands::catalog::get_pokemon_learnset,
+            commands::catalog::list_abilities,
+            commands::catalog::get_ability_detail,
+            commands::catalog::search_global,
+            commands::catalog::suggest,
             commands::species::list_pokemon,
             commands::species::get_pokemon_detail,
             commands::species::search_species,

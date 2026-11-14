@@ -137,11 +137,11 @@ pub fn pokemon_detail(
     )
 }
 
-fn sanitize_query(query: &str) -> String {
+pub(crate) fn sanitize_query(query: &str) -> String {
     query.trim().chars().take(80).collect()
 }
 
-fn sanitize_slugs(values: Vec<String>, max: usize) -> Vec<String> {
+pub(crate) fn sanitize_slugs(values: Vec<String>, max: usize) -> Vec<String> {
     let mut sanitized: Vec<String> = Vec::with_capacity(values.len().min(max));
 
     for value in values {
@@ -159,11 +159,11 @@ fn sanitize_slugs(values: Vec<String>, max: usize) -> Vec<String> {
     sanitized
 }
 
-fn sanitize_generations(values: Vec<u16>) -> Vec<u16> {
+pub(crate) fn sanitize_generations(values: Vec<u16>) -> Vec<u16> {
     let mut sanitized: Vec<u16> = Vec::with_capacity(values.len().min(MAX_FILTER_GENERATIONS));
 
     for value in values {
-        if value == 0 || sanitized.contains(&value) {
+        if value == 0 || value > LATEST_GENERATION || sanitized.contains(&value) {
             continue;
         }
 
@@ -176,7 +176,7 @@ fn sanitize_generations(values: Vec<u16>) -> Vec<u16> {
     sanitized
 }
 
-fn normalize_language(lang: &str) -> &str {
+pub(crate) fn normalize_language(lang: &str) -> &str {
     match lang {
         "fr" => "fr",
         _ => "en",

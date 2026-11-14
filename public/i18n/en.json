@@ -205,6 +205,27 @@
         "title": "Base stats"
       }
     },
+    "learnset": {
+      "title": "Learnsets",
+      "versionGroup": "Version",
+      "generation": "Gen. {{ number }}",
+      "loading": "Loading moves.",
+      "error": "Unable to load the learnset.",
+      "empty": "No move recorded for this form.",
+      "noMatch": "No move matches the filter.",
+      "allMethods": "All",
+      "search": "Search a move",
+      "searchPlaceholder": "Filter…",
+      "clearSearch": "Clear search",
+      "showing": "{{ shown }} of {{ total }} moves shown",
+      "level": "Lv. {{ level }}",
+      "columnMove": "Move",
+      "columnType": "Type",
+      "columnCategory": "Category",
+      "columnPower": "Power",
+      "columnAccuracy": "Acc.",
+      "columnMethod": "Learned by"
+    },
     "stats": {
       "hp": "HP",
       "attack": "Attack",
@@ -233,6 +254,147 @@
       "dark": "Dark",
       "steel": "Steel",
       "fairy": "Fairy"
+    }
+  },
+  "moves": {
+    "eyebrow": "Catalogue",
+    "title": "Moves",
+    "description": "Every move in the game, filterable by type, category, generation and power.",
+    "count": "{{ total }} moves",
+    "loading": "Loading moves.",
+    "loadingMore": "Loading…",
+    "loadMore": "Show more",
+    "showing": "{{ shown }} of {{ total }} moves",
+    "empty": {
+      "title": "No move",
+      "description": "No move matches these filters."
+    },
+    "error": {
+      "title": "Catalogue unavailable",
+      "description": "The local reference database is unavailable.",
+      "retry": "Retry"
+    },
+    "filters": {
+      "search": "Search a move",
+      "searchPlaceholder": "Move name…",
+      "clearSearch": "Clear search",
+      "sort": "Sort",
+      "reset": "Reset",
+      "types": "Types",
+      "category": "Category",
+      "generations": "Generations",
+      "power": "Power",
+      "min": "Min",
+      "max": "Max",
+      "minPower": "Minimum power",
+      "maxPower": "Maximum power"
+    },
+    "sort": {
+      "id": "Number",
+      "name": "Name",
+      "powerDesc": "Power, high to low",
+      "powerAsc": "Power, low to high",
+      "accuracy": "Accuracy",
+      "pp": "PP"
+    },
+    "categories": {
+      "physical": "Physical",
+      "special": "Special",
+      "status": "Status"
+    },
+    "methods": {
+      "level-up": "Level",
+      "machine": "TM/HM",
+      "egg": "Egg",
+      "tutor": "Tutor",
+      "other": "Other"
+    },
+    "columns": {
+      "name": "Move",
+      "type": "Type",
+      "category": "Category",
+      "power": "Power",
+      "accuracy": "Acc.",
+      "pp": "PP",
+      "generation": "Gen."
+    },
+    "detail": {
+      "back": "Back to moves",
+      "loading": "Loading the move.",
+      "eyebrow": "Move",
+      "notFound": {
+        "title": "Move not found",
+        "description": "This move does not exist in the current dataset."
+      },
+      "error": {
+        "title": "Move unavailable",
+        "description": "The local reference database is unavailable.",
+        "retry": "Retry"
+      },
+      "power": "Power",
+      "accuracy": "Accuracy",
+      "pp": "PP",
+      "priority": "Priority",
+      "effectChance": "Effect chance",
+      "generation": "Generation",
+      "effect": "Effect",
+      "target": "Target",
+      "ailment": "Ailment",
+      "drain": "Drain",
+      "healing": "Healing",
+      "learners": {
+        "title": "Pokémon that learn this move",
+        "versionGroup": "Version",
+        "species": "Pokémon",
+        "methods": "Methods",
+        "level": "Level"
+      }
+    }
+  },
+  "abilities": {
+    "eyebrow": "Catalogue",
+    "title": "Abilities",
+    "description": "Every ability, its effect and the Pokémon that have it.",
+    "count": "{{ total }} abilities",
+    "loading": "Loading abilities.",
+    "loadingMore": "Loading…",
+    "loadMore": "Show more",
+    "showing": "{{ shown }} of {{ total }} abilities",
+    "generation": "Gen. {{ number }}",
+    "holders": "{{ count }} Pokémon",
+    "empty": {
+      "title": "No ability",
+      "description": "No ability matches these filters."
+    },
+    "error": {
+      "title": "Catalogue unavailable",
+      "description": "The local reference database is unavailable.",
+      "retry": "Retry"
+    },
+    "filters": {
+      "search": "Search an ability",
+      "searchPlaceholder": "Ability name…",
+      "clearSearch": "Clear search",
+      "generations": "Generations",
+      "reset": "Reset"
+    },
+    "detail": {
+      "back": "Back to abilities",
+      "loading": "Loading the ability.",
+      "eyebrow": "Ability",
+      "notFound": {
+        "title": "Ability not found",
+        "description": "This ability does not exist in the current dataset."
+      },
+      "error": {
+        "title": "Ability unavailable",
+        "description": "The local reference database is unavailable.",
+        "retry": "Retry"
+      },
+      "effect": "Effect",
+      "holders": {
+        "title": "Pokémon with this ability"
+      }
     }
   }
 }

@@ -280,7 +280,12 @@
                 <ul class="m-0 mt-3 flex list-none flex-col gap-2 p-0">
                   @for (ability of entry.abilities; track ability.id) {
                     <li class="flex items-center justify-between gap-2">
-                      <span class="text-sm font-semibold text-ink">{{ ability.name }}</span>
+                      <a
+                        class="text-sm font-semibold text-ink no-underline transition-colors hover:text-accent"
+                        [routerLink]="['/abilities', ability.id]"
+                      >
+                        {{ ability.name }}
+                      </a>
                       @if (ability.isHidden) {
                         <span
                           class="rounded-full border border-line-strong bg-panel-muted px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.08em] text-ink-soft"
@@ -549,6 +554,10 @@
               </dl>
             </section>
           </div>
+        </div>
+
+        <div class="mt-5">
+          <app-species-learnset [formId]="entry.form.id" />
         </div>
       }
     }

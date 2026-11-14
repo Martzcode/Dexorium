@@ -22,8 +22,8 @@ export class AppShell {
   protected readonly navItems: readonly NavItem[] = [
     { labelKey: 'nav.overview', icon: 'layout-dashboard', route: '/', ready: true },
     { labelKey: 'nav.pokedex', icon: 'book-open', route: '/pokedex', ready: true },
-    { labelKey: 'nav.moves', icon: 'swords' },
-    { labelKey: 'nav.abilities', icon: 'brain' },
+    { labelKey: 'nav.moves', icon: 'swords', route: '/moves', ready: true },
+    { labelKey: 'nav.abilities', icon: 'brain', route: '/abilities', ready: true },
     { labelKey: 'nav.items', icon: 'package' },
     { labelKey: 'nav.teams', icon: 'users' },
     { labelKey: 'nav.tools', icon: 'wrench' },

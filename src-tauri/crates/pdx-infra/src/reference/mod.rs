@@ -1,6 +1,9 @@
 //! Reference database adapters (SQLite, FTS5).
 
+mod abilities;
+mod moves;
 mod repository;
+mod search;
 
 pub use repository::{REFERENCE_SCHEMA, SqliteSpeciesRepository};
 
@@ -610,5 +613,379 @@ mod tests {
         assert_eq!(mega_detail.form.id, mega.id);
         assert_eq!(mega_detail.form.types, vec!["fire", "dragon"]);
         assert_ne!(mega_detail.form.stats.attack, detail.form.stats.attack);
+    }
+}
+
+#[cfg(test)]
+mod catalog_tests {
+    use std::path::PathBuf;
+
+    use pdx_app::{AbilityRepository, MoveRepository, SearchRepository};
+    use pdx_domain::{AbilityListQuery, MoveListQuery, MoveSortCriterion, MoveSortField, SortDirection};
+
+    use super::SqliteSpeciesRepository;
+
+    fn generated_repository() -> Option<SqliteSpeciesRepository> {
+        let path = generated_database_path()?;
+        Some(SqliteSpeciesRepository::open(&path).expect("generated database should open"))
+    }
+
+    fn generated_database_path() -> Option<PathBuf> {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("resources")
+            .join("reference.db");
+        path.is_file().then_some(path)
+    }
+
+    #[test]
+    fn fixture_catalogues_are_queryable_but_empty() {
+        let repository =
+            SqliteSpeciesRepository::from_fixture().expect("fixture database should build");
+
+        let moves = repository
+            .list_moves(&MoveListQuery {
+                lang: "en".to_owned(),
+                limit: 50,
+                ..MoveListQuery::default()
+            })
+            .expect("move catalogue should succeed");
+        assert_eq!(moves.total, 0);
+        assert!(moves.items.is_empty());
+
+        let abilities = repository
+            .list_abilities(&AbilityListQuery {
+                lang: "en".to_owned(),
+                limit: 50,
+                ..AbilityListQuery::default()
+            })
+            .expect("ability catalogue should succeed");
+        assert_eq!(abilities.total, 0);
+
+        let learnset = repository
+            .learnset(6, "en", None)
+            .expect("learnset should succeed");
+        assert!(learnset.entries.is_empty());
+        assert!(learnset.version_group.is_none());
+
+        assert!(
+            repository
+                .search_global("pikachu", "en", 10)
+                .expect("search should succeed")
+                .hits
+                .iter()
+                .all(|hit| hit.entity_type.as_str() != "move")
+        );
+    }
+
+    #[test]
+    fn generated_database_filters_and_sorts_moves() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let all = repository
+            .list_moves(&MoveListQuery {
+                lang: "fr".to_owned(),
+                limit: 20,
+                ..MoveListQuery::default()
+            })
+            .expect("catalogue should succeed");
+        assert!(all.total > 800, "expected the full move catalogue");
+        assert_eq!(all.items.len(), 20);
+        assert!(all.items.iter().all(|item| !item.name.is_empty()));
+
+        let fire_specials = repository
+            .list_moves(&MoveListQuery {
+                lang: "fr".to_owned(),
+                types: vec!["fire".to_owned()],
+                damage_classes: vec!["special".to_owned()],
+                sort: vec![MoveSortCriterion {
+                    field: MoveSortField::Power,
+                    direction: SortDirection::Desc,
+                }],
+                limit: 100,
+                ..MoveListQuery::default()
+            })
+            .expect("filtered catalogue should succeed");
+        assert!(fire_specials.total > 5);
+        assert!(
+            fire_specials
+                .items
+                .iter()
+                .all(|item| item.type_slug == "fire" && item.damage_class == "special")
+        );
+        let powers: Vec<u16> = fire_specials
+            .items
+            .iter()
+            .filter_map(|item| item.power)
+            .collect();
+        assert!(powers.windows(2).all(|pair| pair[0] >= pair[1]));
+
+        let highest = fire_specials
+            .items
+            .first()
+            .expect("at least one fire special move");
+        assert_eq!(highest.power, Some(150));
+        assert!(
+            fire_specials
+                .items
+                .iter()
+                .any(|item| item.slug == "blast-burn")
+        );
+    }
+
+    #[test]
+    fn generated_database_returns_flamethrower_detail_with_learners() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let listed = repository
+            .list_moves(&MoveListQuery {
+                search: Some("flamme".to_owned()),
+                lang: "fr".to_owned(),
+                limit: 50,
+                ..MoveListQuery::default()
+            })
+            .expect("search should succeed");
+        let flamethrower = listed
+            .items
+            .iter()
+            .find(|item| item.slug == "flamethrower")
+            .expect("flamethrower should match the localized search");
+        assert_eq!(flamethrower.name, "Lance-Flammes");
+
+        let detail = repository
+            .move_detail(flamethrower.id, "fr")
+            .expect("detail should succeed")
+            .expect("flamethrower should exist");
+        assert_eq!(detail.type_slug, "fire");
+        assert_eq!(detail.damage_class, "special");
+        assert_eq!(detail.power, Some(90));
+        assert_eq!(detail.pp, Some(15));
+        assert!(detail.effect_short.is_some() || detail.description.is_some());
+        assert!(detail.learner_version_group.is_some());
+        assert!(!detail.learners.is_empty());
+        assert!(
+            detail
+                .learners
+                .iter()
+                .any(|learner| learner.national_dex_number == 6)
+        );
+        assert!(
+            detail
+                .learners
+                .iter()
+                .all(|learner| !learner.methods.is_empty())
+        );
+
+        assert!(
+            repository
+                .move_detail(999_999, "fr")
+                .expect("detail should succeed")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn generated_database_exposes_charizard_learnset_per_version_group() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let detail = pdx_app::pokemon_detail(&repository, 6, None, "fr", Some(9))
+            .expect("detail should succeed")
+            .expect("charizard should exist");
+        let form_id = detail.form.id;
+
+        let learnset = repository
+            .learnset(form_id, "fr", None)
+            .expect("learnset should succeed");
+        assert!(learnset.version_group.is_some());
+        assert!(learnset.version_groups.len() > 5);
+        assert!(learnset.total > 50);
+        assert!(
+            learnset
+                .entries
+                .iter()
+                .any(|entry| entry.slug == "flamethrower")
+        );
+        assert!(
+            learnset
+                .version_groups
+                .windows(2)
+                .all(|pair| pair[0].order_index >= pair[1].order_index)
+        );
+
+        let selected = learnset
+            .version_group
+            .as_ref()
+            .expect("a version group should be selected");
+        assert_eq!(selected.slug, learnset.version_groups[0].slug);
+
+        let older = &learnset.version_groups[learnset.version_groups.len() - 1];
+        let old_learnset = repository
+            .learnset(form_id, "fr", Some(&older.slug))
+            .expect("learnset should succeed");
+        assert_eq!(
+            old_learnset
+                .version_group
+                .as_ref()
+                .expect("a version group should be selected")
+                .slug,
+            older.slug
+        );
+
+        let unknown = repository
+            .learnset(form_id, "fr", Some("not-a-version-group"))
+            .expect("learnset should succeed");
+        assert_eq!(
+            unknown
+                .version_group
+                .as_ref()
+                .expect("fallback version group")
+                .slug,
+            learnset.version_groups[0].slug
+        );
+
+        let empty = repository
+            .learnset(999_999, "fr", None)
+            .expect("learnset should succeed");
+        assert!(empty.entries.is_empty());
+        assert!(empty.version_groups.is_empty());
+    }
+
+    #[test]
+    fn generated_database_lists_abilities_and_their_holders() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let page = repository
+            .list_abilities(&AbilityListQuery {
+                lang: "fr".to_owned(),
+                limit: 500,
+                ..AbilityListQuery::default()
+            })
+            .expect("catalogue should succeed");
+        assert!(page.total > 300);
+        let names: Vec<&str> = page.items.iter().map(|item| item.name.as_str()).collect();
+        let mut sorted = names.clone();
+        sorted.sort_by_key(|name| name.to_lowercase());
+        assert_eq!(names, sorted, "abilities are sorted by localized name");
+
+        let blaze = page
+            .items
+            .iter()
+            .find(|item| item.slug == "blaze")
+            .expect("blaze should exist");
+        assert!(blaze.holder_count >= 15);
+
+        let detail = repository
+            .ability_detail(blaze.id, "fr")
+            .expect("detail should succeed")
+            .expect("blaze should exist");
+        assert_eq!(detail.name, "Brasier");
+        assert!(detail.effect_short.is_some());
+        assert!(!detail.holders.is_empty());
+        assert!(
+            detail
+                .holders
+                .iter()
+                .any(|holder| holder.national_dex_number == 6)
+        );
+        assert!(detail.holders.windows(2).all(|pair| {
+            pair[0].national_dex_number <= pair[1].national_dex_number
+        }));
+
+        let filtered = repository
+            .list_abilities(&AbilityListQuery {
+                search: Some("brasier".to_owned()),
+                lang: "fr".to_owned(),
+                limit: 20,
+                ..AbilityListQuery::default()
+            })
+            .expect("search should succeed");
+        assert!(
+            filtered
+                .items
+                .iter()
+                .any(|item| item.slug == "blaze")
+        );
+    }
+
+    #[test]
+    fn generated_database_searches_across_entities_and_tolerates_typos() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let prefix = repository
+            .search_global("pikach", "fr", 10)
+            .expect("search should succeed");
+        let pikachu = prefix
+            .hits
+            .iter()
+            .find(|hit| hit.entity_type.as_str() == "species")
+            .expect("pikachu should be found");
+        assert_eq!(pikachu.slug, "pikachu");
+        assert!(pikachu.subtitle.contains("#0025"));
+
+        let typo = repository
+            .search_global("pikatchu", "fr", 10)
+            .expect("search should succeed");
+        assert!(
+            typo.hits
+                .iter()
+                .any(|hit| hit.entity_type.as_str() == "species" && hit.slug == "pikachu")
+        );
+
+        let flamethrower = repository
+            .search_global("lance-flamme", "fr", 10)
+            .expect("search should succeed");
+        assert!(
+            flamethrower
+                .hits
+                .iter()
+                .any(|hit| hit.entity_type.as_str() == "move" && hit.slug == "flamethrower")
+        );
+
+        let blaze = repository
+            .search_global("brasier", "fr", 10)
+            .expect("search should succeed");
+        assert!(
+            blaze
+                .hits
+                .iter()
+                .any(|hit| hit.entity_type.as_str() == "ability" && hit.slug == "blaze")
+        );
+
+        assert!(
+            repository
+                .search_global("   ", "fr", 10)
+                .expect("search should succeed")
+                .hits
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn generated_database_supports_damage_class_filters() {
+        let Some(repository) = generated_repository() else {
+            return;
+        };
+
+        let status = repository
+            .list_moves(&MoveListQuery {
+                lang: "en".to_owned(),
+                damage_classes: vec!["status".to_owned()],
+                min_power: Some(10),
+                limit: 50,
+                ..MoveListQuery::default()
+            })
+            .expect("catalogue should succeed");
+        assert_eq!(status.total, 0, "status moves never have power");
     }
 }

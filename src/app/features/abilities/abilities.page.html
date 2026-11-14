@@ -1,0 +1,162 @@
+<section class="mx-auto max-w-[1240px] px-5 py-10 sm:px-10 sm:py-14">
+  <header>
+    <p class="m-0 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-muted">
+      {{ 'abilities.eyebrow' | transloco }}
+    </p>
+    <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="m-0 text-[clamp(2rem,3.4vw,2.8rem)] font-bold leading-none tracking-[-0.03em]">
+          {{ 'abilities.title' | transloco }}
+        </h1>
+        <p class="mt-2 max-w-[62ch] text-sm leading-relaxed text-ink-soft">
+          {{ 'abilities.description' | transloco }}
+        </p>
+      </div>
+      @if (state() === 'ready') {
+        <p class="m-0 font-mono text-[0.7rem] text-ink-muted">
+          {{ 'abilities.count' | transloco: { total: total() } }}
+        </p>
+      }
+    </div>
+  </header>
+
+  <div class="mt-6 rounded-xl border border-line bg-panel p-4 sm:p-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <label class="relative flex flex-1 items-center">
+        <span class="pointer-events-none absolute left-3 text-ink-muted">
+          <app-icon name="search" [size]="15" />
+        </span>
+        <span class="sr-only">{{ 'abilities.filters.search' | transloco }}</span>
+        <input
+          #searchInput
+          class="w-full rounded-lg border border-line bg-panel-muted/40 py-2 pl-9 pr-9 text-sm text-ink outline-none transition-colors placeholder:text-ink-muted focus:border-accent"
+          type="search"
+          [value]="search()"
+          [placeholder]="'abilities.filters.searchPlaceholder' | transloco"
+          (input)="onSearch($event)"
+        />
+        @if (search().length > 0) {
+          <button
+            class="absolute right-2 grid size-7 place-items-center rounded-md text-ink-muted transition-colors hover:bg-panel-muted hover:text-ink"
+            type="button"
+            [attr.aria-label]="'abilities.filters.clearSearch' | transloco"
+            (click)="clearSearch(searchInput)"
+          >
+            <app-icon name="x" [size]="14" />
+          </button>
+        }
+      </label>
+
+      <button
+        class="inline-flex items-center gap-1.5 rounded-lg border border-line bg-panel-muted/40 px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:border-line-strong hover:text-ink disabled:opacity-50"
+        type="button"
+        [disabled]="activeFilterCount() === 0 && search().length === 0"
+        (click)="reset()"
+      >
+        {{ 'abilities.filters.reset' | transloco }}
+      </button>
+    </div>
+
+    <fieldset class="m-0 mt-4 min-w-0 border-0 p-0">
+      <legend class="mb-2 p-0 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-muted">
+        {{ 'abilities.filters.generations' | transloco }}
+      </legend>
+      <div class="flex flex-wrap gap-1.5">
+        @for (generation of generations; track generation) {
+          <button
+            [class]="chipClass(isGenerationSelected(generation)) + ' tabular-nums normal-case'"
+            type="button"
+            [attr.aria-pressed]="isGenerationSelected(generation)"
+            (click)="toggleGeneration(generation)"
+          >
+            {{ generation }}
+          </button>
+        }
+      </div>
+    </fieldset>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="mt-8 text-sm text-ink-soft" role="status">
+        {{ 'abilities.loading' | transloco }}
+      </p>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+        @for (card of [1, 2, 3, 4, 5, 6]; track card) {
+          <div class="h-24 animate-pulse rounded-xl border border-line bg-panel/60"></div>
+        }
+      </div>
+    }
+
+    @case ('error') {
+      <div class="mt-8 rounded-xl border border-danger/30 bg-danger/5 p-6">
+        <h2 class="m-0 text-base font-semibold text-ink">
+          {{ 'abilities.error.title' | transloco }}
+        </h2>
+        <p class="mt-1.5 text-sm text-ink-soft">{{ 'abilities.error.description' | transloco }}</p>
+        <button
+          class="mt-4 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="retry()"
+        >
+          {{ 'abilities.error.retry' | transloco }}
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @if (items().length === 0) {
+        <div class="mt-8 rounded-xl border border-dashed border-line bg-panel/50 p-8 text-center">
+          <h2 class="m-0 text-base font-semibold text-ink">
+            {{ 'abilities.empty.title' | transloco }}
+          </h2>
+          <p class="mt-1.5 text-sm text-ink-soft">
+            {{ 'abilities.empty.description' | transloco }}
+          </p>
+        </div>
+      } @else {
+        <ul class="m-0 mt-6 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          @for (ability of items(); track ability.id) {
+            <li>
+              <a
+                class="flex h-full flex-col justify-between gap-3 rounded-xl border border-line bg-panel p-4 no-underline transition-colors hover:border-line-strong"
+                [routerLink]="['/abilities', ability.id]"
+              >
+                <span class="flex items-start justify-between gap-3">
+                  <span class="text-base font-semibold text-ink">{{ ability.name }}</span>
+                  <span
+                    class="shrink-0 rounded-full border border-line bg-panel-muted px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.06em] text-ink-muted"
+                  >
+                    {{ 'abilities.generation' | transloco: { number: ability.generationId } }}
+                  </span>
+                </span>
+                <span class="flex items-center justify-between gap-3">
+                  <span class="font-mono text-[0.66rem] text-ink-muted">{{ ability.slug }}</span>
+                  <span class="font-mono text-[0.68rem] text-ink-soft">
+                    {{ 'abilities.holders' | transloco: { count: ability.holderCount } }}
+                  </span>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="m-0 font-mono text-[0.7rem] text-ink-muted">
+            {{ 'abilities.showing' | transloco: { shown: items().length, total: total() } }}
+          </p>
+          @if (hasMore()) {
+            <button
+              class="inline-flex items-center gap-2 rounded-lg border border-line bg-panel px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:border-line-strong disabled:opacity-60"
+              type="button"
+              [disabled]="loadingMore()"
+              (click)="loadMore()"
+            >
+              {{ (loadingMore() ? 'abilities.loadingMore' : 'abilities.loadMore') | transloco }}
+            </button>
+          }
+        </div>
+      }
+    }
+  }
+</section>

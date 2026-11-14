@@ -1,0 +1,333 @@
+<section class="mx-auto max-w-[1240px] px-5 py-10 sm:px-10 sm:py-14">
+  <header>
+    <p class="m-0 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-muted">
+      {{ 'moves.eyebrow' | transloco }}
+    </p>
+    <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="m-0 text-[clamp(2rem,3.4vw,2.8rem)] font-bold leading-none tracking-[-0.03em]">
+          {{ 'moves.title' | transloco }}
+        </h1>
+        <p class="mt-2 max-w-[62ch] text-sm leading-relaxed text-ink-soft">
+          {{ 'moves.description' | transloco }}
+        </p>
+      </div>
+      @if (state() === 'ready') {
+        <p class="m-0 font-mono text-[0.7rem] text-ink-muted">
+          {{ 'moves.count' | transloco: { total: total() } }}
+        </p>
+      }
+    </div>
+  </header>
+
+  <div class="mt-6 rounded-xl border border-line bg-panel p-4 sm:p-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <label class="relative flex flex-1 items-center">
+        <span class="pointer-events-none absolute left-3 text-ink-muted">
+          <app-icon name="search" [size]="15" />
+        </span>
+        <span class="sr-only">{{ 'moves.filters.search' | transloco }}</span>
+        <input
+          #searchInput
+          class="w-full rounded-lg border border-line bg-panel-muted/40 py-2 pl-9 pr-9 text-sm text-ink outline-none transition-colors placeholder:text-ink-muted focus:border-accent"
+          type="search"
+          [value]="search()"
+          [placeholder]="'moves.filters.searchPlaceholder' | transloco"
+          (input)="onSearch($event)"
+        />
+        @if (search().length > 0) {
+          <button
+            class="absolute right-2 grid size-7 place-items-center rounded-md text-ink-muted transition-colors hover:bg-panel-muted hover:text-ink"
+            type="button"
+            [attr.aria-label]="'moves.filters.clearSearch' | transloco"
+            (click)="clearSearch(searchInput)"
+          >
+            <app-icon name="x" [size]="14" />
+          </button>
+        }
+      </label>
+
+      <label class="flex items-center gap-2 text-[0.72rem] text-ink-muted">
+        <span>{{ 'moves.filters.sort' | transloco }}</span>
+        <select
+          class="rounded-lg border border-line bg-panel-muted/40 px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
+          [value]="sortField() + ':' + sortDirection()"
+          (change)="onSortChange($event)"
+        >
+          <option value="id:asc">{{ 'moves.sort.id' | transloco }}</option>
+          <option value="name:asc">{{ 'moves.sort.name' | transloco }}</option>
+          <option value="power:desc">{{ 'moves.sort.powerDesc' | transloco }}</option>
+          <option value="power:asc">{{ 'moves.sort.powerAsc' | transloco }}</option>
+          <option value="accuracy:desc">{{ 'moves.sort.accuracy' | transloco }}</option>
+          <option value="pp:desc">{{ 'moves.sort.pp' | transloco }}</option>
+        </select>
+      </label>
+
+      <button
+        class="inline-flex items-center gap-1.5 rounded-lg border border-line bg-panel-muted/40 px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:border-line-strong hover:text-ink disabled:opacity-50"
+        type="button"
+        [disabled]="activeFilterCount() === 0 && search().length === 0"
+        (click)="reset()"
+      >
+        {{ 'moves.filters.reset' | transloco }}
+        @if (activeFilterCount() > 0) {
+          <span class="font-mono text-[0.66rem] text-ink-muted">({{ activeFilterCount() }})</span>
+        }
+      </button>
+    </div>
+
+    <div class="mt-4 flex flex-wrap items-start gap-6">
+      <fieldset class="m-0 min-w-0 border-0 p-0">
+        <legend
+          class="mb-2 p-0 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-muted"
+        >
+          {{ 'moves.filters.types' | transloco }}
+        </legend>
+        <div class="flex flex-wrap gap-1.5">
+          @for (type of types; track type) {
+            <button
+              [class]="
+                typeBadgeClass(type) +
+                (isTypeSelected(type) ? ' ring-2 ring-accent/60' : ' opacity-70')
+              "
+              type="button"
+              [attr.aria-pressed]="isTypeSelected(type)"
+              (click)="toggleType(type)"
+            >
+              {{ 'pokedex.types.' + type | transloco }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="m-0 min-w-0 border-0 p-0">
+        <legend
+          class="mb-2 p-0 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-muted"
+        >
+          {{ 'moves.filters.category' | transloco }}
+        </legend>
+        <div class="flex flex-wrap gap-1.5">
+          @for (damageClass of damageClasses; track damageClass) {
+            <button
+              [class]="chipClass(isClassSelected(damageClass))"
+              type="button"
+              [attr.aria-pressed]="isClassSelected(damageClass)"
+              (click)="toggleClass(damageClass)"
+            >
+              {{ 'moves.categories.' + damageClass | transloco }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="m-0 min-w-0 border-0 p-0">
+        <legend
+          class="mb-2 p-0 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-muted"
+        >
+          {{ 'moves.filters.generations' | transloco }}
+        </legend>
+        <div class="flex flex-wrap gap-1.5">
+          @for (generation of generations; track generation) {
+            <button
+              [class]="
+                chipClass(isGenerationSelected(generation)) +
+                ' tabular-nums tracking-normal normal-case'
+              "
+              type="button"
+              [attr.aria-pressed]="isGenerationSelected(generation)"
+              (click)="toggleGeneration(generation)"
+            >
+              {{ generation }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="m-0 min-w-0 border-0 p-0">
+        <legend
+          class="mb-2 p-0 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-muted"
+        >
+          {{ 'moves.filters.power' | transloco }}
+        </legend>
+        <div class="flex items-center gap-2">
+          <input
+            class="w-20 rounded-lg border border-line bg-panel-muted/40 px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-accent"
+            type="number"
+            min="0"
+            max="300"
+            [value]="minPower() ?? ''"
+            [attr.aria-label]="'moves.filters.minPower' | transloco"
+            [placeholder]="'moves.filters.min' | transloco"
+            (change)="setPower('min', $event)"
+          />
+          <span class="text-ink-muted" aria-hidden="true">—</span>
+          <input
+            class="w-20 rounded-lg border border-line bg-panel-muted/40 px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-accent"
+            type="number"
+            min="0"
+            max="300"
+            [value]="maxPower() ?? ''"
+            [attr.aria-label]="'moves.filters.maxPower' | transloco"
+            [placeholder]="'moves.filters.max' | transloco"
+            (change)="setPower('max', $event)"
+          />
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="mt-8 text-sm text-ink-soft" role="status">
+        {{ 'moves.loading' | transloco }}
+      </p>
+      <div class="mt-4 flex flex-col gap-2" aria-hidden="true">
+        @for (row of [1, 2, 3, 4, 5, 6]; track row) {
+          <div class="h-12 animate-pulse rounded-lg border border-line bg-panel/60"></div>
+        }
+      </div>
+    }
+
+    @case ('error') {
+      <div class="mt-8 rounded-xl border border-danger/30 bg-danger/5 p-6">
+        <h2 class="m-0 text-base font-semibold text-ink">
+          {{ 'moves.error.title' | transloco }}
+        </h2>
+        <p class="mt-1.5 text-sm text-ink-soft">{{ 'moves.error.description' | transloco }}</p>
+        <button
+          class="mt-4 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="retry()"
+        >
+          {{ 'moves.error.retry' | transloco }}
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @if (items().length === 0) {
+        <div class="mt-8 rounded-xl border border-dashed border-line bg-panel/50 p-8 text-center">
+          <h2 class="m-0 text-base font-semibold text-ink">
+            {{ 'moves.empty.title' | transloco }}
+          </h2>
+          <p class="mt-1.5 text-sm text-ink-soft">{{ 'moves.empty.description' | transloco }}</p>
+        </div>
+      } @else {
+        <div class="mt-6 overflow-hidden rounded-xl border border-line bg-panel">
+          <table class="w-full border-collapse text-left text-sm">
+            <caption class="sr-only">
+              {{
+                'moves.title' | transloco
+              }}
+            </caption>
+            <thead>
+              <tr class="border-b border-line bg-panel-muted/40">
+                <th
+                  class="px-3 py-2.5 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                  scope="col"
+                >
+                  {{ 'moves.columns.name' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                  scope="col"
+                >
+                  {{ 'moves.columns.type' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                  scope="col"
+                >
+                  {{ 'moves.columns.category' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 text-right font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                  scope="col"
+                >
+                  {{ 'moves.columns.power' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 text-right font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                  scope="col"
+                >
+                  {{ 'moves.columns.accuracy' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 text-right font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                  scope="col"
+                >
+                  {{ 'moves.columns.pp' | transloco }}
+                </th>
+                <th
+                  class="px-3 py-2.5 text-right font-mono text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                  scope="col"
+                >
+                  {{ 'moves.columns.generation' | transloco }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (move of items(); track move.id) {
+                <tr class="border-b border-line/70 last:border-b-0 hover:bg-panel-muted/40">
+                  <td class="px-3 py-2">
+                    <a
+                      class="flex items-center gap-2 font-semibold text-ink no-underline"
+                      [routerLink]="['/moves', move.id]"
+                    >
+                      <span class="text-ink-muted">
+                        <app-icon [name]="damageClassIcon(move.damageClass)" [size]="14" />
+                      </span>
+                      {{ move.name }}
+                    </a>
+                  </td>
+                  <td class="px-3 py-2">
+                    <span [class]="typeBadgeClass(move.typeSlug)">
+                      {{ 'pokedex.types.' + move.typeSlug | transloco }}
+                    </span>
+                  </td>
+                  <td class="px-3 py-2 text-ink-soft max-sm:hidden">
+                    {{ 'moves.categories.' + move.damageClass | transloco }}
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono tabular-nums text-ink-soft">
+                    {{ move.power ?? '—' }}
+                  </td>
+                  <td
+                    class="px-3 py-2 text-right font-mono tabular-nums text-ink-soft max-sm:hidden"
+                  >
+                    {{ move.accuracy === null ? '—' : move.accuracy + ' %' }}
+                  </td>
+                  <td
+                    class="px-3 py-2 text-right font-mono tabular-nums text-ink-soft max-sm:hidden"
+                  >
+                    {{ move.pp ?? '—' }}
+                  </td>
+                  <td
+                    class="px-3 py-2 text-right font-mono tabular-nums text-ink-soft max-sm:hidden"
+                  >
+                    {{ move.generationId }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="m-0 font-mono text-[0.7rem] text-ink-muted">
+            {{ 'moves.showing' | transloco: { shown: items().length, total: total() } }}
+          </p>
+          @if (hasMore()) {
+            <button
+              class="inline-flex items-center gap-2 rounded-lg border border-line bg-panel px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:border-line-strong disabled:opacity-60"
+              type="button"
+              [disabled]="loadingMore()"
+              (click)="loadMore()"
+            >
+              {{ (loadingMore() ? 'moves.loadingMore' : 'moves.loadMore') | transloco }}
+            </button>
+          }
+        </div>
+      }
+    }
+  }
+</section>

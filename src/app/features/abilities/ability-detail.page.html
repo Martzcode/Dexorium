@@ -1,0 +1,132 @@
+<section class="mx-auto max-w-[1080px] px-5 py-10 sm:px-10 sm:py-14">
+  <a
+    class="inline-flex items-center gap-2 text-sm font-semibold text-ink-soft no-underline transition-colors hover:text-ink"
+    routerLink="/abilities"
+  >
+    <app-icon name="arrow-left" [size]="16" />
+    {{ 'abilities.detail.back' | transloco }}
+  </a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="mt-8 text-sm text-ink-soft" role="status">
+        {{ 'abilities.detail.loading' | transloco }}
+      </p>
+      <div class="mt-6 h-[220px] animate-pulse rounded-xl border border-line bg-panel/60"></div>
+    }
+
+    @case ('notFound') {
+      <div class="mt-8 rounded-xl border border-dashed border-line bg-panel/50 p-8 text-center">
+        <h1 class="m-0 text-xl font-semibold text-ink">
+          {{ 'abilities.detail.notFound.title' | transloco }}
+        </h1>
+        <p class="mt-1.5 text-sm text-ink-soft">
+          {{ 'abilities.detail.notFound.description' | transloco }}
+        </p>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="mt-8 rounded-xl border border-danger/30 bg-danger/5 p-6">
+        <h1 class="m-0 text-base font-semibold text-ink">
+          {{ 'abilities.detail.error.title' | transloco }}
+        </h1>
+        <p class="mt-1.5 text-sm text-ink-soft">
+          {{ 'abilities.detail.error.description' | transloco }}
+        </p>
+        <button
+          class="mt-4 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="retry()"
+        >
+          {{ 'abilities.detail.error.retry' | transloco }}
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @if (ability(); as entry) {
+        <header class="mt-6 border-b border-line pb-6">
+          <p class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.12em] text-ink-muted">
+            {{ 'abilities.detail.eyebrow' | transloco }} № {{ entry.id }}
+          </p>
+          <h1
+            class="mb-0 mt-2 text-[clamp(2rem,4vw,3rem)] font-bold leading-none tracking-[-0.04em]"
+          >
+            {{ entry.name }}
+          </h1>
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <span
+              class="rounded-full border border-line bg-panel-muted px-2.5 py-0.5 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
+            >
+              {{ 'abilities.generation' | transloco: { number: entry.generationId } }}
+            </span>
+            <span class="font-mono text-[0.66rem] text-ink-muted">{{ entry.slug }}</span>
+          </div>
+        </header>
+
+        <section class="mt-5 rounded-xl border border-line bg-panel p-5">
+          <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
+            {{ 'abilities.detail.effect' | transloco }}
+          </h2>
+
+          @if (entry.effectShort) {
+            <p class="mt-3 text-sm font-semibold leading-relaxed text-ink">
+              {{ entry.effectShort }}
+            </p>
+          }
+          @if (effectText(); as text) {
+            <p class="mt-2 text-sm leading-relaxed text-ink-soft">{{ text }}</p>
+          } @else if (!entry.effectShort) {
+            <p class="mt-2 text-sm text-ink-soft">{{ 'pokedex.detail.noData' | transloco }}</p>
+          }
+        </section>
+
+        <section class="mt-5 rounded-xl border border-line bg-panel p-5">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
+              {{ 'abilities.detail.holders.title' | transloco }}
+            </h2>
+            <span class="font-mono text-[0.66rem] text-ink-muted">
+              {{ 'abilities.holders' | transloco: { count: holders().length } }}
+            </span>
+          </div>
+
+          @if (holders().length > 0) {
+            <ul class="m-0 mt-3 grid list-none gap-2 p-0 sm:grid-cols-2">
+              @for (holder of holders(); track holder.formId) {
+                <li>
+                  <a
+                    class="flex items-center justify-between gap-3 rounded-lg border border-line bg-panel-muted/40 px-3 py-2 no-underline transition-colors hover:border-line-strong"
+                    [routerLink]="['/pokedex', holder.speciesId]"
+                  >
+                    <span class="flex min-w-0 items-baseline gap-2">
+                      <span class="font-mono text-[0.66rem] text-ink-muted">
+                        {{ formatDexNumber(holder.nationalDexNumber) }}
+                      </span>
+                      <span class="truncate font-semibold text-ink">{{ holder.speciesName }}</span>
+                      @if (holder.formName !== holder.speciesName) {
+                        <span class="truncate text-[0.7rem] text-ink-muted">
+                          {{ holder.formName }}
+                        </span>
+                      }
+                    </span>
+                    @if (holder.isHidden) {
+                      <span
+                        class="shrink-0 rounded-full border border-line-strong bg-panel-muted px-2 py-0.5 font-mono text-[0.56rem] uppercase tracking-[0.06em] text-ink-soft"
+                      >
+                        {{ 'pokedex.detail.abilities.hidden' | transloco }}
+                      </span>
+                    }
+                  </a>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="mt-2 text-sm text-ink-soft">{{ 'pokedex.detail.noData' | transloco }}</p>
+          }
+        </section>
+      }
+    }
+  }
+</section>

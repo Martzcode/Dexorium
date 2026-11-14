@@ -1,0 +1,197 @@
+<section class="rounded-xl border border-line bg-panel p-5">
+  <div class="flex flex-wrap items-baseline justify-between gap-3">
+    <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
+      {{ 'pokedex.learnset.title' | transloco }}
+    </h2>
+
+    @if (page()?.versionGroups?.length) {
+      <label class="flex items-center gap-2 text-[0.72rem] text-ink-muted">
+        <span>{{ 'pokedex.learnset.versionGroup' | transloco }}</span>
+        <select
+          class="max-w-[220px] rounded-lg border border-line bg-panel-muted/40 px-2.5 py-1.5 text-sm text-ink outline-none focus:border-accent"
+          [value]="selectedVersionGroup() ?? ''"
+          (change)="onVersionGroupChange($event)"
+        >
+          @for (group of page()?.versionGroups ?? []; track group.id) {
+            <option [value]="group.slug">
+              {{ group.slug }} ·
+              {{ 'pokedex.learnset.generation' | transloco: { number: group.generationId } }}
+            </option>
+          }
+        </select>
+      </label>
+    }
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="mt-4 text-sm text-ink-soft" role="status">
+        {{ 'pokedex.learnset.loading' | transloco }}
+      </p>
+      <div class="mt-3 flex flex-col gap-2" aria-hidden="true">
+        @for (row of [1, 2, 3, 4]; track row) {
+          <div class="h-9 animate-pulse rounded-lg border border-line bg-panel-muted/40"></div>
+        }
+      </div>
+    }
+
+    @case ('error') {
+      <div class="mt-4 rounded-lg border border-danger/30 bg-danger/5 p-4">
+        <p class="m-0 text-sm text-ink-soft">{{ 'pokedex.learnset.error' | transloco }}</p>
+        <button
+          class="mt-3 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="retry()"
+        >
+          {{ 'pokedex.detail.error.retry' | transloco }}
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @if ((page()?.entries?.length ?? 0) === 0) {
+        <p class="mt-4 text-sm text-ink-soft">{{ 'pokedex.learnset.empty' | transloco }}</p>
+      } @else {
+        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              [class]="chipClass(isMethodSelected('all'))"
+              type="button"
+              [attr.aria-pressed]="isMethodSelected('all')"
+              (click)="setMethod('all')"
+            >
+              {{ 'pokedex.learnset.allMethods' | transloco }}
+            </button>
+            @for (method of methods(); track method) {
+              <button
+                [class]="chipClass(isMethodSelected(method))"
+                type="button"
+                [attr.aria-pressed]="isMethodSelected(method)"
+                (click)="setMethod(method)"
+              >
+                {{ 'moves.methods.' + method | transloco }}
+              </button>
+            }
+          </div>
+
+          <label class="relative flex items-center sm:w-[240px]">
+            <span class="pointer-events-none absolute left-2.5 text-ink-muted">
+              <app-icon name="search" [size]="14" />
+            </span>
+            <span class="sr-only">{{ 'pokedex.learnset.search' | transloco }}</span>
+            <input
+              #searchInput
+              class="w-full rounded-lg border border-line bg-panel-muted/40 py-1.5 pl-8 pr-8 text-sm text-ink outline-none placeholder:text-ink-muted focus:border-accent"
+              type="search"
+              [value]="search()"
+              [placeholder]="'pokedex.learnset.searchPlaceholder' | transloco"
+              (input)="onSearch($event)"
+            />
+            @if (search().length > 0) {
+              <button
+                class="absolute right-1.5 grid size-6 place-items-center rounded-md text-ink-muted transition-colors hover:bg-panel-muted hover:text-ink"
+                type="button"
+                [attr.aria-label]="'pokedex.learnset.clearSearch' | transloco"
+                (click)="clearSearch(searchInput)"
+              >
+                <app-icon name="x" [size]="12" />
+              </button>
+            }
+          </label>
+        </div>
+
+        <p class="mt-3 font-mono text-[0.68rem] text-ink-muted">
+          {{
+            'pokedex.learnset.showing'
+              | transloco: { shown: entries().length, total: page()?.total ?? 0 }
+          }}
+        </p>
+
+        @if (entries().length === 0) {
+          <p class="mt-2 text-sm text-ink-soft">{{ 'pokedex.learnset.noMatch' | transloco }}</p>
+        } @else {
+          <div class="mt-2 overflow-hidden rounded-lg border border-line">
+            <table class="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-line bg-panel-muted/40">
+                  <th
+                    class="px-3 py-2 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnMove' | transloco }}
+                  </th>
+                  <th
+                    class="px-3 py-2 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnType' | transloco }}
+                  </th>
+                  <th
+                    class="px-3 py-2 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnCategory' | transloco }}
+                  </th>
+                  <th
+                    class="px-3 py-2 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnPower' | transloco }}
+                  </th>
+                  <th
+                    class="px-3 py-2 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted max-sm:hidden"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnAccuracy' | transloco }}
+                  </th>
+                  <th
+                    class="px-3 py-2 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnMethod' | transloco }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  entry of entries();
+                  track entry.moveId + '-' + entry.method + '-' + entry.level
+                ) {
+                  <tr class="border-b border-line/70 last:border-b-0 hover:bg-panel-muted/30">
+                    <td class="px-3 py-1.5">
+                      <a
+                        class="font-semibold text-ink no-underline hover:text-accent"
+                        [routerLink]="['/moves', entry.moveId]"
+                      >
+                        {{ entry.name }}
+                      </a>
+                    </td>
+                    <td class="px-3 py-1.5 max-sm:hidden">
+                      <span [class]="typeBadgeClass(entry.typeSlug)">
+                        {{ 'pokedex.types.' + entry.typeSlug | transloco }}
+                      </span>
+                    </td>
+                    <td class="px-3 py-1.5 text-ink-soft max-sm:hidden">
+                      {{ 'moves.categories.' + entry.damageClass | transloco }}
+                    </td>
+                    <td class="px-3 py-1.5 text-right font-mono tabular-nums text-ink-soft">
+                      {{ entry.power ?? '—' }}
+                    </td>
+                    <td
+                      class="px-3 py-1.5 text-right font-mono tabular-nums text-ink-soft max-sm:hidden"
+                    >
+                      {{ entry.accuracy === null ? '—' : entry.accuracy + ' %' }}
+                    </td>
+                    <td class="px-3 py-1.5 text-right font-mono text-[0.68rem] text-ink-muted">
+                      {{ methodLabel(entry) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    }
+  }
+</section>
