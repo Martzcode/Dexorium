@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
+import { CollectionService } from '../../core/collection/collection.service';
 import { invokeCommand, isTauriRuntime } from '../../core/ipc/tauri-ipc';
 import type {
   FixtureSpecies,
@@ -26,6 +27,7 @@ const DEFAULT_LIMIT = 1300;
 @Injectable({ providedIn: 'root' })
 export class PokedexService {
   private readonly http = inject(HttpClient);
+  private readonly collection = inject(CollectionService);
   private fixture?: Promise<readonly FixtureSpecies[]>;
 
   async list(query: SpeciesListQuery): Promise<SpeciesPage> {
@@ -33,7 +35,11 @@ export class PokedexService {
       return invokeCommand<SpeciesPage>('list_pokemon', { query });
     }
 
-    return listFixture(await this.fixtureSpecies(), query);
+    const favoriteIds = query.favoritesOnly
+      ? new Set(this.collection.favorites().map((entry) => entry.entityId))
+      : null;
+
+    return listFixture(await this.fixtureSpecies(), query, favoriteIds);
   }
 
   async search(query: string, lang: string, limit = DEFAULT_LIMIT): Promise<SpeciesSummary[]> {
@@ -90,11 +96,19 @@ export class PokedexService {
   }
 }
 
-function listFixture(species: readonly FixtureSpecies[], query: SpeciesListQuery): SpeciesPage {
+function listFixture(
+  species: readonly FixtureSpecies[],
+  query: SpeciesListQuery,
+  favoriteIds: ReadonlySet<number> | null,
+): SpeciesPage {
   const tokens = tokenize(query.search ?? '');
   const types = query.types.map((type) => type.toLowerCase());
 
   const filtered = species.filter((entry) => {
+    if (favoriteIds && !favoriteIds.has(entry.id)) {
+      return false;
+    }
+
     if (!tokens.every((token) => matches(entry, token))) {
       return false;
     }

@@ -162,6 +162,15 @@ pub struct SpeciesListQuery {
     pub generations: Vec<u16>,
     pub stat_ranges: Vec<StatRange>,
     pub flags: SpeciesFlags,
+    /// When set, only species whose id is listed are returned. The Tauri
+    /// command fills it from the user database when the "favorites only"
+    /// filter is active; an empty list means "no species".
+    pub favorite_ids: Option<Vec<i64>>,
+    /// Restricts the page to the user's favourite species.
+    ///
+    /// The command resolves the identifiers from the user database before the
+    /// query reaches the repository, so the reference database stays read-only.
+    pub favorites_only: bool,
     /// Requested sort order. Empty means "national dex number ascending".
     pub sort: Vec<SortCriterion>,
     /// Zero-based index of the first item.
@@ -181,6 +190,8 @@ impl Default for SpeciesListQuery {
             generations: Vec::new(),
             stat_ranges: Vec::new(),
             flags: SpeciesFlags::default(),
+            favorite_ids: None,
+            favorites_only: false,
             sort: Vec::new(),
             offset: 0,
             limit: 0,

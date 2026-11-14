@@ -80,13 +80,23 @@
         <app-icon name="menu" [size]="18" />
       </button>
 
-      <div
-        class="flex max-w-[560px] flex-1 cursor-not-allowed items-center gap-2.5 rounded-[9px] border border-line bg-panel px-3 py-2.5 text-[0.82rem] text-ink-muted max-sm:hidden"
-        role="search"
-        aria-disabled="true"
+      <button
+        class="grid size-9 place-items-center rounded-lg border border-line bg-panel text-ink-soft transition-colors hover:border-line-strong hover:text-ink sm:hidden"
+        type="button"
+        [attr.aria-label]="'palette.open' | transloco"
+        (click)="openPalette()"
+      >
+        <app-icon name="search" [size]="18" />
+      </button>
+
+      <button
+        class="flex max-w-[560px] flex-1 items-center gap-2.5 rounded-[9px] border border-line bg-panel px-3 py-2.5 text-[0.82rem] text-ink-muted transition-colors hover:border-line-strong hover:text-ink max-sm:hidden"
+        type="button"
+        [attr.aria-label]="'palette.open' | transloco"
+        (click)="openPalette()"
       >
         <app-icon name="search" [size]="16" />
-        <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+        <span class="flex-1 overflow-hidden text-left text-ellipsis whitespace-nowrap">
           {{ 'topbar.search' | transloco }}
         </span>
         <kbd
@@ -94,7 +104,7 @@
         >
           Ctrl K
         </kbd>
-      </div>
+      </button>
     </header>
 
     <main class="flex-1">
@@ -108,3 +118,5 @@
     </footer>
   </div>
 </div>
+
+<app-command-palette />

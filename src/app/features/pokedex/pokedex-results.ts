@@ -7,6 +7,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { PokemonSprite } from '../../shared/pokemon-sprite/pokemon-sprite';
+import { CollectionService } from '../../core/collection/collection.service';
+import { AppIcon } from '../../shared/icon/app-icon';
 import { formatDexNumber, typeBadgeClass } from './pokedex-format';
 import type { SortCriterion, SpeciesSortField, SpeciesSummary } from './pokedex.models';
 import type { PokedexView } from './pokedex.store';
@@ -17,11 +19,12 @@ const TABLE_ROW_HEIGHT = 44;
 
 @Component({
   selector: 'app-pokedex-results',
-  imports: [ScrollingModule, RouterLink, TranslocoPipe, PokemonSprite],
+  imports: [ScrollingModule, RouterLink, TranslocoPipe, PokemonSprite, AppIcon],
   templateUrl: './pokedex-results.html',
 })
 export class PokedexResults {
   private readonly breakpoints = inject(BreakpointObserver);
+  protected readonly collection = inject(CollectionService);
 
   readonly view = input.required<PokedexView>();
   readonly items = input.required<readonly SpeciesSummary[]>();
@@ -104,5 +107,17 @@ export class PokedexResults {
 
   protected onSort(field: SpeciesSortField): void {
     this.sortField.emit(field);
+  }
+
+  protected toggleFavorite(event: Event, speciesId: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    void this.collection.toggle(speciesId);
+  }
+
+  protected favoriteLabel(speciesId: number): string {
+    return this.collection.isFavorite(speciesId)
+      ? 'pokedex.favorite.remove'
+      : 'pokedex.favorite.add';
   }
 }

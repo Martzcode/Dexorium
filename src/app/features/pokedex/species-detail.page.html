@@ -118,6 +118,23 @@
             </div>
 
             <div class="flex flex-wrap items-start gap-2">
+              <button
+                class="inline-flex items-center gap-1.5 rounded-full border bg-panel px-3 py-1.5 text-sm font-semibold transition-colors hover:border-amber-500/60 hover:text-amber-500 disabled:opacity-50"
+                type="button"
+                [class]="
+                  collection.isFavorite(entry.speciesId)
+                    ? 'border-amber-500/60 text-amber-500'
+                    : 'border-line text-ink-soft'
+                "
+                [attr.aria-label]="favoriteLabel() | transloco"
+                [attr.aria-pressed]="collection.isFavorite(entry.speciesId)"
+                [disabled]="collection.isPending(entry.speciesId)"
+                (click)="toggleFavorite()"
+              >
+                <app-icon name="star" [size]="14" />
+                {{ favoriteLabel() | transloco }}
+              </button>
+
               @if (entry.isLegendary) {
                 <span
                   class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-amber-700 dark:text-amber-300"

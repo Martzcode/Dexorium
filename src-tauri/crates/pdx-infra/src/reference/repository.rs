@@ -1057,6 +1057,22 @@ fn build_list_sql(query: &SpeciesListQuery) -> Option<ListSql> {
         where_clause.push(')');
     }
 
+    if let Some(favorite_ids) = &query.favorite_ids {
+        if favorite_ids.is_empty() {
+            where_clause.push_str(" AND 1 = 0");
+        } else {
+            where_clause.push_str(" AND s.id IN (");
+            for (index, id) in favorite_ids.iter().enumerate() {
+                if index > 0 {
+                    where_clause.push_str(", ");
+                }
+                where_clause.push('?');
+                params.push(Value::Integer(*id));
+            }
+            where_clause.push(')');
+        }
+    }
+
     let order_clause = build_order_clause(&query.sort);
 
     Some(ListSql {

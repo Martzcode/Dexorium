@@ -1,9 +1,11 @@
 //! Reference database adapters (SQLite, FTS5).
 
 mod abilities;
+mod dataset;
 mod moves;
 mod repository;
 mod search;
+mod types;
 
 pub use repository::{REFERENCE_SCHEMA, SqliteSpeciesRepository};
 

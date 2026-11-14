@@ -89,10 +89,18 @@
   } @else if (store.items().length === 0) {
     <div class="rounded-xl border border-dashed border-line bg-panel/50 p-8 text-center">
       <h2 class="m-0 text-base font-semibold text-ink">
-        {{ 'pokedex.empty.title' | transloco }}
+        {{
+          (store.favoritesOnly() ? 'pokedex.empty.favoritesTitle' : 'pokedex.empty.title')
+            | transloco
+        }}
       </h2>
       <p class="mt-1.5 text-sm text-ink-soft">
-        {{ 'pokedex.empty.description' | transloco }}
+        {{
+          (store.favoritesOnly()
+            ? 'pokedex.empty.favoritesDescription'
+            : 'pokedex.empty.description'
+          ) | transloco
+        }}
       </p>
       @if (store.hasFilters()) {
         <button

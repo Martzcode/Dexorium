@@ -4,17 +4,22 @@
 //! depend on Tauri, SQLite, the file system or any other I/O crate.
 
 pub mod ability;
+pub mod dataset;
 pub mod detail;
+pub mod favorites;
 pub mod moves;
 pub mod search;
 pub mod species;
+pub mod types;
 
 pub use ability::{
     AbilityDetail, AbilityHolder, AbilityListQuery, AbilityPage, AbilitySummary,
 };
+pub use dataset::{DatasetInfo, DatasetRowCount};
 pub use detail::{
     AbilityRef, EvolutionStepView, FlavorTextEntry, FormSummary, PokemonDetail, TypeEffectiveness,
 };
+pub use favorites::{FavoriteCollection, FavoriteEntry, FavoriteKind, FavoriteStatus};
 pub use moves::{
     LearnsetEntry, LearnsetPage, MoveDetail, MoveLearner, MoveListQuery, MovePage, MoveSortCriterion,
     MoveSortField, MoveSummary, VersionGroupRef,
@@ -27,3 +32,4 @@ pub use species::{
     SpeciesListQuery, SpeciesPage, SpeciesSortField, SpeciesStat, SpeciesSummary, StatRange,
     TypeMatchMode,
 };
+pub use types::{TypeMatrix, TypeRef};

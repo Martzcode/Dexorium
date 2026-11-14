@@ -4,6 +4,9 @@ import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AppIcon, type IconName } from '../../shared/icon/app-icon';
+import { CollectionService } from '../../core/collection/collection.service';
+import { CommandPalette } from '../command-palette/command-palette';
+import { CommandPaletteService } from '../command-palette/command-palette.service';
 import { AppTitlebar } from '../titlebar/app-titlebar';
 
 interface NavItem {
@@ -15,7 +18,15 @@ interface NavItem {
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslocoPipe, AppIcon, AppTitlebar],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    TranslocoPipe,
+    AppIcon,
+    AppTitlebar,
+    CommandPalette,
+  ],
   templateUrl: './app-shell.html',
 })
 export class AppShell {
@@ -26,13 +37,24 @@ export class AppShell {
     { labelKey: 'nav.abilities', icon: 'brain', route: '/abilities', ready: true },
     { labelKey: 'nav.items', icon: 'package' },
     { labelKey: 'nav.teams', icon: 'users' },
-    { labelKey: 'nav.tools', icon: 'wrench' },
+    { labelKey: 'nav.tools', icon: 'wrench', route: '/tools/types', ready: true },
     { labelKey: 'nav.collection', icon: 'library-big' },
-    { labelKey: 'nav.settings', icon: 'settings' },
+    { labelKey: 'nav.settings', icon: 'settings', route: '/settings', ready: true },
   ];
+
+  private readonly palette = inject(CommandPaletteService);
+  private readonly collection = inject(CollectionService);
 
   protected readonly year = new Date().getFullYear();
   protected readonly mobileNavOpen = signal(false);
+
+  constructor() {
+    void this.collection.load();
+  }
+
+  protected openPalette(): void {
+    this.palette.show();
+  }
 
   protected readonly sidebarClass = computed(() => {
     const base =

@@ -17,10 +17,14 @@ pub fn run() {
             commands::catalog::get_ability_detail,
             commands::catalog::search_global,
             commands::catalog::suggest,
+            commands::collection::list_favorites,
+            commands::collection::set_favorite,
+            commands::dataset::get_dataset_info,
             commands::species::list_pokemon,
             commands::species::get_pokemon_detail,
             commands::species::search_species,
             commands::species::get_species,
+            commands::tools::get_type_matrix,
         ])
         .setup(|app| {
             let state = AppState::load(app.handle())

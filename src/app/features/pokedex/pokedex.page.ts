@@ -1,7 +1,8 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { CollectionService } from '../../core/collection/collection.service';
 import { AppIcon } from '../../shared/icon/app-icon';
 import { PokedexFilters } from './pokedex-filters';
 import { PokedexResults } from './pokedex-results';
@@ -14,6 +15,7 @@ import { PokedexStore, type PokedexView } from './pokedex.store';
 })
 export class PokedexPage {
   private readonly transloco = inject(TranslocoService);
+  private readonly collection = inject(CollectionService);
 
   protected readonly store = inject(PokedexStore);
   protected readonly placeholders = [1, 2, 3, 4, 5, 6];
@@ -39,6 +41,19 @@ export class PokedexPage {
   constructor() {
     effect(() => {
       this.store.setLanguage(this.language());
+    });
+
+    let seenRevision = -1;
+    effect(() => {
+      const revision = this.collection.revision();
+      const changed = seenRevision !== -1 && seenRevision !== revision;
+      seenRevision = revision;
+
+      // Track the revision only: reading `favoritesOnly` untracked avoids a
+      // duplicate reload when the filter itself toggles.
+      if (changed && untracked(() => this.store.favoritesOnly())) {
+        this.store.refresh();
+      }
     });
   }
 

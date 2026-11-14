@@ -77,6 +77,7 @@
       "sortAttackDesc": "Attack ↓",
       "active": "{{ count }} active",
       "clear": "Clear filters",
+      "favoritesOnly": "Favourites only",
       "types": "Types",
       "typeMode": {
         "label": "Mode",
@@ -96,7 +97,9 @@
     "bst": "Total",
     "empty": {
       "title": "No results",
-      "description": "Try another name or a national number."
+      "description": "Try another name or a national number.",
+      "favoritesTitle": "No favourites yet",
+      "favoritesDescription": "Star Pokémon to find them here."
     },
     "error": {
       "title": "The Pokédex could not be loaded",
@@ -225,6 +228,10 @@
       "columnPower": "Power",
       "columnAccuracy": "Acc.",
       "columnMethod": "Learned by"
+    },
+    "favorite": {
+      "add": "Add to favourites",
+      "remove": "Remove from favourites"
     },
     "stats": {
       "hp": "HP",
@@ -395,6 +402,106 @@
       "holders": {
         "title": "Pokémon with this ability"
       }
+    }
+  },
+  "tools": {
+    "eyebrow": "Tools",
+    "types": {
+      "title": "Type chart",
+      "description": "Effectiveness of every attacking type against every defending type, for the selected generation.",
+      "generation": "Generation",
+      "generationValue": "Gen. {{ number }}",
+      "attacking": "Attacking",
+      "defending": "Defending",
+      "caption": "Effectiveness matrix for the eighteen types",
+      "loading": "Loading the type chart.",
+      "note": "Types introduced after the selected generation are neutral.",
+      "error": {
+        "title": "Chart unavailable",
+        "description": "The local reference database is unavailable.",
+        "retry": "Retry"
+      },
+      "legend": {
+        "immune": "Immune",
+        "quarter": "Not very effective (¼)",
+        "half": "Not very effective (½)",
+        "neutral": "Neutral",
+        "double": "Super effective (×2)",
+        "quadruple": "Super effective (×4)"
+      }
+    }
+  },
+  "settings": {
+    "eyebrow": "Settings",
+    "title": "Settings and sources",
+    "description": "Information about the application, the embedded dataset and its licences.",
+    "app": {
+      "title": "Application",
+      "name": "Name",
+      "version": "Version",
+      "runtime": "Runtime",
+      "platform": "Platform",
+      "mode": "Mode",
+      "offline": "Offline",
+      "browser": "Browser preview: Tauri commands and the local database are unavailable."
+    },
+    "dataset": {
+      "title": "Dataset",
+      "version": "Version",
+      "builtAt": "Built at",
+      "schema": "Schema",
+      "languages": "Languages",
+      "commit": "Source commit",
+      "lock": "Source lock",
+      "contents": "Contents",
+      "loading": "Loading metadata.",
+      "error": {
+        "description": "Dataset metadata is unavailable.",
+        "retry": "Retry"
+      },
+      "tables": {
+        "ability": "Abilities",
+        "evolutionChain": "Evolution chains",
+        "evolutionStep": "Evolutions",
+        "flavorText": "Flavor texts",
+        "formMove": "Learnsets",
+        "formStat": "Form stats",
+        "formStatSummary": "Aggregated stats",
+        "formType": "Form types",
+        "forms": "Forms (fixture)",
+        "move": "Moves",
+        "pokemonForm": "Forms",
+        "species": "Species",
+        "translation": "Translations",
+        "typeEfficacy": "Type matrix"
+      }
+    },
+    "sources": {
+      "title": "Sources and licences",
+      "source": "Data source",
+      "license": "Licence",
+      "notice": "Dexorium runs fully offline: no data is sent and no telemetry is collected.",
+      "sprites": "Official Pokémon artwork is not included. Thumbnails are original placeholders; an optional media pack can be added later."
+    }
+  },
+  "palette": {
+    "title": "Command palette",
+    "open": "Open the command palette",
+    "action": "Navigation",
+    "placeholder": "Search a Pokémon, a move, an ability…",
+    "searching": "Searching…",
+    "error": "Search is unavailable.",
+    "empty": "No result.",
+    "kinds": {
+      "species": "Pokémon",
+      "move": "Move",
+      "ability": "Ability"
+    },
+    "hints": {
+      "move": "navigate",
+      "open": "open",
+      "close": "close",
+      "shortcut": "Ctrl K"
     }
   }
 }

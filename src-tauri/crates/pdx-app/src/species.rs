@@ -46,6 +46,7 @@ const MAX_FILTER_TYPES: usize = 18;
 const MAX_FILTER_GENERATIONS: usize = 9;
 const MAX_STAT_RANGES: usize = 16;
 const MAX_SORT_CRITERIA: usize = 3;
+const MAX_FAVORITE_IDS: usize = 2_000;
 
 /// Searches species by localized name, English name, slug or national number.
 pub fn search_species(
@@ -83,6 +84,7 @@ pub fn list_species(
     query.types = sanitize_slugs(query.types, MAX_FILTER_TYPES);
     query.generations = sanitize_generations(query.generations);
     query.stat_ranges.truncate(MAX_STAT_RANGES);
+    query.favorite_ids = query.favorite_ids.map(sanitize_ids);
     query.sort.truncate(MAX_SORT_CRITERIA);
     query.limit = if query.limit == 0 {
         DEFAULT_PAGE_SIZE
@@ -169,6 +171,25 @@ pub(crate) fn sanitize_generations(values: Vec<u16>) -> Vec<u16> {
 
         sanitized.push(value);
         if sanitized.len() == MAX_FILTER_GENERATIONS {
+            break;
+        }
+    }
+
+    sanitized
+}
+
+/// Keeps positive, de-duplicated identifiers and caps the list so a hostile
+/// payload cannot exhaust the SQLite parameter budget.
+pub(crate) fn sanitize_ids(values: Vec<i64>) -> Vec<i64> {
+    let mut sanitized: Vec<i64> = Vec::with_capacity(values.len().min(MAX_FAVORITE_IDS));
+
+    for value in values {
+        if value <= 0 || sanitized.contains(&value) {
+            continue;
+        }
+
+        sanitized.push(value);
+        if sanitized.len() == MAX_FAVORITE_IDS {
             break;
         }
     }

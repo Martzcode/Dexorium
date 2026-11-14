@@ -36,6 +36,7 @@ export class PokedexStore {
   readonly generations = signal<readonly number[]>([]);
   readonly statRanges = signal<readonly StatRange[]>([]);
   readonly flags = signal<SpeciesFlags>(EMPTY_FLAGS);
+  readonly favoritesOnly = signal(false);
   readonly sort = signal<readonly SortCriterion[]>([]);
   readonly view = signal<PokedexView>('grid');
 
@@ -54,7 +55,8 @@ export class PokedexStore {
       this.flags().legendary ||
       this.flags().mythical ||
       this.flags().baby ||
-      this.flags().ultraBeast,
+      this.flags().ultraBeast ||
+      this.favoritesOnly(),
   );
 
   private language = 'en';
@@ -103,6 +105,17 @@ export class PokedexStore {
 
   toggleFlag(flag: keyof SpeciesFlags): void {
     this.flags.update((flags) => ({ ...flags, [flag]: !flags[flag] }));
+    this.scheduleReload(0);
+  }
+
+  /** Restricts the list to the user's favourite species. */
+  toggleFavoritesOnly(): void {
+    this.favoritesOnly.update((value) => !value);
+    this.scheduleReload(0);
+  }
+
+  /** Reloads the first page, e.g. after the collection changed. */
+  refresh(): void {
     this.scheduleReload(0);
   }
 
@@ -159,6 +172,7 @@ export class PokedexStore {
     this.generations.set([]);
     this.statRanges.set([]);
     this.flags.set(EMPTY_FLAGS);
+    this.favoritesOnly.set(false);
     this.scheduleReload(0);
   }
 
@@ -232,6 +246,8 @@ export class PokedexStore {
       generations: this.generations(),
       statRanges: this.statRanges(),
       flags: this.flags(),
+      favoritesOnly: this.favoritesOnly(),
+      favoriteIds: null,
       sort: this.sort(),
       offset,
       limit: PAGE_SIZE,

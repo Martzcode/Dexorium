@@ -20,6 +20,21 @@
     </label>
 
     <div class="flex flex-wrap items-center gap-2">
+      <button
+        class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[0.66rem] font-semibold transition-colors"
+        [class]="
+          store.favoritesOnly()
+            ? 'border-amber-500/60 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+            : 'border-line bg-panel text-ink-soft hover:border-line-strong'
+        "
+        type="button"
+        [attr.aria-pressed]="store.favoritesOnly()"
+        (click)="store.toggleFavoritesOnly()"
+      >
+        <app-icon name="star" [size]="13" />
+        {{ 'pokedex.filters.favoritesOnly' | transloco }}
+      </button>
+
       <span class="font-mono text-[0.68rem] uppercase tracking-[0.08em] text-ink-muted">
         {{ 'pokedex.filters.active' | transloco: { count: activeCount() } }}
       </span>

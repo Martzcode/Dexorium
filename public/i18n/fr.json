@@ -77,6 +77,7 @@
       "sortAttackDesc": "Attaque ↓",
       "active": "{{ count }} actif(s)",
       "clear": "Effacer les filtres",
+      "favoritesOnly": "Favoris uniquement",
       "types": "Types",
       "typeMode": {
         "label": "Mode",
@@ -96,7 +97,9 @@
     "bst": "Total",
     "empty": {
       "title": "Aucun résultat",
-      "description": "Essayez un autre nom ou un numéro national."
+      "description": "Essayez un autre nom ou un numéro national.",
+      "favoritesTitle": "Aucun favori",
+      "favoritesDescription": "Ajoutez des Pokémon avec l’étoile pour les retrouver ici."
     },
     "error": {
       "title": "Le Pokédex n’a pas pu être chargé",
@@ -225,6 +228,10 @@
       "columnPower": "Puis.",
       "columnAccuracy": "Préc.",
       "columnMethod": "Apprentissage"
+    },
+    "favorite": {
+      "add": "Ajouter aux favoris",
+      "remove": "Retirer des favoris"
     },
     "stats": {
       "hp": "PV",
@@ -395,6 +402,106 @@
       "holders": {
         "title": "Pokémon possédant ce talent"
       }
+    }
+  },
+  "tools": {
+    "eyebrow": "Outils",
+    "types": {
+      "title": "Table des types",
+      "description": "Efficacité de chaque type attaquant contre chaque type défenseur, pour la génération sélectionnée.",
+      "generation": "Génération",
+      "generationValue": "Gén. {{ number }}",
+      "attacking": "Attaquant",
+      "defending": "Défenseur",
+      "caption": "Matrice d’efficacité des 18 types",
+      "loading": "Chargement de la table des types.",
+      "note": "Les types apparus après la génération choisie sont neutres.",
+      "error": {
+        "title": "Table indisponible",
+        "description": "La base de référence locale est indisponible.",
+        "retry": "Réessayer"
+      },
+      "legend": {
+        "immune": "Immunité",
+        "quarter": "Très peu efficace (¼)",
+        "half": "Peu efficace (½)",
+        "neutral": "Neutre",
+        "double": "Super efficace (×2)",
+        "quadruple": "Très efficace (×4)"
+      }
+    }
+  },
+  "settings": {
+    "eyebrow": "Réglages",
+    "title": "Réglages et sources",
+    "description": "Informations sur l’application, le jeu de données embarqué et les licences.",
+    "app": {
+      "title": "Application",
+      "name": "Nom",
+      "version": "Version",
+      "runtime": "Runtime",
+      "platform": "Plateforme",
+      "mode": "Mode",
+      "offline": "Hors ligne",
+      "browser": "Aperçu navigateur : les commandes Tauri et la base locale ne sont pas disponibles."
+    },
+    "dataset": {
+      "title": "Jeu de données",
+      "version": "Version",
+      "builtAt": "Construit le",
+      "schema": "Schéma",
+      "languages": "Langues",
+      "commit": "Commit source",
+      "lock": "Verrou source",
+      "contents": "Contenu",
+      "loading": "Chargement des métadonnées.",
+      "error": {
+        "description": "Les métadonnées du jeu de données sont indisponibles.",
+        "retry": "Réessayer"
+      },
+      "tables": {
+        "ability": "Talents",
+        "evolutionChain": "Chaînes d’évolution",
+        "evolutionStep": "Évolutions",
+        "flavorText": "Descriptions",
+        "formMove": "Capacités par forme",
+        "formStat": "Statistiques par forme",
+        "formStatSummary": "Statistiques agrégées",
+        "formType": "Types par forme",
+        "forms": "Formes (fixture)",
+        "move": "Attaques",
+        "pokemonForm": "Formes",
+        "species": "Espèces",
+        "translation": "Traductions",
+        "typeEfficacy": "Matrice des types"
+      }
+    },
+    "sources": {
+      "title": "Sources et licences",
+      "source": "Source des données",
+      "license": "Licence",
+      "notice": "Dexorium fonctionne entièrement hors ligne : aucune donnée n’est envoyée et aucune télémétrie n’est collectée.",
+      "sprites": "Les images officielles des Pokémon ne sont pas incluses. Les vignettes sont des placeholders originaux ; un pack média optionnel pourra être ajouté."
+    }
+  },
+  "palette": {
+    "title": "Palette de commandes",
+    "open": "Ouvrir la palette de commandes",
+    "action": "Navigation",
+    "placeholder": "Rechercher un Pokémon, une attaque, un talent…",
+    "searching": "Recherche…",
+    "error": "La recherche est indisponible.",
+    "empty": "Aucun résultat.",
+    "kinds": {
+      "species": "Pokémon",
+      "move": "Attaque",
+      "ability": "Talent"
+    },
+    "hints": {
+      "move": "naviguer",
+      "open": "ouvrir",
+      "close": "fermer",
+      "shortcut": "Ctrl K"
     }
   }
 }

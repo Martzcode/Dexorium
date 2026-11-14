@@ -46,6 +46,8 @@ export interface SpeciesListQuery {
   readonly generations: readonly number[];
   readonly statRanges: readonly StatRange[];
   readonly flags: SpeciesFlags;
+  readonly favoritesOnly: boolean;
+  readonly favoriteIds: readonly number[] | null;
   readonly sort: readonly SortCriterion[];
   readonly offset: number;
   readonly limit: number;
@@ -74,6 +76,8 @@ export const DEFAULT_QUERY: Omit<SpeciesListQuery, 'lang' | 'offset' | 'limit'> 
   generations: [],
   statRanges: [],
   flags: EMPTY_FLAGS,
+  favoritesOnly: false,
+  favoriteIds: null,
   sort: [],
 };
 

@@ -1,0 +1,109 @@
+@if (isOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-start justify-center bg-black/45 px-3 pt-[10vh] backdrop-blur-sm sm:px-6"
+    role="presentation"
+    (click)="close()"
+  >
+    <div
+      class="w-full max-w-[640px] overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="palette-title"
+      (click)="$event.stopPropagation()"
+    >
+      <h2 id="palette-title" class="sr-only">{{ 'palette.title' | transloco }}</h2>
+
+      <div class="flex items-center gap-2.5 border-b border-line px-4 py-3">
+        <span class="text-ink-muted" aria-hidden="true">
+          <app-icon name="search" [size]="17" />
+        </span>
+        <input
+          #paletteInput
+          class="min-w-0 flex-1 border-0 bg-transparent p-0 text-[0.95rem] text-ink outline-none placeholder:text-ink-muted"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          spellcheck="false"
+          aria-autocomplete="list"
+          aria-controls="palette-list"
+          [attr.aria-expanded]="items().length > 0"
+          [attr.aria-activedescendant]="activeDescendant()"
+          [value]="query()"
+          [placeholder]="'palette.placeholder' | transloco"
+          (input)="onInput($event)"
+          (keydown)="onKeydown($event)"
+        />
+        <kbd
+          class="rounded-[5px] border border-line bg-panel-muted px-1.5 py-0.5 font-mono text-[0.62rem] text-ink-muted"
+        >
+          Esc
+        </kbd>
+      </div>
+
+      <div id="palette-list" class="max-h-[52vh] overflow-y-auto p-2" role="listbox">
+        @if (loading()) {
+          <p class="px-3 py-2.5 text-sm text-ink-muted" role="status">
+            {{ 'palette.searching' | transloco }}
+          </p>
+        }
+
+        @if (error()) {
+          <p class="px-3 py-2.5 text-sm text-danger" role="alert">
+            {{ 'palette.error' | transloco }}
+          </p>
+        }
+
+        @if (!loading() && !error() && items().length === 0) {
+          <p class="px-3 py-6 text-center text-sm text-ink-muted">
+            {{ 'palette.empty' | transloco }}
+          </p>
+        }
+
+        @for (item of items(); track item.id; let index = $index) {
+          <button
+            class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors"
+            [id]="'palette-item-' + index"
+            type="button"
+            role="option"
+            [attr.aria-selected]="index === selected()"
+            [class.bg-panel-muted]="index === selected()"
+            [class.text-ink]="index === selected()"
+            [class.text-ink-soft]="index !== selected()"
+            (mouseenter)="select(index)"
+            (click)="activate(item)"
+          >
+            <span
+              class="grid size-8 shrink-0 place-items-center rounded-lg border border-line bg-panel text-accent"
+              aria-hidden="true"
+            >
+              <app-icon [name]="item.icon" [size]="15" />
+            </span>
+
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-[0.9rem] font-semibold">{{ item.label }}</span>
+              <span class="block truncate text-[0.72rem] text-ink-muted">{{ item.subtitle }}</span>
+            </span>
+
+            <span
+              class="shrink-0 rounded-full border border-line px-2 py-0.5 font-mono text-[0.56rem] uppercase tracking-[0.06em] text-ink-muted"
+            >
+              {{ kindLabel(item.kind) | transloco }}
+            </span>
+          </button>
+        }
+      </div>
+
+      <div
+        class="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line bg-panel-muted/40 px-4 py-2 text-[0.66rem] text-ink-muted"
+      >
+        <span><kbd class="font-mono">↑ ↓</kbd> {{ 'palette.hints.move' | transloco }}</span>
+        <span><kbd class="font-mono">↵</kbd> {{ 'palette.hints.open' | transloco }}</span>
+        <span><kbd class="font-mono">Esc</kbd> {{ 'palette.hints.close' | transloco }}</span>
+        <span class="ml-auto inline-flex items-center gap-1">
+          <app-icon name="command" [size]="12" />
+          {{ 'palette.hints.shortcut' | transloco }}
+        </span>
+      </div>
+    </div>
+  </div>
+}

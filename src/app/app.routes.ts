@@ -42,6 +42,18 @@ export const routes: Routes = [
       import('./features/abilities/ability-detail.page').then((module) => module.AbilityDetailPage),
   },
   {
+    path: 'tools/types',
+    title: 'Table des types — Dexorium',
+    loadComponent: () =>
+      import('./features/tools/type-matrix.page').then((module) => module.TypeMatrixPage),
+  },
+  {
+    path: 'settings',
+    title: 'Réglages — Dexorium',
+    loadComponent: () =>
+      import('./features/settings/settings.page').then((module) => module.SettingsPage),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

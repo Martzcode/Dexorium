@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AppIcon } from '../../shared/icon/app-icon';
 import { typeBadgeClass } from './pokedex-format';
 import { PokedexStore } from './pokedex.store';
 import type { SpeciesFlags, SpeciesSortField, SpeciesStat } from './pokedex.models';
@@ -46,7 +47,7 @@ const STAT_FILTERS: readonly StatFilter[] = [
 
 @Component({
   selector: 'app-pokedex-filters',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, AppIcon],
   templateUrl: './pokedex-filters.html',
 })
 export class PokedexFilters {
@@ -71,7 +72,8 @@ export class PokedexFilters {
       (this.store.flags().legendary ? 1 : 0) +
       (this.store.flags().mythical ? 1 : 0) +
       (this.store.flags().baby ? 1 : 0) +
-      (this.store.flags().ultraBeast ? 1 : 0),
+      (this.store.flags().ultraBeast ? 1 : 0) +
+      (this.store.favoritesOnly() ? 1 : 0),
   );
 
   protected bounds(stat: SpeciesStat): { min: number | null; max: number | null } {

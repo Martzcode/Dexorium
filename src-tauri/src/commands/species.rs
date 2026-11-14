@@ -7,8 +7,13 @@ use crate::state::AppState;
 #[tauri::command]
 pub fn list_pokemon(
     state: State<'_, AppState>,
-    query: SpeciesListQuery,
+    mut query: SpeciesListQuery,
 ) -> Result<SpeciesPage, String> {
+    if query.favorites_only {
+        let user = state.user()?;
+        query.favorite_ids = Some(pdx_app::favorite_species_ids(&*user)?);
+    }
+
     let repository = state.species()?;
     pdx_app::list_species(&*repository, &query)
 }

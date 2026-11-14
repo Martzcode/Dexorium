@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppIcon } from '../../shared/icon/app-icon';
 import { PokemonSprite } from '../../shared/pokemon-sprite/pokemon-sprite';
+import { CollectionService } from '../../core/collection/collection.service';
 import { formatDexNumber, typeBadgeClass } from './pokedex-format';
 import { SpeciesLearnset } from './species-learnset';
 import type {
@@ -57,6 +58,8 @@ export class SpeciesDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly pokedex = inject(PokedexService);
   private readonly transloco = inject(TranslocoService);
+
+  protected readonly collection = inject(CollectionService);
 
   protected readonly species = signal<PokemonDetail | null>(null);
   protected readonly state = signal<LoadState>('loading');
@@ -179,6 +182,18 @@ export class SpeciesDetailPage {
 
   protected isSelectedForm(form: PokemonForm): boolean {
     return this.species()?.form.id === form.id;
+  }
+
+  protected toggleFavorite(): void {
+    const id = this.species()?.speciesId;
+    if (id) {
+      void this.collection.toggle(id);
+    }
+  }
+
+  protected favoriteLabel(): string {
+    const id = this.species()?.speciesId ?? 0;
+    return this.collection.isFavorite(id) ? 'pokedex.favorite.remove' : 'pokedex.favorite.add';
   }
 
   protected formBadges(form: PokemonForm): readonly string[] {
