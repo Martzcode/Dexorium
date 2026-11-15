@@ -33,7 +33,7 @@
 
 It is built for people who need reliable data **right now**: at a tournament with unreliable Wi-Fi, on a plane, in a venue basement, or simply when the major reference wikis are slow. The interface targets professional-tool ergonomics: instant search, full keyboard navigation, a command palette, cross-linked pages and a light/dark theme that follows the OS.
 
-> **Project status:** offline Pokédex MVP (v1.0). The Tauri shell, layered Rust workspace, embedded SQLite reference database (1,025 species, 1,351 forms, 919 moves, 374 abilities, 638k learnset rows), typed IPC bridge and Angular interface are in place. Favourites, type chart, command palette and settings are implemented; packaging, E2E coverage and the signed release checklist remain. See the [roadmap](#-roadmap).
+> **Project status:** offline Pokédex MVP (v1.0). The Tauri shell, layered Rust workspace, embedded SQLite reference database (1,025 species, 1,351 forms, 919 moves, 374 abilities, 638k learnset rows), typed IPC bridge and Angular interface are in place. Favourites, type chart, command palette and settings are implemented; unsigned packaging is automated, while E2E coverage and code signing remain. See the [roadmap](#-roadmap).
 
 ---
 
@@ -264,6 +264,16 @@ npm run desktop:build
 
 The installer is written to `src-tauri/target/release/bundle/` (MSI/NSIS on Windows, DMG on macOS, deb/rpm/AppImage on Linux).
 
+### Releases
+
+Releases are automated on every push to `main`, once the `CI` workflow succeeds:
+
+- version and tag: `YYYY.MM.XX`, with `XX` starting at `01` each month (for example `v2026.11.01`);
+- the bundled Pokédex is rebuilt from the pinned dataset lockfile, validated and published with its checksum;
+- artifacts: NSIS `.exe`, `.msi`, unsigned `.msix` for the Microsoft Store, `.deb` and `.rpm`.
+
+The MSIX uses provisional Partner Center identity values (`Martzcode.Dexorium`, `CN=Martzcode`) until the real Store identity is reserved. No artifact is code-signed yet.
+
 ### Useful scripts
 
 | Command                 | Description                                     |
@@ -273,6 +283,7 @@ The installer is written to `src-tauri/target/release/bundle/` (MSI/NSIS on Wind
 | `npm run desktop:dev`   | Tauri development app with hot reload           |
 | `npm run desktop:build` | Production desktop bundle                       |
 | `npm run check:rust`    | `cargo check` for the whole Rust workspace      |
+| `npm run check:fmt`     | `cargo fmt --check` for the Rust workspace      |
 | `npm run test:rust`     | Rust unit tests                                 |
 | `npm run format`        | Format the repository with Prettier             |
 | `npm run check`         | Format check + Angular build + Rust check/tests |
