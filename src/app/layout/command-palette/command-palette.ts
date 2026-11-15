@@ -123,6 +123,7 @@ export class CommandPalette {
 
   private timer?: ReturnType<typeof setTimeout>;
   private requestId = 0;
+  private previousFocus: HTMLElement | null = null;
 
   constructor() {
     effect(() => {
@@ -130,6 +131,8 @@ export class CommandPalette {
         return;
       }
 
+      this.previousFocus =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
       this.query.set('');
       this.hints.set([]);
       this.selected.set(0);
@@ -205,7 +208,10 @@ export class CommandPalette {
   }
 
   protected close(): void {
+    const target = this.previousFocus;
+    this.previousFocus = null;
     this.palette.hide();
+    target?.focus();
   }
 
   protected kindLabel(kind: PaletteItem['kind']): string {
