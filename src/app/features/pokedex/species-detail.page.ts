@@ -89,6 +89,22 @@ export class SpeciesDetailPage {
     }));
   });
 
+  protected readonly evYieldRows = computed<readonly StatRow[]>(() => {
+    const yields = this.species()?.form.evYield;
+    if (!yields) {
+      return [];
+    }
+
+    return STAT_DEFINITIONS.map((definition) => ({
+      ...definition,
+      value: yields[definition.key as keyof typeof yields],
+    })).filter((row) => row.value > 0);
+  });
+
+  protected readonly evYieldTotal = computed(() =>
+    this.evYieldRows().reduce((total, row) => total + row.value, 0),
+  );
+
   protected readonly previousId = computed(() => {
     const id = this.species()?.speciesId ?? 0;
     return id > 1 ? id - 1 : null;

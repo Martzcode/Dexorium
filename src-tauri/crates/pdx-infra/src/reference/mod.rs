@@ -407,6 +407,13 @@ mod tests {
         assert_eq!(detail.bst, 534);
         assert_eq!(detail.types, vec!["fire".to_owned(), "flying".to_owned()]);
 
+        let bulbasaur = repository
+            .pokemon_detail(1, None, "fr", Some(9))
+            .expect("detail should succeed")
+            .expect("bulbasaur should exist");
+        assert_eq!(bulbasaur.form.ev_yield.sp_atk, 1);
+        assert_eq!(bulbasaur.form.ev_yield.bst(), 1);
+
         assert!(
             repository
                 .search_species("dracaufeu", "fr", 10)
@@ -515,6 +522,7 @@ mod tests {
         assert!(detail.form.is_default);
         assert_eq!(detail.form.types, vec!["fire", "flying"]);
         assert_eq!(detail.form.stats.attack, 84);
+        assert_eq!(detail.form.ev_yield.bst(), 0);
         assert_eq!(detail.forms.len(), 1);
         assert!(detail.abilities.is_empty());
         assert!(detail.egg_groups.is_empty());

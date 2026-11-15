@@ -534,6 +534,7 @@ fn load_forms(
                     sp_def: get_u16(row, 15)?,
                     speed: get_u16(row, 16)?,
                 },
+                ev_yield: BaseStats::default(),
                 bst: get_u16(row, 17)?,
                 height_dm: get_u16(row, 9)?,
                 weight_hg: get_u16(row, 10)?,
@@ -543,13 +544,54 @@ fn load_forms(
         .collect::<rusqlite::Result<Vec<_>>>()
         .map_err(db_error)?;
 
+    let effort_yields = load_effort_yields(connection, species_id)?;
     let mut forms = Vec::with_capacity(rows.len());
     for mut form in rows {
         form.types = load_types(connection, form.id)?;
+        form.ev_yield = effort_yields.get(&form.id).copied().unwrap_or_default();
         forms.push(form);
     }
 
     Ok(forms)
+}
+
+const EFFORT_YIELD_SQL: &str = r"
+SELECT form_id, stat_slug, effort_yield
+FROM form_stat
+WHERE form_id IN (SELECT id FROM pokemon_form WHERE species_id = ?1)
+";
+
+fn load_effort_yields(
+    connection: &Connection,
+    species_id: i64,
+) -> Result<HashMap<i64, BaseStats>, String> {
+    let mut statement = connection.prepare(EFFORT_YIELD_SQL).map_err(db_error)?;
+    let rows = statement
+        .query_map(params![species_id], |row| {
+            Ok((
+                row.get::<_, i64>(0)?,
+                row.get::<_, String>(1)?,
+                get_u16(row, 2)?,
+            ))
+        })
+        .map_err(db_error)?;
+
+    let mut yields: HashMap<i64, BaseStats> = HashMap::new();
+    for row in rows {
+        let (form_id, stat_slug, value) = row.map_err(db_error)?;
+        let entry = yields.entry(form_id).or_default();
+        match stat_slug.as_str() {
+            "hp" => entry.hp = value,
+            "attack" => entry.attack = value,
+            "defense" => entry.defense = value,
+            "sp_atk" => entry.sp_atk = value,
+            "sp_def" => entry.sp_def = value,
+            "speed" => entry.speed = value,
+            _ => {}
+        }
+    }
+
+    Ok(yields)
 }
 
 fn select_form(forms: &[FormSummary], form_id: Option<i64>) -> Option<&FormSummary> {

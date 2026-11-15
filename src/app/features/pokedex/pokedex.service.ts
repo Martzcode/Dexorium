@@ -297,6 +297,7 @@ function toPokemonDetail(species: FixtureSpecies, lang: string): PokemonDetail {
     generationId: species.generation,
     types: species.types,
     stats: species.stats,
+    evYield: { hp: 0, attack: 0, defense: 0, spAtk: 0, spDef: 0, speed: 0 },
     bst: statsTotal(species),
     heightDm: species.heightDm,
     weightHg: species.weightHg,

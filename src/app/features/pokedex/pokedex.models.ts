@@ -132,6 +132,8 @@ export interface PokemonForm {
   readonly generationId: number;
   readonly types: readonly string[];
   readonly stats: BaseStats;
+  /** Effort values awarded to the opponent when this form is knocked out. */
+  readonly evYield: BaseStats;
   readonly bst: number;
   readonly heightDm: number;
   readonly weightHg: number;

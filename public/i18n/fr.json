@@ -211,6 +211,11 @@
       },
       "stats": {
         "title": "Statistiques de base"
+      },
+      "evYield": {
+        "title": "Rendement EV",
+        "total": "{{ total }} EV au total",
+        "hint": "Points d'effort gagnés lorsque ce Pokémon est mis K.O."
       }
     },
     "learnset": {

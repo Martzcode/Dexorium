@@ -211,6 +211,11 @@
       },
       "stats": {
         "title": "Base stats"
+      },
+      "evYield": {
+        "title": "EV yield",
+        "total": "{{ total }} EV total",
+        "hint": "Effort values gained when this Pokémon is knocked out."
       }
     },
     "learnset": {

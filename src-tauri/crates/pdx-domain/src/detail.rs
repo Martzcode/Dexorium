@@ -17,6 +17,8 @@ pub struct FormSummary {
     pub generation_id: u16,
     pub types: Vec<String>,
     pub stats: BaseStats,
+    /// Effort values awarded to the opponent when this form is knocked out.
+    pub ev_yield: BaseStats,
     pub bst: u16,
     pub height_dm: u16,
     pub weight_hg: u16,

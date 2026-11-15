@@ -214,7 +214,7 @@ pub struct SpeciesPage {
 }
 
 /// Base stats for a playable form.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BaseStats {
     pub hp: u16,
