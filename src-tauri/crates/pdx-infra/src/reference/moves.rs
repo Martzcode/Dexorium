@@ -10,9 +10,7 @@ use pdx_domain::{
 use rusqlite::types::Value;
 use rusqlite::{Connection, OptionalExtension, Row, params, params_from_iter};
 
-use super::repository::{
-    SqliteSpeciesRepository, db_error, fts_query, get_optional_u16, get_u16,
-};
+use super::repository::{SqliteSpeciesRepository, db_error, fts_query, get_optional_u16, get_u16};
 
 const MOVE_FROM: &str = r"
 FROM move_ m

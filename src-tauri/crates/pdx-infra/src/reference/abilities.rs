@@ -1,9 +1,7 @@
 //! SQLite implementation of the ability catalogue.
 
 use pdx_app::AbilityRepository;
-use pdx_domain::{
-    AbilityDetail, AbilityHolder, AbilityListQuery, AbilityPage, AbilitySummary,
-};
+use pdx_domain::{AbilityDetail, AbilityHolder, AbilityListQuery, AbilityPage, AbilitySummary};
 use rusqlite::types::Value;
 use rusqlite::{Connection, OptionalExtension, Row, params, params_from_iter};
 

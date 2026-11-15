@@ -1718,7 +1718,14 @@ fn index_localized(
 
     let normalized = normalize(&values.join(" "));
 
-    index_entity(tx, entity_type, entity_id, english, &normalized, &normalized)
+    index_entity(
+        tx,
+        entity_type,
+        entity_id,
+        english,
+        &normalized,
+        &normalized,
+    )
 }
 
 fn last_flavor<T: FlavorEntry>(entries: &[T], lang: &str) -> Option<String> {

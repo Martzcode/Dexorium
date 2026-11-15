@@ -631,7 +631,9 @@ mod catalog_tests {
     use std::path::PathBuf;
 
     use pdx_app::{AbilityRepository, MoveRepository, SearchRepository};
-    use pdx_domain::{AbilityListQuery, MoveListQuery, MoveSortCriterion, MoveSortField, SortDirection};
+    use pdx_domain::{
+        AbilityListQuery, MoveListQuery, MoveSortCriterion, MoveSortField, SortDirection,
+    };
 
     use super::SqliteSpeciesRepository;
 
@@ -906,9 +908,12 @@ mod catalog_tests {
                 .iter()
                 .any(|holder| holder.national_dex_number == 6)
         );
-        assert!(detail.holders.windows(2).all(|pair| {
-            pair[0].national_dex_number <= pair[1].national_dex_number
-        }));
+        assert!(
+            detail
+                .holders
+                .windows(2)
+                .all(|pair| { pair[0].national_dex_number <= pair[1].national_dex_number })
+        );
 
         let filtered = repository
             .list_abilities(&AbilityListQuery {
@@ -918,12 +923,7 @@ mod catalog_tests {
                 ..AbilityListQuery::default()
             })
             .expect("search should succeed");
-        assert!(
-            filtered
-                .items
-                .iter()
-                .any(|item| item.slug == "blaze")
-        );
+        assert!(filtered.items.iter().any(|item| item.slug == "blaze"));
     }
 
     #[test]

@@ -53,10 +53,7 @@ impl TypeRepository for SqliteSpeciesRepository {
     }
 }
 
-fn load_types(
-    connection: &rusqlite::Connection,
-    lang: &str,
-) -> Result<Vec<TypeRef>, String> {
+fn load_types(connection: &rusqlite::Connection, lang: &str) -> Result<Vec<TypeRef>, String> {
     let mut statement = connection
         .prepare(
             "SELECT pt.slug,
@@ -134,7 +131,13 @@ mod tests {
                 .any(|item| item.slug == "fairy" && item.introduced_in == 6)
         );
         assert!(matrix.types.iter().all(|item| item.name == item.slug));
-        assert!(matrix.multipliers.iter().flatten().all(|value| *value == 100));
+        assert!(
+            matrix
+                .multipliers
+                .iter()
+                .flatten()
+                .all(|value| *value == 100)
+        );
     }
 
     #[test]

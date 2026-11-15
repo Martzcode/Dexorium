@@ -72,9 +72,7 @@ impl SqliteUserRepository {
                  PRAGMA foreign_keys = ON;",
             )
             .map_err(user_error)?;
-        connection
-            .execute_batch(USER_SCHEMA)
-            .map_err(user_error)?;
+        connection.execute_batch(USER_SCHEMA).map_err(user_error)?;
 
         Ok(Self { connection })
     }

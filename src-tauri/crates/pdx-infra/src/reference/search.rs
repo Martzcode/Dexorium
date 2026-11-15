@@ -51,9 +51,8 @@ impl SearchRepository for SqliteSpeciesRepository {
                     continue;
                 };
 
-                let score = 1_000_u32.saturating_sub(
-                    u32::try_from(index).unwrap_or(u32::MAX).saturating_mul(10),
-                );
+                let score = 1_000_u32
+                    .saturating_sub(u32::try_from(index).unwrap_or(u32::MAX).saturating_mul(10));
                 if let Some(hit) = resolve_hit(&self.connection, entity_type, id, lang, score)? {
                     seen.insert((entity_type.as_str().to_owned(), id));
                     hits.push(hit);
@@ -71,7 +70,9 @@ impl SearchRepository for SqliteSpeciesRepository {
                 }
 
                 let score = 600_u32.saturating_sub(
-                    u32::try_from(distance).unwrap_or(u32::MAX).saturating_mul(100),
+                    u32::try_from(distance)
+                        .unwrap_or(u32::MAX)
+                        .saturating_mul(100),
                 );
                 if let Some(hit) = resolve_hit(&self.connection, entity_type, id, lang, score)? {
                     hits.push(hit);
@@ -212,8 +213,14 @@ fn resolve_move(
 
     let name =
         translation_value(connection, "move", id, lang, "name")?.unwrap_or_else(|| slug.clone());
-    let type_label = translation_value(connection, "type", type_id(connection, &type_slug)?, lang, "name")?
-        .unwrap_or_else(|| type_slug.clone());
+    let type_label = translation_value(
+        connection,
+        "type",
+        type_id(connection, &type_slug)?,
+        lang,
+        "name",
+    )?
+    .unwrap_or_else(|| type_slug.clone());
 
     Ok(Some(SearchHit {
         entity_type: SearchEntityType::Move,
@@ -252,8 +259,8 @@ fn resolve_ability(
         return Ok(None);
     };
 
-    let name = translation_value(connection, "ability", id, lang, "name")?
-        .unwrap_or_else(|| slug.clone());
+    let name =
+        translation_value(connection, "ability", id, lang, "name")?.unwrap_or_else(|| slug.clone());
 
     Ok(Some(SearchHit {
         entity_type: SearchEntityType::Ability,
@@ -339,7 +346,8 @@ fn levenshtein(left: &str, right: &str) -> usize {
     for (left_index, left_character) in left.iter().enumerate() {
         let mut current = vec![left_index + 1; right.len() + 1];
         for (right_index, right_character) in right.iter().enumerate() {
-            let substitution = previous[right_index] + usize::from(left_character != right_character);
+            let substitution =
+                previous[right_index] + usize::from(left_character != right_character);
             current[right_index + 1] = (current[right_index] + 1)
                 .min(previous[right_index + 1] + 1)
                 .min(substitution);

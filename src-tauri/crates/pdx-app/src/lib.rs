@@ -18,9 +18,7 @@ pub use abilities::{
 };
 pub use app_info::{AppInfo, app_info};
 pub use dataset::{DatasetMetadata, DatasetRepository, dataset_info};
-pub use favorites::{
-    FavoriteRepository, favorite_species_ids, list_favorites, set_favorite,
-};
+pub use favorites::{FavoriteRepository, favorite_species_ids, list_favorites, set_favorite};
 pub use moves::{
     DEFAULT_MOVE_PAGE_SIZE, MAX_MOVE_PAGE_SIZE, MoveRepository, learnset, list_moves, move_detail,
 };

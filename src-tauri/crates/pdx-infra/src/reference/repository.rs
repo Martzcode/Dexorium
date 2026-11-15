@@ -1529,7 +1529,9 @@ fn verify_reference(connection: &Connection) -> Result<(), String> {
         .query_row("PRAGMA quick_check", [], |row| row.get(0))
         .map_err(db_error)?;
     if status != "ok" {
-        return Err(format!("reference database integrity check failed: {status}"));
+        return Err(format!(
+            "reference database integrity check failed: {status}"
+        ));
     }
 
     let version: Option<String> = connection

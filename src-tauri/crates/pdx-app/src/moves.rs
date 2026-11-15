@@ -110,13 +110,11 @@ fn sanitize_damage_classes(values: Vec<String>) -> Vec<String> {
 }
 
 fn sanitize_sort(values: Vec<MoveSortCriterion>) -> Vec<MoveSortCriterion> {
-    let mut sanitized: Vec<MoveSortCriterion> = Vec::with_capacity(values.len().min(MAX_SORT_CRITERIA));
+    let mut sanitized: Vec<MoveSortCriterion> =
+        Vec::with_capacity(values.len().min(MAX_SORT_CRITERIA));
 
     for criterion in values {
-        if !sanitized
-            .iter()
-            .any(|entry| entry.field == criterion.field)
-        {
+        if !sanitized.iter().any(|entry| entry.field == criterion.field) {
             sanitized.push(criterion);
         }
         if sanitized.len() == MAX_SORT_CRITERIA {

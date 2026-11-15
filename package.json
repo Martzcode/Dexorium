@@ -14,8 +14,9 @@
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "check:rust": "cargo check --workspace --manifest-path src-tauri/Cargo.toml",
+    "check:fmt": "cargo fmt --all --manifest-path src-tauri/Cargo.toml -- --check",
     "test:rust": "cargo test --workspace --manifest-path src-tauri/Cargo.toml",
-    "check": "npm run format:check && npm run build && npm run check:rust && npm run test:rust"
+    "check": "npm run format:check && npm run check:fmt && npm run build && npm run check:rust && npm run test:rust"
   },
   "prettier": {
     "printWidth": 100,

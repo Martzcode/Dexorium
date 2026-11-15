@@ -80,9 +80,7 @@ mod tests {
         let repository =
             SqliteSpeciesRepository::from_fixture().expect("fixture database should build");
 
-        let metadata = repository
-            .dataset_metadata()
-            .expect("metadata should load");
+        let metadata = repository.dataset_metadata().expect("metadata should load");
 
         assert_eq!(metadata.version, "0.1.0-fixture");
         assert_eq!(metadata.languages, Vec::<String>::new());
@@ -106,9 +104,7 @@ mod tests {
         }
 
         let repository = SqliteSpeciesRepository::open(&path).expect("database should open");
-        let metadata = repository
-            .dataset_metadata()
-            .expect("metadata should load");
+        let metadata = repository.dataset_metadata().expect("metadata should load");
 
         assert!(!metadata.version.is_empty());
         assert_eq!(metadata.schema_version, "2");

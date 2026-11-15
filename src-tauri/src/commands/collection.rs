@@ -18,10 +18,5 @@ pub fn set_favorite(
     favorite: bool,
 ) -> Result<FavoriteCollection, String> {
     let repository = state.user()?;
-    pdx_app::set_favorite(
-        &*repository,
-        FavoriteKind::Species,
-        species_id,
-        favorite,
-    )
+    pdx_app::set_favorite(&*repository, FavoriteKind::Species, species_id, favorite)
 }

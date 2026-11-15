@@ -27,8 +27,7 @@ pub const DATASET_SOURCE_URL: &str = "https://github.com/PokeAPI/api-data";
 pub const DATASET_LICENSE: &str = "BSD-3-Clause";
 
 /// Upstream license text.
-pub const DATASET_LICENSE_URL: &str =
-    "https://github.com/PokeAPI/api-data/blob/master/LICENSE.txt";
+pub const DATASET_LICENSE_URL: &str = "https://github.com/PokeAPI/api-data/blob/master/LICENSE.txt";
 
 /// Loads dataset provenance and enriches it with the upstream attribution.
 pub fn dataset_info(repository: &dyn DatasetRepository) -> Result<DatasetInfo, String> {
