@@ -435,6 +435,15 @@
     "eyebrow": "Settings",
     "title": "Settings and sources",
     "description": "Information about the application, the embedded dataset and its licences.",
+    "preferences": {
+      "title": "Preferences",
+      "theme": "Theme",
+      "themeSystem": "System",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "language": "Language",
+      "languageHint": "Preferences are stored locally, without any connection."
+    },
     "app": {
       "title": "Application",
       "name": "Name",

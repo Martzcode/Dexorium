@@ -435,6 +435,15 @@
     "eyebrow": "Réglages",
     "title": "Réglages et sources",
     "description": "Informations sur l’application, le jeu de données embarqué et les licences.",
+    "preferences": {
+      "title": "Préférences",
+      "theme": "Thème",
+      "themeSystem": "Système",
+      "themeLight": "Clair",
+      "themeDark": "Sombre",
+      "language": "Langue",
+      "languageHint": "Les préférences sont enregistrées localement, sans connexion."
+    },
     "app": {
       "title": "Application",
       "name": "Nom",

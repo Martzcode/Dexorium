@@ -153,16 +153,24 @@ impl SqliteSpeciesRepository {
 
     /// Opens a generated reference database in read-only mode.
     ///
+    /// The database is verified before use: `PRAGMA quick_check` catches
+    /// truncation or page corruption, and the schema version must match the
+    /// one this build understands. A damaged or outdated file is reported as
+    /// an error so the caller can fall back to the fixture instead of serving
+    /// half-broken data.
+    ///
     /// # Errors
     ///
-    /// Returns a message when the file cannot be opened. The caller is
-    /// responsible for falling back to the bundled fixture during development.
+    /// Returns a message when the file cannot be opened, fails the integrity
+    /// check or was built with another schema version.
     pub fn open(path: &Path) -> Result<Self, String> {
         let connection = Connection::open_with_flags(
             path,
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
         )
         .map_err(db_error)?;
+
+        verify_reference(&connection)?;
 
         Ok(Self { connection })
     }
@@ -1303,7 +1311,7 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
         ("version", "0.1.0-fixture".to_owned()),
         ("built_at", "fixture".to_owned()),
         ("source_commit", "fixture".to_owned()),
-        ("schema_version", "1".to_owned()),
+        ("schema_version", "2".to_owned()),
         ("checksum", "fixture".to_owned()),
         (
             "row_counts_json",
@@ -1470,6 +1478,36 @@ pub(crate) fn db_error(error: rusqlite::Error) -> String {
     format!("reference database error: {error}")
 }
 
+/// Schema version written by `pdx-dataset` and understood by this build.
+const EXPECTED_SCHEMA_VERSION: &str = "2";
+
+/// Runs the read-only integrity check and validates the schema version.
+fn verify_reference(connection: &Connection) -> Result<(), String> {
+    let status: String = connection
+        .query_row("PRAGMA quick_check", [], |row| row.get(0))
+        .map_err(db_error)?;
+    if status != "ok" {
+        return Err(format!("reference database integrity check failed: {status}"));
+    }
+
+    let version: Option<String> = connection
+        .query_row(
+            "SELECT value FROM dataset_meta WHERE key = 'schema_version'",
+            [],
+            |row| row.get(0),
+        )
+        .optional()
+        .map_err(db_error)?;
+
+    match version {
+        Some(version) if version == EXPECTED_SCHEMA_VERSION => Ok(()),
+        Some(version) => Err(format!(
+            "reference database schema version {version} is not supported (expected {EXPECTED_SCHEMA_VERSION})"
+        )),
+        None => Err("reference database is missing its schema version".to_owned()),
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct FixtureSpecies {
@@ -1508,5 +1546,56 @@ struct FixtureStats {
 impl FixtureStats {
     const fn bst(&self) -> u16 {
         self.hp + self.attack + self.defense + self.sp_atk + self.sp_def + self.speed
+    }
+}
+
+#[cfg(test)]
+mod integrity_tests {
+    use std::io::Write;
+
+    use super::{SqliteSpeciesRepository, verify_reference};
+
+    #[test]
+    fn fixture_passes_the_integrity_check() {
+        let repository =
+            SqliteSpeciesRepository::from_fixture().expect("fixture database should build");
+
+        verify_reference(&repository.connection).expect("fixture should pass verification");
+    }
+
+    #[test]
+    fn rejects_an_outdated_schema() {
+        let repository =
+            SqliteSpeciesRepository::from_fixture().expect("fixture database should build");
+        repository
+            .connection
+            .execute(
+                "UPDATE dataset_meta SET value = '1' WHERE key = 'schema_version'",
+                [],
+            )
+            .expect("schema version should update");
+
+        let error = verify_reference(&repository.connection).expect_err("old schema must fail");
+        assert!(error.contains("not supported"), "unexpected error: {error}");
+    }
+
+    #[test]
+    fn rejects_a_corrupt_database_file() {
+        let root = std::env::temp_dir().join(format!(
+            "dexorium-corrupt-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).expect("temporary directory should be created");
+        let path = root.join("reference.db");
+        let mut file = std::fs::File::create(&path).expect("corrupt file should be created");
+        file.write_all(b"this is not a sqlite database")
+            .expect("corrupt content should be written");
+        drop(file);
+
+        assert!(SqliteSpeciesRepository::open(&path).is_err());
+
+        let _ = std::fs::remove_dir_all(&root);
     }
 }

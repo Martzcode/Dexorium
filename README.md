@@ -33,7 +33,7 @@
 
 It is built for people who need reliable data **right now**: at a tournament with unreliable Wi-Fi, on a plane, in a venue basement, or simply when the major reference wikis are slow. The interface targets professional-tool ergonomics: instant search, full keyboard navigation, a command palette, cross-linked pages and a light/dark theme that follows the OS.
 
-> **Project status:** Phase 0: technical foundation. The Tauri shell, layered Rust workspace, typed IPC bridge and Angular 20 interface are in place. The Pokédex dataset and feature modules are actively being built. See the [roadmap](#-roadmap).
+> **Project status:** offline Pokédex MVP (v1.0). The Tauri shell, layered Rust workspace, embedded SQLite reference database (1,025 species, 1,351 forms, 919 moves, 374 abilities, 638k learnset rows), typed IPC bridge and Angular interface are in place. Favourites, type chart, command palette and settings are implemented; packaging, E2E coverage and the signed release checklist remain. See the [roadmap](#-roadmap).
 
 ---
 
@@ -70,17 +70,21 @@ It is built for people who need reliable data **right now**: at a tournament wit
 - [x] Layered **Rust workspace**: `pdx-domain`, `pdx-app`, `pdx-infra`
 - [x] Domain smoke tests and a clean dependency direction
 
-### In progress: offline Pokédex MVP (v1.0)
+### Offline Pokédex MVP (v1.0)
 
-- [ ] Embedded SQLite reference database with FTS5 search
-- [ ] National and regional Pokédex with virtual scrolling
-- [ ] Complete species pages: stats, types, abilities, forms, sprites, flavor text
-- [ ] Evolution chains with structured conditions
-- [ ] Learnsets filterable by version group and learn method
-- [ ] Instant fuzzy search across French, English and Japanese names
-- [ ] Multi-criteria filters: type, generation, stat ranges, abilities, flags
-- [ ] Global command palette (`Ctrl/Cmd + K`)
-- [ ] Favorites and recent views
+- [x] Embedded SQLite reference database with FTS5 search
+- [x] National Pokédex with virtual scrolling, list and table views
+- [x] Complete species pages: stats, types, abilities, forms, flavor text and placeholders
+- [x] Evolution chains with readable conditions
+- [x] Move and ability catalogues with detail pages and holders/learners
+- [x] Learnsets filterable by version group and learn method
+- [x] Instant fuzzy search across French and English names (FTS5 + Levenshtein fallback)
+- [x] Multi-criteria filters: type, generation, stat ranges, flags and favourites
+- [x] Global command palette (`Ctrl/Cmd + K`)
+- [x] Favourites persisted in `user.db`, with a SQL-level favourites filter
+- [x] Interactive 18×18 type effectiveness chart per generation
+- [x] Settings page with theme, language, dataset provenance and licences
+- [ ] Packaging/signing of the three platforms, E2E campaign and release checklist
 
 ### Planned
 
@@ -89,6 +93,24 @@ It is built for people who need reliable data **right now**: at a tournament wit
 - [ ] Encounter locations, items, abilities catalogues (v1.1 → v1.2)
 - [ ] Collection profiles and living-dex tracking (v1.3)
 - [ ] Signed data packs, custom themes and local API (v1.4 → v2.0)
+
+---
+
+## 🗃️ Data sources
+
+The reference dataset is built from a **pinned snapshot** of
+[PokeAPI/api-data](https://github.com/PokeAPI/api-data) (commit
+`447bd5c378bf87da964bfe4dd7487a7bf1d97cbd`, BSD-3-Clause). The commit and lock
+file are recorded in `dataset_meta` and shown in the application settings, so
+every shipped database can be traced back to its source.
+
+- 18 battle types (Gen I–IX), with per-generation effectiveness matrices.
+- French and English localizations for species, forms, moves, abilities, types,
+  egg groups and stats.
+- **No official Pokémon sprites or artwork** are bundled. Thumbnails are
+  original placeholders; an optional media pack can be installed separately.
+- `reference.db` is read-only and replaced on dataset upgrades. Favourites and
+  future user data live in a separate `user.db`, which survives upgrades.
 
 ---
 
@@ -271,15 +293,15 @@ The Tauri 2 foundation also keeps a native mobile build possible in a later phas
 
 ## 🗺 Roadmap
 
-| Milestone                     | Scope                                                                          | Status         |
-| ----------------------------- | ------------------------------------------------------------------------------ | -------------- |
-| **Phase 0: Foundation**       | Tauri shell, Rust workspace, IPC, Angular shell, themes, i18n                  | ✅ Done        |
-| **v1.0: Offline Pokédex MVP** | Dataset, species pages, evolution, learnsets, search, filters, command palette | 🚧 In progress |
-| **v1.1: Data & comfort**      | Abilities, items, saved filters, comparison, exports, shortcuts                | Planned        |
-| **v1.2: Competitive toolkit** | Damage/stat calculators, team builder, coverage, encounters, Showdown I/O      | Planned        |
-| **v1.3: Collection**          | Profiles, living dex, tags, notes, dashboard                                   | Planned        |
-| **v1.4: Extensibility**       | Signed data packs, custom themes, diagnostics                                  | Planned        |
-| **v2.0: Platform**            | Plugin system, local read-only API, companion CLI                              | Backlog        |
+| Milestone                     | Scope                                                                                                            | Status                               |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| **Phase 0: Foundation**       | Tauri shell, Rust workspace, IPC, Angular shell, themes, i18n                                                    | ✅ Done                              |
+| **v1.0: Offline Pokédex MVP** | Dataset, species pages, evolution, learnsets, search, filters, favourites, type chart, command palette, settings | 🚧 Feature-complete, release pending |
+| **v1.1: Data & comfort**      | Abilities, items, saved filters, comparison, exports, shortcuts                                                  | Planned                              |
+| **v1.2: Competitive toolkit** | Damage/stat calculators, team builder, coverage, encounters, Showdown I/O                                        | Planned                              |
+| **v1.3: Collection**          | Profiles, living dex, tags, notes, dashboard                                                                     | Planned                              |
+| **v1.4: Extensibility**       | Signed data packs, custom themes, diagnostics                                                                    | Planned                              |
+| **v2.0: Platform**            | Plugin system, local read-only API, companion CLI                                                                | Backlog                              |
 
 Detailed product specifications and the data-source annex are maintained privately during development and will be published alongside the first public release.
 

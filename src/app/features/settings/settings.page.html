@@ -12,6 +12,61 @@
   </header>
 
   <div class="mt-8 grid gap-5 lg:grid-cols-2">
+    <section class="rounded-xl border border-line bg-panel p-5 lg:col-span-2">
+      <h2
+        class="m-0 flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted"
+      >
+        <app-icon name="sun" [size]="14" />
+        {{ 'settings.preferences.title' | transloco }}
+      </h2>
+
+      <div class="mt-4 grid gap-5 sm:grid-cols-2">
+        <div>
+          <p class="m-0 font-mono text-[0.62rem] uppercase tracking-[0.1em] text-ink-muted">
+            {{ 'settings.preferences.theme' | transloco }}
+          </p>
+          <div
+            class="mt-2 inline-flex rounded-lg border border-line bg-panel-muted p-0.5"
+            role="group"
+            [attr.aria-label]="'settings.preferences.theme' | transloco"
+          >
+            @for (option of themeOptions; track option.key) {
+              <button
+                class="rounded-md px-3 py-1.5 text-sm font-semibold transition-colors"
+                type="button"
+                [class]="
+                  theme.preference() === option.key
+                    ? 'bg-panel text-ink shadow-sm'
+                    : 'text-ink-muted hover:text-ink'
+                "
+                [attr.aria-pressed]="theme.preference() === option.key"
+                (click)="setTheme(option.key)"
+              >
+                {{ option.labelKey | transloco }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <label class="flex flex-col gap-1">
+          <span class="font-mono text-[0.62rem] uppercase tracking-[0.1em] text-ink-muted">
+            {{ 'settings.preferences.language' | transloco }}
+          </span>
+          <select
+            class="mt-1 rounded-lg border border-line bg-panel px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
+            [value]="languagePreference.current()"
+            (change)="onLanguageChange($event)"
+          >
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+          <span class="text-[0.7rem] text-ink-muted">
+            {{ 'settings.preferences.languageHint' | transloco }}
+          </span>
+        </label>
+      </div>
+    </section>
+
     <section class="rounded-xl border border-line bg-panel p-5">
       <h2
         class="m-0 flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted"
