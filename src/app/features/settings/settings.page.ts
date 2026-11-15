@@ -4,10 +4,10 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppInfoService } from '../../core/app-info/app-info.service';
 import { LanguageService } from '../../core/i18n/language.service';
-import { ThemeService, type ThemePreference } from '../../core/theme/theme.service';
+import { ThemeService } from '../../core/theme/theme.service';
 import { AppIcon } from '../../shared/icon/app-icon';
 import { DATASET_TABLE_LABELS, type DatasetInfo } from './settings.models';
-import { SettingsService } from './settings.service';
+import { DEVELOPER_PROFILE_URL, SettingsService } from './settings.service';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
@@ -17,7 +17,7 @@ type LoadState = 'loading' | 'ready' | 'error';
   templateUrl: './settings.page.html',
 })
 export class SettingsPage {
-  private readonly settings = inject(SettingsService);
+  protected readonly settings = inject(SettingsService);
   private readonly transloco = inject(TranslocoService);
 
   protected readonly appInfo = inject(AppInfoService);
@@ -25,15 +25,7 @@ export class SettingsPage {
   protected readonly languagePreference = inject(LanguageService);
   protected readonly state = signal<LoadState>('loading');
   protected readonly dataset = signal<DatasetInfo | null>(null);
-
-  protected readonly themeOptions: readonly {
-    key: ThemePreference;
-    labelKey: string;
-  }[] = [
-    { key: 'system', labelKey: 'settings.preferences.themeSystem' },
-    { key: 'light', labelKey: 'settings.preferences.themeLight' },
-    { key: 'dark', labelKey: 'settings.preferences.themeDark' },
-  ];
+  protected readonly developerProfileUrl = DEVELOPER_PROFILE_URL;
 
   private readonly language = toSignal(this.transloco.langChanges$, {
     initialValue: this.transloco.getActiveLang(),
@@ -52,12 +44,13 @@ export class SettingsPage {
     });
   }
 
-  protected setTheme(preference: ThemePreference): void {
-    this.theme.set(preference);
-  }
-
   protected onLanguageChange(event: Event): void {
     this.languagePreference.setLanguage((event.target as HTMLSelectElement).value);
+  }
+
+  protected openDeveloperProfile(event: Event): void {
+    event.preventDefault();
+    void this.settings.openDeveloperProfile();
   }
 
   protected tableLabel(table: string): string {

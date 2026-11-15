@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
 import {
-  DEFAULT_QUERY,
   EMPTY_FLAGS,
   type SortCriterion,
   type SpeciesFlags,
@@ -22,9 +21,9 @@ const SEARCH_DEBOUNCE_MS = 120;
 /**
  * Signal store backing the Pokédex list.
  *
- * It owns the filters, the current page and the pagination cursor. Every
- * mutation schedules a debounced reload so rapid typing does not flood the
- * IPC boundary.
+ * It owns the filters, the current page and the pagination. Every filter
+ * mutation jumps back to the first page and schedules a debounced reload so
+ * rapid typing does not flood the IPC boundary.
  */
 @Injectable({ providedIn: 'root' })
 export class PokedexStore {
@@ -45,7 +44,9 @@ export class PokedexStore {
   readonly loading = signal(false);
   readonly error = signal(false);
 
-  readonly hasMore = computed(() => this.items().length < this.total());
+  readonly pageSize = PAGE_SIZE;
+  readonly page = signal(1);
+  readonly pageCount = computed(() => Math.max(1, Math.ceil(this.total() / PAGE_SIZE)));
   readonly hasFilters = computed(
     () =>
       this.search().trim().length > 0 ||
@@ -62,7 +63,6 @@ export class PokedexStore {
   private language = 'en';
   private initialized = false;
   private requestId = 0;
-  private loadingMore = false;
   private timer?: ReturnType<typeof setTimeout>;
 
   setLanguage(language: string): void {
@@ -177,17 +177,36 @@ export class PokedexStore {
   }
 
   retry(): void {
-    this.scheduleReload(0);
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+    }
+
+    void this.fetch(this.page());
   }
 
-  async loadMore(): Promise<void> {
-    if (this.loading() || this.loadingMore || !this.hasMore()) {
+  /** Navigates to an explicit page, clamped to the available range. */
+  goToPage(page: number): void {
+    if (this.loading()) {
       return;
     }
 
-    this.loadingMore = true;
-    await this.fetch(this.items().length);
-    this.loadingMore = false;
+    const target = Math.min(Math.max(1, Math.trunc(page)), this.pageCount());
+
+    if (target === this.page()) {
+      return;
+    }
+
+    this.page.set(target);
+    void this.fetch(target);
+  }
+
+  previousPage(): void {
+    this.goToPage(this.page() - 1);
+  }
+
+  nextPage(): void {
+    this.goToPage(this.page() + 1);
   }
 
   private scheduleReload(delay: number): void {
@@ -195,31 +214,26 @@ export class PokedexStore {
       clearTimeout(this.timer);
     }
 
+    this.page.set(1);
     this.timer = setTimeout(() => {
       this.timer = undefined;
-      void this.reload();
+      void this.fetch(1);
     }, delay);
   }
 
-  private async reload(): Promise<void> {
-    await this.fetch(0);
-  }
-
-  private async fetch(offset: number): Promise<void> {
+  private async fetch(page: number): Promise<void> {
     const requestId = ++this.requestId;
-    if (offset === 0) {
-      this.loading.set(true);
-      this.error.set(false);
-    }
+    this.loading.set(true);
+    this.error.set(false);
 
     try {
-      const page = await this.pokedex.list(this.buildQuery(offset));
+      const result = await this.pokedex.list(this.buildQuery((page - 1) * PAGE_SIZE));
       if (requestId !== this.requestId) {
         return;
       }
 
-      this.total.set(page.total);
-      this.items.update((items) => (offset === 0 ? page.items : [...items, ...page.items]));
+      this.total.set(result.total);
+      this.items.set(result.items);
       this.error.set(false);
     } catch {
       if (requestId !== this.requestId) {
@@ -227,10 +241,6 @@ export class PokedexStore {
       }
 
       this.error.set(true);
-      if (offset === 0) {
-        this.items.set([]);
-        this.total.set(0);
-      }
     } finally {
       if (requestId === this.requestId) {
         this.loading.set(false);

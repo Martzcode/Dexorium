@@ -25,27 +25,19 @@
           <p class="m-0 font-mono text-[0.62rem] uppercase tracking-[0.1em] text-ink-muted">
             {{ 'settings.preferences.theme' | transloco }}
           </p>
-          <div
-            class="mt-2 inline-flex rounded-lg border border-line bg-panel-muted p-0.5"
-            role="group"
-            [attr.aria-label]="'settings.preferences.theme' | transloco"
+          <button
+            class="mt-2 inline-flex items-center gap-2 rounded-lg border border-line bg-panel-muted px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+            type="button"
+            [attr.aria-label]="theme.labelKey() | transloco"
+            [title]="theme.labelKey() | transloco"
+            (click)="theme.cycle()"
           >
-            @for (option of themeOptions; track option.key) {
-              <button
-                class="rounded-md px-3 py-1.5 text-sm font-semibold transition-colors"
-                type="button"
-                [class]="
-                  theme.preference() === option.key
-                    ? 'bg-panel text-ink shadow-sm'
-                    : 'text-ink-muted hover:text-ink'
-                "
-                [attr.aria-pressed]="theme.preference() === option.key"
-                (click)="setTheme(option.key)"
-              >
-                {{ option.labelKey | transloco }}
-              </button>
-            }
-          </div>
+            <app-icon [name]="theme.icon()" [size]="16" />
+            {{ theme.labelKey() | transloco }}
+          </button>
+          <span class="mt-1 block text-[0.7rem] text-ink-muted">
+            {{ 'settings.preferences.themeHint' | transloco }}
+          </span>
         </div>
 
         <label class="flex flex-col gap-1">
@@ -57,8 +49,9 @@
             [value]="languagePreference.current()"
             (change)="onLanguageChange($event)"
           >
-            <option value="fr">Français</option>
-            <option value="en">English</option>
+            @for (option of languagePreference.languages; track option.code) {
+              <option [value]="option.code">{{ option.label }}</option>
+            }
           </select>
           <span class="text-[0.7rem] text-ink-muted">
             {{ 'settings.preferences.languageHint' | transloco }}
@@ -223,6 +216,32 @@
       </p>
       <p class="mt-2 text-[0.75rem] leading-relaxed text-ink-muted">
         {{ 'settings.sources.sprites' | transloco }}
+      </p>
+    </section>
+
+    <section class="rounded-xl border border-line bg-panel p-5 lg:col-span-2">
+      <h2
+        class="m-0 flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted"
+      >
+        <app-icon name="sparkles" [size]="14" />
+        {{ 'settings.about.title' | transloco }}
+      </h2>
+
+      <p class="mt-4 text-sm text-ink-soft">
+        {{ 'settings.about.developer' | transloco }}
+        <a
+          class="inline-flex items-center gap-1 font-semibold text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:decoration-accent"
+          [href]="developerProfileUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          (click)="openDeveloperProfile($event)"
+        >
+          Martzcode
+          <app-icon name="external-link" [size]="13" />
+        </a>
+      </p>
+      <p class="mt-2 text-[0.75rem] leading-relaxed text-ink-muted">
+        {{ 'settings.about.openSource' | transloco }}
       </p>
     </section>
   </div>

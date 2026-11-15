@@ -51,8 +51,7 @@
     "searchLabel": "Rechercher une espèce",
     "searchPlaceholder": "Nom ou numéro national…",
     "results": "Espèces affichées : {{ count }}",
-    "resultsCount": "{{ count }} résultats",
-    "loadingMore": "Chargement d’espèces supplémentaires…",
+    "resultsRange": "{{ from }}–{{ to }} sur {{ total }} espèces",
     "loading": "Chargement du Pokédex…",
     "views": {
       "label": "Mode d’affichage",
@@ -63,6 +62,12 @@
     "table": {
       "name": "Nom",
       "types": "Types"
+    },
+    "pagination": {
+      "label": "Pagination du Pokédex",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "status": "Page {{ page }} sur {{ pages }}"
     },
     "filters": {
       "sort": "Tri",
@@ -438,9 +443,7 @@
     "preferences": {
       "title": "Préférences",
       "theme": "Thème",
-      "themeSystem": "Système",
-      "themeLight": "Clair",
-      "themeDark": "Sombre",
+      "themeHint": "Cliquez pour passer au thème suivant.",
       "language": "Langue",
       "languageHint": "Les préférences sont enregistrées localement, sans connexion."
     },
@@ -491,6 +494,11 @@
       "license": "Licence",
       "notice": "Dexorium fonctionne entièrement hors ligne : aucune donnée n’est envoyée et aucune télémétrie n’est collectée.",
       "sprites": "Les images officielles des Pokémon ne sont pas incluses. Les vignettes sont des placeholders originaux ; un pack média optionnel pourra être ajouté."
+    },
+    "about": {
+      "title": "À propos",
+      "developer": "Développé par",
+      "openSource": "Projet open source sous licence AGPL-3.0. Le code source et les mises à jour sont publiés sur GitHub."
     }
   },
   "palette": {

@@ -24,6 +24,7 @@ pub fn run() {
             commands::species::get_pokemon_detail,
             commands::species::search_species,
             commands::species::get_species,
+            commands::system::open_external,
             commands::tools::get_type_matrix,
         ])
         .setup(|app| {

@@ -28,10 +28,12 @@ export class PokedexPage {
     { key: 'table', icon: 'table' },
   ];
 
-  protected readonly resultCount = computed(() => {
-    const shown = this.store.items().length;
+  protected readonly resultRange = computed(() => {
     const total = this.store.total();
-    return shown < total ? `${shown} / ${total}` : String(total);
+    const shown = this.store.items().length;
+    const from = shown === 0 ? 0 : (this.store.page() - 1) * this.store.pageSize + 1;
+
+    return { from, to: shown === 0 ? 0 : from + shown - 1, total };
   });
 
   private readonly language = toSignal(this.transloco.langChanges$, {
@@ -65,8 +67,8 @@ export class PokedexPage {
     this.store.retry();
   }
 
-  protected loadMore(): void {
-    void this.store.loadMore();
+  protected formatNumber(value: number): string {
+    return new Intl.NumberFormat(this.language()).format(value);
   }
 
   protected sortField(field: Parameters<PokedexStore['cycleSort']>[0]): void {

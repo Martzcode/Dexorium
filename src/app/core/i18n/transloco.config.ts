@@ -5,6 +5,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
 
+import { SUPPORTED_LANGUAGE_CODES, isSupportedLanguage } from './languages';
+
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
   private readonly http = inject(HttpClient);
@@ -16,7 +18,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 export const translocoProviders = provideTransloco({
   config: {
-    availableLangs: ['en', 'fr'],
+    availableLangs: [...SUPPORTED_LANGUAGE_CODES],
     defaultLang: readInitialLanguage(),
     fallbackLang: 'en',
     reRenderOnLangChange: true,
@@ -27,7 +29,7 @@ export const translocoProviders = provideTransloco({
 
 function readInitialLanguage(): string {
   const stored = localStorage.getItem('dexorium.language');
-  if (stored === 'en' || stored === 'fr') {
+  if (isSupportedLanguage(stored)) {
     return stored;
   }
 

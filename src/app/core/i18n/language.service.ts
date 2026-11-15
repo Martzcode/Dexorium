@@ -1,6 +1,8 @@
-import { Injectable, effect, inject } from '@angular/core';
+import { Injectable, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
+
+import { SUPPORTED_LANGUAGES, isSupportedLanguage } from './languages';
 
 const STORAGE_KEY = 'dexorium.language';
 
@@ -14,9 +16,15 @@ const STORAGE_KEY = 'dexorium.language';
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
 
+  readonly languages = SUPPORTED_LANGUAGES;
   readonly current = toSignal(this.transloco.langChanges$, {
     initialValue: this.transloco.getActiveLang(),
   });
+  readonly currentLabel = computed(
+    () =>
+      SUPPORTED_LANGUAGES.find((language) => language.code === this.current())?.label ??
+      this.current().toUpperCase(),
+  );
 
   constructor() {
     effect(() => {
@@ -25,7 +33,7 @@ export class LanguageService {
   }
 
   setLanguage(language: string): void {
-    if (language === this.current()) {
+    if (!isSupportedLanguage(language) || language === this.current()) {
       return;
     }
 

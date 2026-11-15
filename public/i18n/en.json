@@ -51,8 +51,7 @@
     "searchLabel": "Search for a species",
     "searchPlaceholder": "Name or national number…",
     "results": "Species shown: {{ count }}",
-    "resultsCount": "{{ count }} results",
-    "loadingMore": "Loading more species…",
+    "resultsRange": "{{ from }}–{{ to }} of {{ total }} species",
     "loading": "Loading Pokédex…",
     "views": {
       "label": "Display mode",
@@ -63,6 +62,12 @@
     "table": {
       "name": "Name",
       "types": "Types"
+    },
+    "pagination": {
+      "label": "Pokédex pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {{ page }} of {{ pages }}"
     },
     "filters": {
       "sort": "Sort",
@@ -438,9 +443,7 @@
     "preferences": {
       "title": "Preferences",
       "theme": "Theme",
-      "themeSystem": "System",
-      "themeLight": "Light",
-      "themeDark": "Dark",
+      "themeHint": "Click to cycle to the next theme.",
       "language": "Language",
       "languageHint": "Preferences are stored locally, without any connection."
     },
@@ -491,6 +494,11 @@
       "license": "Licence",
       "notice": "Dexorium runs fully offline: no data is sent and no telemetry is collected.",
       "sprites": "Official Pokémon artwork is not included. Thumbnails are original placeholders; an optional media pack can be added later."
+    },
+    "about": {
+      "title": "About",
+      "developer": "Developed by",
+      "openSource": "Open-source project under the AGPL-3.0 licence. Source code and releases are published on GitHub."
     }
   },
   "palette": {

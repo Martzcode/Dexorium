@@ -33,7 +33,15 @@
 
     <div class="flex items-center gap-3">
       <p class="m-0 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-muted">
-        {{ 'pokedex.resultsCount' | transloco: { count: resultCount() } }}
+        {{
+          'pokedex.resultsRange'
+            | transloco
+              : {
+                  from: formatNumber(resultRange().from),
+                  to: formatNumber(resultRange().to),
+                  total: formatNumber(resultRange().total),
+                }
+        }}
       </p>
 
       <div
@@ -116,11 +124,48 @@
     <app-pokedex-results
       [view]="store.view()"
       [items]="store.items()"
-      [total]="store.total()"
-      [hasMore]="store.hasMore()"
       [sort]="store.sort()"
-      (loadMore)="loadMore()"
       (sortField)="sortField($event)"
     />
+
+    @if (store.pageCount() > 1) {
+      <nav
+        class="mt-5 flex flex-wrap items-center justify-center gap-2"
+        [attr.aria-label]="'pokedex.pagination.label' | transloco"
+      >
+        <button
+          class="inline-flex h-8 items-center gap-1 rounded-lg border border-line bg-panel pl-2 pr-3 text-[0.78rem] font-semibold text-ink transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
+          type="button"
+          [disabled]="store.page() <= 1 || store.loading()"
+          [attr.aria-label]="'pokedex.pagination.previous' | transloco"
+          (click)="store.previousPage()"
+        >
+          <app-icon name="arrow-left" [size]="15" />
+          {{ 'pokedex.pagination.previous' | transloco }}
+        </button>
+
+        <span
+          class="px-2 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-muted"
+          aria-live="polite"
+        >
+          {{
+            'pokedex.pagination.status'
+              | transloco
+                : { page: formatNumber(store.page()), pages: formatNumber(store.pageCount()) }
+          }}
+        </span>
+
+        <button
+          class="inline-flex h-8 items-center gap-1 rounded-lg border border-line bg-panel pl-3 pr-2 text-[0.78rem] font-semibold text-ink transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
+          type="button"
+          [disabled]="store.page() >= store.pageCount() || store.loading()"
+          [attr.aria-label]="'pokedex.pagination.next' | transloco"
+          (click)="store.nextPage()"
+        >
+          {{ 'pokedex.pagination.next' | transloco }}
+          <app-icon class="rotate-180" name="arrow-left" [size]="15" />
+        </button>
+      </nav>
+    }
   }
 </section>

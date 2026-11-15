@@ -3,7 +3,7 @@
     @case ('grid') {
       <cdk-virtual-scroll-viewport
         [itemSize]="gridRowHeight"
-        class="h-[calc(100vh-330px)] min-h-[420px]"
+        class="h-[calc(100vh-386px)] min-h-[420px]"
       >
         <div
           *cdkVirtualFor="let row of gridRows(); trackBy: trackRow"
@@ -69,7 +69,7 @@
     @case ('list') {
       <cdk-virtual-scroll-viewport
         [itemSize]="listRowHeight"
-        class="h-[calc(100vh-330px)] min-h-[420px]"
+        class="h-[calc(100vh-386px)] min-h-[420px]"
       >
         <div *cdkVirtualFor="let row of singleRows(); trackBy: trackRow" class="pb-2">
           @for (species of row; track species.id) {
@@ -162,7 +162,7 @@
 
           <cdk-virtual-scroll-viewport
             [itemSize]="tableRowHeight"
-            class="h-[calc(100vh-370px)] min-h-[380px]"
+            class="h-[calc(100vh-426px)] min-h-[380px]"
           >
             <div *cdkVirtualFor="let row of singleRows(); trackBy: trackRow">
               @for (species of row; track species.id) {
@@ -220,9 +220,5 @@
         </div>
       </div>
     }
-  }
-
-  @if (hasMore()) {
-    <p class="sr-only" role="status">{{ 'pokedex.loadingMore' | transloco }}</p>
   }
 </div>

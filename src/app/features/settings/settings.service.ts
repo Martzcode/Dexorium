@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { invokeCommand, isTauriRuntime } from '../../core/ipc/tauri-ipc';
 import type { DatasetInfo } from './settings.models';
 
-/** Facade for the embedded dataset provenance. */
+export const DEVELOPER_PROFILE_URL = 'https://github.com/Martzcode';
+
+/** Facade for the embedded dataset provenance and external links. */
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   async datasetInfo(): Promise<DatasetInfo> {
@@ -24,5 +26,15 @@ export class SettingsService {
       source: 'PokeAPI/api-data',
       sourceUrl: 'https://github.com/PokeAPI/api-data',
     };
+  }
+
+  /** Opens the developer GitHub profile in the user's default browser. */
+  async openDeveloperProfile(): Promise<void> {
+    if (isTauriRuntime()) {
+      await invokeCommand('open_external', { url: DEVELOPER_PROFILE_URL });
+      return;
+    }
+
+    window.open(DEVELOPER_PROFILE_URL, '_blank', 'noopener,noreferrer');
   }
 }

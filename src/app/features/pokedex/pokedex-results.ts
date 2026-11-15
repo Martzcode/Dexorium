@@ -1,6 +1,15 @@
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, computed, inject, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -28,12 +37,11 @@ export class PokedexResults {
 
   readonly view = input.required<PokedexView>();
   readonly items = input.required<readonly SpeciesSummary[]>();
-  readonly total = input(0);
-  readonly hasMore = input(false);
   readonly sort = input<readonly SortCriterion[]>([]);
 
-  readonly loadMore = output<void>();
   readonly sortField = output<SpeciesSortField>();
+
+  private readonly viewport = viewChild(CdkVirtualScrollViewport);
 
   protected readonly formatDexNumber = formatDexNumber;
   protected readonly typeBadgeClass = typeBadgeClass;
@@ -75,25 +83,19 @@ export class PokedexResults {
     return rows;
   });
 
+  constructor() {
+    // A new page replaces the whole list: bring the virtual viewport back to
+    // the first row so pagination never leaves the user mid-scroll.
+    effect(() => {
+      this.items();
+      untracked(() => this.viewport()?.scrollToIndex(0));
+    });
+  }
+
   protected readonly singleRows = computed(() => this.items().map((species) => [species] as const));
 
   protected trackRow(index: number, row: readonly SpeciesSummary[]): number {
     return row[0]?.id ?? index;
-  }
-
-  protected onScrolled(index: number): void {
-    if (this.items().length >= this.total()) {
-      return;
-    }
-
-    const nearEnd =
-      this.view() === 'grid'
-        ? (index + 4) * this.columns() >= this.items().length - 8
-        : index + 16 >= this.items().length;
-
-    if (nearEnd && this.hasMore()) {
-      this.loadMore.emit();
-    }
   }
 
   protected sortIndicator(field: SpeciesSortField): string {
