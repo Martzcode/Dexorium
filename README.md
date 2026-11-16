@@ -272,17 +272,41 @@ Releases are automated on every push to `main`, once the `CI` workflow succeeds:
 - the bundled Pokédex is rebuilt from the pinned dataset lockfile and validated as part of the pipeline;
 - release assets only contain installers: NSIS `.exe`, `.msi`, `.msix` (Microsoft Store), `.deb` and `.rpm`. Dataset reports, checksums and the reference database are kept as workflow artifacts instead.
 
-The MSIX package identity is read from repository secrets so the pipeline can target the real Partner Center reservation:
+### Microsoft Store identity
 
-| Secret                       | Purpose                                            |
-| ---------------------------- | -------------------------------------------------- |
-| `MS_STORE_IDENTITY_NAME`     | Package identity name, e.g. `Martzcode.Dexorium`   |
-| `MS_STORE_PUBLISHER`         | Publisher identity, e.g. `CN=00000000-0000-...`    |
-| `MS_STORE_PUBLISHER_DISPLAY` | Publisher display name shown by Windows            |
-| `MSIX_SIGN_PFX_BASE64`       | Optional base64 PFX to sign the MSIX (sideloading) |
-| `MSIX_SIGN_PASSWORD`         | Optional password of that PFX                      |
+The MSIX identity must match the reservation in Microsoft Partner Center. These
+values are public, so they are stored as **repository variables** (not secrets):
 
-When the secrets are unset, the script falls back to the provisional `Martzcode.Dexorium` / `CN=Martzcode` identity and publishes an unsigned MSIX, which Partner Center re-signs on submission.
+| Variable                     | Value used by Dexorium                    |
+| ---------------------------- | ----------------------------------------- |
+| `MS_STORE_IDENTITY_NAME`     | `Martzcode.Dexorium`                      |
+| `MS_STORE_PUBLISHER`         | `CN=7D2188A8-E979-4CC7-B4CA-0B3ADA615D01` |
+| `MS_STORE_PUBLISHER_DISPLAY` | `Martzcode`                               |
+
+Configure them in **Settings → Secrets and variables → Actions → Variables**, or
+with the GitHub CLI:
+
+```bash
+gh variable set MS_STORE_IDENTITY_NAME --body "Martzcode.Dexorium"
+gh variable set MS_STORE_PUBLISHER --body "CN=7D2188A8-E979-4CC7-B4CA-0B3ADA615D01"
+gh variable set MS_STORE_PUBLISHER_DISPLAY --body "Martzcode"
+```
+
+The workflow also accepts the same names as secrets, which makes the switch from
+an earlier setup seamless. With these values, Partner Center derives the expected
+package family name `Martzcode.Dexorium_4hz7d9j9njen8`.
+
+Signing is separate and always optional: the Store re-signs submitted packages,
+so nothing is needed unless the MSIX must also be sideloaded.
+
+| Secret                 | Purpose                                            |
+| ---------------------- | -------------------------------------------------- |
+| `MSIX_SIGN_PFX_BASE64` | Optional base64 PFX to sign the MSIX (sideloading) |
+| `MSIX_SIGN_PASSWORD`   | Optional password of that PFX                      |
+
+When the variables are unset, the script falls back to the reserved Martzcode
+identity and publishes an unsigned MSIX, which Partner Center re-signs on
+submission.
 
 ### Useful scripts
 
