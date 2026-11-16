@@ -303,6 +303,7 @@ jobs:
         run: |
           mapfile -d '' assets < <(find release-assets -type f -print0)
           gh release create "$TAG" "${assets[@]}" \
+            --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \
             --title "Dexorium $VERSION" \
             --generate-notes
