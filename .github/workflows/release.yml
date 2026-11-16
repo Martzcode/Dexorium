@@ -185,15 +185,15 @@ jobs:
         env:
           MSIX_PFX_B64: ${{ secrets.MSIX_SIGN_PFX_BASE64 }}
 
-      # Package identity comes from Microsoft Partner Center. The script reads
-      # these variables and falls back to the provisional Dexorium identity,
-      # so the pipeline keeps working before the Store reservation exists.
+      # Package identity comes from Microsoft Partner Center. These values are
+      # public (they appear in the Store listing), so they live in repository
+      # variables; the secrets fallback keeps existing setups working.
       - name: Build MSIX for Microsoft Store
         shell: pwsh
         env:
-          MSIX_IDENTITY_NAME: ${{ secrets.MS_STORE_IDENTITY_NAME }}
-          MSIX_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
-          MSIX_PUBLISHER_DISPLAY: ${{ secrets.MS_STORE_PUBLISHER_DISPLAY }}
+          MSIX_IDENTITY_NAME: ${{ vars.MS_STORE_IDENTITY_NAME || secrets.MS_STORE_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MS_STORE_PUBLISHER || secrets.MS_STORE_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY: ${{ vars.MS_STORE_PUBLISHER_DISPLAY || secrets.MS_STORE_PUBLISHER_DISPLAY }}
           MSIX_SIGN_PASSWORD: ${{ secrets.MSIX_SIGN_PASSWORD }}
         run: |
           ./scripts/build-msix.ps1 `

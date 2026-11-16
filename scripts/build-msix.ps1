@@ -7,7 +7,7 @@
     The MSIX is built from the release binary and its bundled reference
     database. The package identity comes from the Microsoft Partner Center
     reservation: each value can be passed as a parameter or through an
-    environment variable, falling back to the provisional defaults.
+    environment variable, falling back to the reserved Martzcode identity.
 
     The package stays unsigned by default. Microsoft Store signs submitted
     MSIX packages, so a Partner Center submission does not need a certificate.
@@ -68,10 +68,18 @@ function Resolve-Setting {
 }
 
 $PackageName = Resolve-Setting $PackageName 'MSIX_IDENTITY_NAME' 'Martzcode.Dexorium'
-$Publisher = Resolve-Setting $Publisher 'MSIX_PUBLISHER' 'CN=Martzcode'
+$Publisher = Resolve-Setting $Publisher 'MSIX_PUBLISHER' 'CN=7D2188A8-E979-4CC7-B4CA-0B3ADA615D01'
 $PublisherDisplayName = Resolve-Setting $PublisherDisplayName 'MSIX_PUBLISHER_DISPLAY' 'Martzcode'
 $SignPfx = Resolve-Setting $SignPfx 'MSIX_SIGN_PFX_PATH' ''
 $SignPassword = Resolve-Setting $SignPassword 'MSIX_SIGN_PASSWORD' ''
+
+Write-Host "MSIX identity : $PackageName"
+Write-Host "MSIX publisher: $Publisher"
+Write-Host "MSIX display  : $PublisherDisplayName"
+
+if ($Publisher -notmatch '^CN=') {
+    throw "Publisher must be a Partner Center identity such as 'CN=<publisher-id>', got '$Publisher'."
+}
 
 $ErrorActionPreference = 'Stop'
 
