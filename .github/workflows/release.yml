@@ -172,8 +172,29 @@ jobs:
             Set-Content -LiteralPath $config -Encoding utf8
           npx tauri bundle --bundles msi --config $config
 
+      - name: Prepare MSIX signing certificate (optional)
+        shell: pwsh
+        run: |
+          if ($env:MSIX_PFX_B64) {
+            $bytes = [Convert]::FromBase64String($env:MSIX_PFX_B64)
+            [IO.File]::WriteAllBytes("$env:RUNNER_TEMP\msix-sign.pfx", $bytes)
+            "MSIX_SIGN_PFX_PATH=$env:RUNNER_TEMP\msix-sign.pfx" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "No signing certificate provided: MSIX stays unsigned (Partner Center re-signs on submission)."
+          }
+        env:
+          MSIX_PFX_B64: ${{ secrets.MSIX_SIGN_PFX_BASE64 }}
+
+      # Package identity comes from Microsoft Partner Center. The script reads
+      # these variables and falls back to the provisional Dexorium identity,
+      # so the pipeline keeps working before the Store reservation exists.
       - name: Build MSIX for Microsoft Store
         shell: pwsh
+        env:
+          MSIX_IDENTITY_NAME: ${{ secrets.MS_STORE_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ secrets.MS_STORE_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY: ${{ secrets.MS_STORE_PUBLISHER_DISPLAY }}
+          MSIX_SIGN_PASSWORD: ${{ secrets.MSIX_SIGN_PASSWORD }}
         run: |
           ./scripts/build-msix.ps1 `
             -Semver '${{ needs.version.outputs.semver }}' `
@@ -289,10 +310,19 @@ jobs:
           path: release-assets
           merge-multiple: true
 
-      - name: Name the dataset asset after its checksum
-        env:
-          SEMVER: ${{ needs.version.outputs.semver }}
-        run: mv release-assets/reference.db "release-assets/reference-${SEMVER}.db"
+      # Only installers are published: dataset reports, checksums, manifests
+      # and the reference database stay attached to the workflow run instead.
+      - name: Strip non-installer files
+        run: |
+          find release-assets -type f \
+            ! -name '*.exe' \
+            ! -name '*.msi' \
+            ! -name '*.msix' \
+            ! -name '*.deb' \
+            ! -name '*.rpm' \
+            -delete
+          echo "Release assets:"
+          find release-assets -type f -printf '  %f\n' | sort
 
       - name: Create tag and release
         env:
@@ -301,7 +331,11 @@ jobs:
           VERSION: ${{ needs.version.outputs.version }}
           SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          mapfile -d '' assets < <(find release-assets -type f -print0)
+          mapfile -d '' assets < <(find release-assets -type f -print0 | sort -z)
+          if [ "${#assets[@]}" -eq 0 ]; then
+            echo "::error::No installer found in the release artifacts."
+            exit 1
+          fi
           gh release create "$TAG" "${assets[@]}" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \

@@ -269,10 +269,20 @@ The installer is written to `src-tauri/target/release/bundle/` (MSI/NSIS on Wind
 Releases are automated on every push to `main`, once the `CI` workflow succeeds:
 
 - version and tag: `YYYY.MM.XX`, with `XX` starting at `01` each month (for example `v2026.11.01`);
-- the bundled Pokédex is rebuilt from the pinned dataset lockfile, validated and published with its checksum;
-- artifacts: NSIS `.exe`, `.msi`, unsigned `.msix` for the Microsoft Store, `.deb` and `.rpm`.
+- the bundled Pokédex is rebuilt from the pinned dataset lockfile and validated as part of the pipeline;
+- release assets only contain installers: NSIS `.exe`, `.msi`, `.msix` (Microsoft Store), `.deb` and `.rpm`. Dataset reports, checksums and the reference database are kept as workflow artifacts instead.
 
-The MSIX uses provisional Partner Center identity values (`Martzcode.Dexorium`, `CN=Martzcode`) until the real Store identity is reserved. No artifact is code-signed yet.
+The MSIX package identity is read from repository secrets so the pipeline can target the real Partner Center reservation:
+
+| Secret                       | Purpose                                            |
+| ---------------------------- | -------------------------------------------------- |
+| `MS_STORE_IDENTITY_NAME`     | Package identity name, e.g. `Martzcode.Dexorium`   |
+| `MS_STORE_PUBLISHER`         | Publisher identity, e.g. `CN=00000000-0000-...`    |
+| `MS_STORE_PUBLISHER_DISPLAY` | Publisher display name shown by Windows            |
+| `MSIX_SIGN_PFX_BASE64`       | Optional base64 PFX to sign the MSIX (sideloading) |
+| `MSIX_SIGN_PASSWORD`         | Optional password of that PFX                      |
+
+When the secrets are unset, the script falls back to the provisional `Martzcode.Dexorium` / `CN=Martzcode` identity and publishes an unsigned MSIX, which Partner Center re-signs on submission.
 
 ### Useful scripts
 
