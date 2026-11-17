@@ -91,7 +91,10 @@
         "label": "Mode",
         "any": "Contains",
         "exact": "Exactly",
-        "mono": "Mono-type"
+        "mono": "Mono-type",
+        "anyHelp": "Keeps Pokémon that have at least one of the selected types.",
+        "exactHelp": "Keeps Pokémon whose type set exactly matches the selection.",
+        "monoHelp": "Keeps mono-typed Pokémon whose single type is among the selection."
       },
       "advanced": "Advanced filters",
       "generations": "Generations",

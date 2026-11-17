@@ -91,7 +91,10 @@
         "label": "Mode",
         "any": "Contient",
         "exact": "Exactement",
-        "mono": "Monotype"
+        "mono": "Monotype",
+        "anyHelp": "Garde les Pokémon ayant au moins un des types sélectionnés.",
+        "exactHelp": "Garde les Pokémon dont l'ensemble de types correspond exactement à la sélection.",
+        "monoHelp": "Garde les Pokémon monotypes dont le type unique fait partie de la sélection."
       },
       "advanced": "Filtres avancés",
       "generations": "Générations",

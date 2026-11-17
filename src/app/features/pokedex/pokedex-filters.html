@@ -87,11 +87,18 @@
         <select
           class="rounded-md border border-line bg-panel px-2 py-1 text-xs text-ink outline-none focus:border-accent"
           [value]="store.typeMatch()"
+          [title]="'pokedex.filters.typeMode.' + store.typeMatch() + 'Help' | transloco"
           (change)="onTypeMatchChange($any($event.target).value)"
         >
-          <option value="any">{{ 'pokedex.filters.typeMode.any' | transloco }}</option>
-          <option value="exact">{{ 'pokedex.filters.typeMode.exact' | transloco }}</option>
-          <option value="mono">{{ 'pokedex.filters.typeMode.mono' | transloco }}</option>
+          <option value="any" [title]="'pokedex.filters.typeMode.anyHelp' | transloco">
+            {{ 'pokedex.filters.typeMode.any' | transloco }}
+          </option>
+          <option value="exact" [title]="'pokedex.filters.typeMode.exactHelp' | transloco">
+            {{ 'pokedex.filters.typeMode.exact' | transloco }}
+          </option>
+          <option value="mono" [title]="'pokedex.filters.typeMode.monoHelp' | transloco">
+            {{ 'pokedex.filters.typeMode.mono' | transloco }}
+          </option>
         </select>
       </label>
     </div>
