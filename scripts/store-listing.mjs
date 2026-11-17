@@ -103,7 +103,7 @@ Dexorium is an unofficial, fan-made reference tool. It is not affiliated with, e
     shortDescription:
       'Offline Pokémon encyclopedia: 1,025 species, 919 moves, 374 abilities and the full type chart. No account, no ads, no telemetry.',
     copyright:
-      'Copyright © 2026 Martzcode. Pokémon and Pokémon character names are trademarks of their respective owners. Dexorium is an unofficial fan project, not affiliated with Nintendo, Creatures Inc. or The Pokémon Company.',
+      'Copyright © 2026 Martzcode. Pokémon names are trademarks of their owners. Dexorium is an unofficial fan project, not affiliated with Nintendo, Creatures Inc. or The Pokémon Company.',
     license:
       'Dexorium is free software distributed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). Source code and license text: https://github.com/Martzcode/Dexorium',
     features: [
@@ -186,7 +186,7 @@ Dexorium est un outil de référence non officiel, réalisé par des fans. Il n'
     shortDescription:
       'Encyclopédie Pokémon hors ligne : 1 025 espèces, 919 attaques, 374 talents et la table des types complète. Sans compte, sans publicité, sans télémétrie.',
     copyright:
-      'Copyright © 2026 Martzcode. Pokémon et les noms des personnages Pokémon sont des marques de leurs propriétaires respectifs. Dexorium est un projet de fans non officiel, non affilié à Nintendo, Creatures Inc. ou The Pokémon Company.',
+      'Copyright © 2026 Martzcode. Pokémon et les noms de personnages sont des marques de leurs propriétaires. Dexorium est un projet de fans non affilié à Nintendo, Creatures Inc. ou The Pokémon Company.',
     license:
       'Dexorium est un logiciel libre distribué sous licence GNU Affero General Public License v3.0 ou ultérieure (AGPL-3.0-or-later). Code source et texte de la licence : https://github.com/Martzcode/Dexorium',
     features: [
@@ -269,7 +269,7 @@ Dexorium ist ein inoffizielles Fan-Projekt. Es steht in keiner Verbindung zu Nin
     shortDescription:
       'Offline-Pokémon-Lexikon: 1.025 Arten, 919 Attacken, 374 Fähigkeiten und die komplette Typentabelle. Ohne Konto, ohne Werbung, ohne Telemetrie.',
     copyright:
-      'Copyright © 2026 Martzcode. Pokémon und die Namen der Pokémon-Charaktere sind Marken ihrer jeweiligen Inhaber. Dexorium ist ein inoffizielles Fan-Projekt und steht in keiner Verbindung zu Nintendo, Creatures Inc. oder The Pokémon Company.',
+      'Copyright © 2026 Martzcode. Pokémon und Charakternamen sind Marken ihrer Inhaber. Dexorium ist ein inoffizielles Fan-Projekt, nicht verbunden mit Nintendo, Creatures Inc. oder The Pokémon Company.',
     license:
       'Dexorium ist freie Software, veröffentlicht unter der GNU Affero General Public License v3.0 oder neuer (AGPL-3.0-or-later). Quellcode und Lizenztext: https://github.com/Martzcode/Dexorium',
     features: [
@@ -352,7 +352,7 @@ Dexorium es una herramienta de referencia no oficial, creada por fanes. No está
     shortDescription:
       'Enciclopedia Pokémon sin conexión: 1025 especies, 919 movimientos, 374 habilidades y la tabla de tipos completa. Sin cuenta, sin anuncios, sin telemetría.',
     copyright:
-      'Copyright © 2026 Martzcode. Pokémon y los nombres de los personajes Pokémon son marcas de sus respectivos propietarios. Dexorium es un proyecto de fanes no oficial, no afiliado a Nintendo, Creatures Inc. ni The Pokémon Company.',
+      'Copyright © 2026 Martzcode. Pokémon y los nombres de personajes son marcas de sus propietarios. Dexorium es un proyecto de fanes no afiliado a Nintendo, Creatures Inc. ni The Pokémon Company.',
     license:
       'Dexorium es software libre distribuido bajo la GNU Affero General Public License v3.0 o posterior (AGPL-3.0-or-later). Código fuente y texto de la licencia: https://github.com/Martzcode/Dexorium',
     features: [
@@ -435,7 +435,7 @@ Dexorium è uno strumento di riferimento non ufficiale, realizzato da fan. Non �
     shortDescription:
       'Enciclopedia Pokémon offline: 1.025 specie, 919 mosse, 374 abilità e la tabella dei tipi completa. Nessun account, nessuna pubblicità, nessuna telemetria.',
     copyright:
-      'Copyright © 2026 Martzcode. Pokémon e i nomi dei personaggi Pokémon sono marchi dei rispettivi proprietari. Dexorium è un progetto amatoriale non ufficiale, non affiliato a Nintendo, Creatures Inc. o The Pokémon Company.',
+      'Copyright © 2026 Martzcode. Pokémon e i nomi dei personaggi sono marchi dei proprietari. Dexorium è un progetto amatoriale non affiliato a Nintendo, Creatures Inc. o The Pokémon Company.',
     license:
       'Dexorium è software libero distribuito con licenza GNU Affero General Public License v3.0 o successiva (AGPL-3.0-or-later). Codice sorgente e testo della licenza: https://github.com/Martzcode/Dexorium',
     features: [
