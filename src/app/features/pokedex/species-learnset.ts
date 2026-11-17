@@ -13,6 +13,41 @@ type LoadState = 'loading' | 'ready' | 'error';
 
 const METHOD_ORDER = ['level-up', 'machine', 'egg', 'tutor'] as const;
 
+const VERSION_GROUP_NAMES_FR: Readonly<Record<string, string>> = {
+  'red-green-japan': 'Rouge/Vert (Japon)',
+  'blue-japan': 'Bleu (Japon)',
+  'red-blue': 'Rouge/Bleu',
+  yellow: 'Jaune',
+  'gold-silver': 'Or/Argent',
+  crystal: 'Cristal',
+  'ruby-sapphire': 'Rubis/Saphir',
+  emerald: 'Émeraude',
+  colosseum: 'Colosseum',
+  xd: 'XD',
+  'firered-leafgreen': 'Rouge Feu/Vert Feuille',
+  'diamond-pearl': 'Diamant/Perle',
+  platinum: 'Platine',
+  'heartgold-soulsilver': 'Or HeartGold/Argent SoulSilver',
+  'black-white': 'Noir/Blanc',
+  'black-2-white-2': 'Noir 2/Blanc 2',
+  'x-y': 'X/Y',
+  'omega-ruby-alpha-sapphire': 'Rubis Oméga/Saphir Alpha',
+  'sun-moon': 'Soleil/Lune',
+  'ultra-sun-ultra-moon': 'Ultra-Soleil/Ultra-Lune',
+  'lets-go-pikachu-lets-go-eevee': "Let's Go Pikachu/Let's Go Évoli",
+  'sword-shield': 'Épée/Bouclier',
+  'the-isle-of-armor': "L'Île Solitaire de l'Armure",
+  'the-crown-tundra': 'Les Terres Enneigées de la Couronne',
+  'brilliant-diamond-shining-pearl': 'Diamant Étincelant/Perle Scintillante',
+  'legends-arceus': 'Légendes : Arceus',
+  'scarlet-violet': 'Écarlate/Violet',
+  'the-teal-mask': 'Le Masque Turquoise',
+  'the-indigo-disk': 'Le Disque Indigo',
+  'legends-za': 'Légendes Z-A',
+  'mega-dimension': 'Méga-Dimension',
+  champions: 'Champions',
+};
+
 @Component({
   selector: 'app-species-learnset',
   imports: [RouterLink, TranslocoPipe, AppIcon],
@@ -31,6 +66,13 @@ export class SpeciesLearnset {
   protected readonly method = signal<string>('all');
   protected readonly search = signal('');
   protected readonly typeBadgeClass = typeBadgeClass;
+
+  protected versionGroupName(slug: string): string {
+    if (this.language().startsWith('fr')) {
+      return VERSION_GROUP_NAMES_FR[slug] ?? slug;
+    }
+    return slug;
+  }
 
   private requestId = 0;
 

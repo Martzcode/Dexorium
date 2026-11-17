@@ -14,7 +14,7 @@
           @for (group of page()?.versionGroups ?? []; track group.id) {
             <option [value]="group.slug" [selected]="group.slug === (selectedVersionGroup() ?? '')">
               {{ 'pokedex.learnset.generation' | transloco: { number: group.generationId } }} ·
-              {{ group.slug }}
+              {{ versionGroupName(group.slug) }}
             </option>
           }
         </select>
