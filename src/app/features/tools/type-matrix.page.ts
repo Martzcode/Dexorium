@@ -2,7 +2,6 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { AppIcon } from '../../shared/icon/app-icon';
 import { typeBadgeClass } from '../pokedex/pokedex-format';
 import type { TypeMatrix } from './tools.models';
 import { ToolsService } from './tools.service';
@@ -26,7 +25,7 @@ const LEGEND: readonly LegendEntry[] = [
 
 @Component({
   selector: 'app-type-matrix',
-  imports: [TranslocoPipe, AppIcon],
+  imports: [TranslocoPipe],
   templateUrl: './type-matrix.page.html',
 })
 export class TypeMatrixPage {
