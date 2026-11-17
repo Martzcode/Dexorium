@@ -112,7 +112,7 @@
       "favoritesTitle": "Aucun favori",
       "favoritesDescription": "Ajoutez des Pokémon avec l'étoile pour les retrouver ici."
     },
-    "export": "Exporter en CSV",
+
     "error": {
       "title": "Le Pokédex n’a pas pu être chargé",
       "description": "La base de référence locale est indisponible.",

@@ -67,52 +67,6 @@ export class PokedexPage {
     this.store.retry();
   }
 
-  protected exportCsv(): void {
-    const items = this.store.items();
-    if (items.length === 0) {
-      return;
-    }
-
-    const header = [
-      'nationalDexNumber',
-      'name',
-      'types',
-      'bst',
-      'hp',
-      'attack',
-      'defense',
-      'spAtk',
-      'spDef',
-      'speed',
-    ];
-    const lines = [header.join(',')];
-    for (const item of items) {
-      const stats = item.stats;
-      lines.push(
-        [
-          item.nationalDexNumber,
-          `"${item.name.replace(/"/g, '""')}"`,
-          `"${item.types.join(';')}"`,
-          item.bst,
-          stats.hp,
-          stats.attack,
-          stats.defense,
-          stats.spAtk,
-          stats.spDef,
-          stats.speed,
-        ].join(','),
-      );
-    }
-
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'dexorium-pokedex.csv';
-    anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
   protected formatNumber(value: number): string {
     return new Intl.NumberFormat(this.language()).format(value);
   }

@@ -112,7 +112,7 @@
       "favoritesTitle": "No favourites yet",
       "favoritesDescription": "Star Pokémon to find them here."
     },
-    "export": "Export CSV",
+
     "error": {
       "title": "The Pokédex could not be loaded",
       "description": "The local reference database is unavailable.",

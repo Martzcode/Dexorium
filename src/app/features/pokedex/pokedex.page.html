@@ -44,16 +44,6 @@
         }}
       </p>
 
-      <button
-        class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line bg-panel px-3 text-[0.78rem] font-semibold text-ink transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
-        type="button"
-        [disabled]="store.items().length === 0"
-        (click)="exportCsv()"
-      >
-        <app-icon name="copy" [size]="15" />
-        {{ 'pokedex.export' | transloco }}
-      </button>
-
       <div
         class="flex items-center gap-0.5 rounded-lg border border-line bg-panel p-0.5"
         role="group"
