@@ -459,6 +459,14 @@
       "language": "Language",
       "languageHint": "Preferences are stored locally, without any connection."
     },
+    "sprites": {
+      "title": "Pokémon sprites",
+      "description": "Select a folder containing sprite images named by national Pokédex number (e.g. 1.png, 1.jpg, 1.jpeg, 1.svg).",
+      "pick": "Select folder",
+      "clear": "Clear",
+      "none": "No folder selected: placeholders are used.",
+      "hint": "Images are loaded locally from the selected folder. Nothing is bundled with the application."
+    },
     "app": {
       "title": "Application",
       "name": "Name",

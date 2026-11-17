@@ -4,6 +4,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppInfoService } from '../../core/app-info/app-info.service';
 import { LanguageService } from '../../core/i18n/language.service';
+import { SpriteFolderService } from '../../core/media/sprite-folder.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { AppIcon } from '../../shared/icon/app-icon';
 import { DATASET_TABLE_LABELS, type DatasetInfo } from './settings.models';
@@ -23,6 +24,7 @@ export class SettingsPage {
   protected readonly appInfo = inject(AppInfoService);
   protected readonly theme = inject(ThemeService);
   protected readonly languagePreference = inject(LanguageService);
+  protected readonly sprites = inject(SpriteFolderService);
   protected readonly state = signal<LoadState>('loading');
   protected readonly dataset = signal<DatasetInfo | null>(null);
   protected readonly developerProfileUrl = DEVELOPER_PROFILE_URL;
@@ -46,6 +48,14 @@ export class SettingsPage {
 
   protected onLanguageChange(event: Event): void {
     this.languagePreference.setLanguage((event.target as HTMLSelectElement).value);
+  }
+
+  protected async pickSpritesFolder(): Promise<void> {
+    await this.sprites.pickFolder();
+  }
+
+  protected clearSpritesFolder(): void {
+    this.sprites.clear();
   }
 
   protected openDeveloperProfile(event: Event): void {

@@ -68,6 +68,54 @@
       <h2
         class="m-0 flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted"
       >
+        <app-icon name="package" [size]="14" />
+        {{ 'settings.sprites.title' | transloco }}
+      </h2>
+
+      <p class="mt-3 text-sm text-ink-soft">
+        {{ 'settings.sprites.description' | transloco }}
+      </p>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <button
+          class="inline-flex items-center gap-2 rounded-lg border border-line bg-panel-muted px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+          type="button"
+          (click)="pickSpritesFolder()"
+        >
+          <app-icon name="external-link" [size]="16" />
+          {{ 'settings.sprites.pick' | transloco }}
+        </button>
+        @if (sprites.folder()) {
+          <button
+            class="inline-flex items-center gap-2 rounded-lg border border-line bg-panel-muted px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-line-strong"
+            type="button"
+            (click)="clearSpritesFolder()"
+          >
+            <app-icon name="x" [size]="16" />
+            {{ 'settings.sprites.clear' | transloco }}
+          </button>
+        }
+      </div>
+
+      @if (sprites.folder()) {
+        <p class="mt-3 break-all font-mono text-[0.72rem] text-ink-muted">
+          {{ sprites.folder() }}
+        </p>
+      } @else {
+        <p class="mt-3 text-[0.72rem] text-ink-muted">
+          {{ 'settings.sprites.none' | transloco }}
+        </p>
+      }
+
+      <p class="mt-3 text-[0.7rem] text-ink-muted">
+        {{ 'settings.sprites.hint' | transloco }}
+      </p>
+    </section>
+
+    <section class="rounded-xl border border-line bg-panel p-5">
+      <h2
+        class="m-0 flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted"
+      >
         <app-icon name="sparkles" [size]="14" />
         {{ 'settings.app.title' | transloco }}
       </h2>

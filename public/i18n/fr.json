@@ -459,6 +459,14 @@
       "language": "Langue",
       "languageHint": "Les préférences sont enregistrées localement, sans connexion."
     },
+    "sprites": {
+      "title": "Sprites des Pokémon",
+      "description": "Sélectionnez un dossier contenant des images nommées par numéro national dans le Pokédex (ex. 1.png, 1.jpg, 1.jpeg, 1.svg).",
+      "pick": "Choisir un dossier",
+      "clear": "Effacer",
+      "none": "Aucun dossier sélectionné : les placeholders sont utilisés.",
+      "hint": "Les images sont chargées localement depuis le dossier sélectionné. Rien n'est embarqué avec l'application."
+    },
     "app": {
       "title": "Application",
       "name": "Nom",
