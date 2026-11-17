@@ -14,6 +14,26 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" type="image/x-icon" href="favicon.ico" />
     <script src="theme-init.js"></script>
+    <style>
+      /* Paint the app background before the bundled stylesheet is parsed, so the
+         window never flashes white while WebView2 boots. */
+      html {
+        background: #0e1016;
+        color-scheme: dark;
+      }
+      html[data-theme='light'] {
+        background: #f6f6fa;
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        background: inherit;
+        color: #f4f5f8;
+      }
+      html[data-theme='light'] body {
+        color: #15171f;
+      }
+    </style>
   </head>
   <body>
     <app-root></app-root>

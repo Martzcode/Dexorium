@@ -1,6 +1,6 @@
 {
   "app": {
-    "tagline": "Encyclopédie Pokémon hors ligne"
+    "tagline": "Encyclopédie hors ligne"
   },
   "nav": {
     "ariaLabel": "Navigation principale",
@@ -41,7 +41,7 @@
       "eyebrow": "Encyclopédie de bureau hors ligne",
       "titleLine1": "Tous les Pokémon.",
       "titleLine2": "Zéro réseau.",
-      "description": "Dexorium est l’outil de référence des joueurs, collectionneurs et compétiteurs : espèces, attaques, talents, objets, lieux, chaînes d’évolution et outils d’équipe — le tout embarqué dans une application native qui fonctionne en avion, en tournoi ou dans une salle sans Wi-Fi."
+      "description": "Dexorium est l’outil de référence des joueurs, collectionneurs et compétiteurs : espèces, attaques, talents, chaînes d’évolution et table des types — le tout embarqué dans une application native qui fonctionne en avion, en tournoi ou dans une salle sans Wi-Fi."
     }
   },
   "pokedex": {

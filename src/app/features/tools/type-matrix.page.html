@@ -18,11 +18,10 @@
           <span>{{ 'tools.types.generation' | transloco }}</span>
           <select
             class="min-w-[160px] rounded-lg border border-line bg-panel px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
-            [value]="matrix()?.generation ?? ''"
             (change)="onGenerationChange($event)"
           >
             @for (generation of generations(); track generation) {
-              <option [value]="generation">
+              <option [value]="generation" [selected]="generation === (matrix()?.generation ?? '')">
                 {{ 'tools.types.generationValue' | transloco: { number: generation } }}
               </option>
             }

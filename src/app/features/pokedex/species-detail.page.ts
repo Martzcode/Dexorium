@@ -251,9 +251,9 @@ export class SpeciesDetailPage {
       case 0:
         return '0';
       case 25:
-        return '×¼';
+        return '×0.25';
       case 50:
-        return '×½';
+        return '×0.5';
       case 200:
         return '×2';
       case 400:

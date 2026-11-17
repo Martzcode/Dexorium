@@ -9,11 +9,10 @@
         <span>{{ 'pokedex.learnset.versionGroup' | transloco }}</span>
         <select
           class="max-w-[220px] rounded-lg border border-line bg-panel-muted/40 px-2.5 py-1.5 text-sm text-ink outline-none focus:border-accent"
-          [value]="selectedVersionGroup() ?? ''"
           (change)="onVersionGroupChange($event)"
         >
           @for (group of page()?.versionGroups ?? []; track group.id) {
-            <option [value]="group.slug">
+            <option [value]="group.slug" [selected]="group.slug === (selectedVersionGroup() ?? '')">
               {{ group.slug }} ·
               {{ 'pokedex.learnset.generation' | transloco: { number: group.generationId } }}
             </option>

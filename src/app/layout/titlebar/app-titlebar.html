@@ -27,15 +27,20 @@
 
     <label class="relative flex items-center">
       <span class="sr-only">{{ 'topbar.language' | transloco }}</span>
+      <!-- The option list is created after the host bindings, so selecting the
+           active language through `[selected]` is required: a `[value]` binding
+           on the <select> would be applied before any <option> exists and the
+           control would fall back to its first entry. -->
       <select
         class="h-6 cursor-pointer appearance-none rounded-[5px] border border-line bg-panel-muted/60 pl-2 pr-6 text-[0.66rem] font-semibold text-ink-soft outline-none transition-colors hover:bg-panel hover:text-ink focus-visible:border-accent"
-        [value]="language.current()"
         [attr.aria-label]="'topbar.language' | transloco"
         [title]="language.currentLabel()"
         (change)="onLanguageChange($event)"
       >
         @for (option of language.languages; track option.code) {
-          <option [value]="option.code">{{ option.label }}</option>
+          <option [value]="option.code" [selected]="option.code === language.current()">
+            {{ option.label }}
+          </option>
         }
       </select>
       <span

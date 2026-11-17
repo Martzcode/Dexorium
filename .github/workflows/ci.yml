@@ -35,6 +35,21 @@ jobs:
       - name: Build Angular application
         run: npm run build
 
+      # Angular can inline critical CSS and defer the full stylesheet with
+      # `media="print" onload="this.media='all'"`. Tauri's CSP (script-src
+      # 'self') blocks that inline handler, which leaves the packaged app
+      # completely unstyled. Keep the protection so it never ships again.
+      - name: Guard against a deferred stylesheet
+        run: |
+          set -euo pipefail
+          html=dist/dexorium/browser/index.html
+          if grep -q 'media="print"' "$html"; then
+            echo "::error file=angular.json::The production build defers its stylesheet (media=print + inline onload), which Tauri's CSP blocks. Keep optimization.styles.inlineCritical disabled."
+            exit 1
+          fi
+          grep -q '<link rel="stylesheet" href="styles-' "$html"
+          echo "Stylesheet is loaded eagerly."
+
   rust:
     name: Rust core
     runs-on: ubuntu-latest

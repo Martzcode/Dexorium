@@ -46,11 +46,15 @@
           </span>
           <select
             class="mt-1 rounded-lg border border-line bg-panel px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
-            [value]="languagePreference.current()"
             (change)="onLanguageChange($event)"
           >
             @for (option of languagePreference.languages; track option.code) {
-              <option [value]="option.code">{{ option.label }}</option>
+              <option
+                [value]="option.code"
+                [selected]="option.code === languagePreference.current()"
+              >
+                {{ option.label }}
+              </option>
             }
           </select>
           <span class="text-[0.7rem] text-ink-muted">
