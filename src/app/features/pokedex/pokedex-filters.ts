@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AppIcon } from '../../shared/icon/app-icon';
@@ -52,6 +52,7 @@ const STAT_FILTERS: readonly StatFilter[] = [
 })
 export class PokedexFilters {
   protected readonly store = inject(PokedexStore);
+  protected readonly presetName = signal('');
 
   protected readonly types = TYPES;
   protected readonly generations = GENERATIONS;
@@ -103,6 +104,23 @@ export class PokedexFilters {
       bound === 'min' ? value : current.min,
       bound === 'max' ? value : current.max,
     );
+  }
+
+  protected savePreset(): void {
+    this.store.savePreset(this.presetName());
+    this.presetName.set('');
+  }
+
+  protected applyPreset(raw: string): void {
+    if (raw) {
+      this.store.applyPreset(raw);
+    }
+  }
+
+  protected deletePreset(raw: string): void {
+    if (raw) {
+      this.store.deletePreset(raw);
+    }
   }
 
   protected onSortChange(raw: string): void {

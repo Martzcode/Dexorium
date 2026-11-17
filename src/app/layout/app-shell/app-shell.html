@@ -119,4 +119,47 @@
   </div>
 </div>
 
+@if (shortcutsOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 backdrop-blur-sm"
+    (click)="shortcutsOpen.set(false)"
+  >
+    <div
+      class="w-full max-w-md rounded-xl border border-line bg-panel p-5 shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="m-0 text-base font-semibold text-ink">Keyboard shortcuts</h2>
+        <button
+          class="grid size-7 place-items-center rounded-md text-ink-muted hover:bg-panel-muted hover:text-ink"
+          type="button"
+          (click)="shortcutsOpen.set(false)"
+        >
+          <app-icon name="x" [size]="16" />
+        </button>
+      </div>
+      <ul class="m-0 space-y-2 p-0 text-sm text-ink-soft">
+        <li class="flex items-center justify-between">
+          <span>Command palette</span
+          ><kbd class="rounded border border-line bg-panel-muted px-2 py-0.5 font-mono text-xs"
+            >Ctrl/⌘ K</kbd
+          >
+        </li>
+        <li class="flex items-center justify-between">
+          <span>Show this help</span
+          ><kbd class="rounded border border-line bg-panel-muted px-2 py-0.5 font-mono text-xs"
+            >?</kbd
+          >
+        </li>
+        <li class="flex items-center justify-between">
+          <span>Close</span
+          ><kbd class="rounded border border-line bg-panel-muted px-2 py-0.5 font-mono text-xs"
+            >Esc</kbd
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+}
+
 <app-command-palette />

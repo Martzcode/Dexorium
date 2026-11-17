@@ -82,6 +82,9 @@
       "sortAttackDesc": "Attack ↓",
       "active": "{{ count }} active",
       "clear": "Clear filters",
+      "presets": "Saved filters",
+      "presetName": "Preset name",
+      "savePreset": "Save preset",
       "favoritesOnly": "Favourites only",
       "types": "Types",
       "typeMode": {
@@ -106,6 +109,7 @@
       "favoritesTitle": "No favourites yet",
       "favoritesDescription": "Star Pokémon to find them here."
     },
+    "export": "Export CSV",
     "error": {
       "title": "The Pokédex could not be loaded",
       "description": "The local reference database is unavailable.",

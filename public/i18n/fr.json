@@ -82,6 +82,9 @@
       "sortAttackDesc": "Attaque ↓",
       "active": "{{ count }} actif(s)",
       "clear": "Effacer les filtres",
+      "presets": "Filtres sauvegardés",
+      "presetName": "Nom du filtre",
+      "savePreset": "Sauvegarder",
       "favoritesOnly": "Favoris uniquement",
       "types": "Types",
       "typeMode": {
@@ -104,8 +107,9 @@
       "title": "Aucun résultat",
       "description": "Essayez un autre nom ou un numéro national.",
       "favoritesTitle": "Aucun favori",
-      "favoritesDescription": "Ajoutez des Pokémon avec l’étoile pour les retrouver ici."
+      "favoritesDescription": "Ajoutez des Pokémon avec l'étoile pour les retrouver ici."
     },
+    "export": "Exporter en CSV",
     "error": {
       "title": "Le Pokédex n’a pas pu être chargé",
       "description": "La base de référence locale est indisponible.",

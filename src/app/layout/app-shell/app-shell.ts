@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -47,6 +47,7 @@ export class AppShell {
 
   protected readonly year = new Date().getFullYear();
   protected readonly mobileNavOpen = signal(false);
+  protected readonly shortcutsOpen = signal(false);
 
   constructor() {
     void this.collection.load();
@@ -68,6 +69,31 @@ export class AppShell {
 
   protected closeMobileNav(): void {
     this.mobileNavOpen.set(false);
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  protected onKeydown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement | null;
+    const typing =
+      !!target &&
+      (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+
+    if (event.key === 'Escape') {
+      if (this.shortcutsOpen()) {
+        this.shortcutsOpen.set(false);
+        event.preventDefault();
+      }
+      return;
+    }
+
+    if (typing) {
+      return;
+    }
+
+    if (event.key === '?') {
+      this.shortcutsOpen.update((value) => !value);
+      event.preventDefault();
+    }
   }
 
   protected navClass(item: NavItem, active: boolean): string {

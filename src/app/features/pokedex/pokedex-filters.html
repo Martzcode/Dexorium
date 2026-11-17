@@ -1,4 +1,31 @@
 <div class="rounded-xl border border-line bg-panel/70 p-4">
+  <div class="mb-3 flex flex-wrap items-center gap-2">
+    <select
+      class="min-w-[160px] rounded-lg border border-line bg-panel px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
+      [value]="''"
+      (change)="applyPreset($any($event.target).value); $any($event.target).value = ''"
+    >
+      <option value="">{{ 'pokedex.filters.presets' | transloco }}</option>
+      @for (preset of store.presets(); track preset.name) {
+        <option [value]="preset.name">{{ preset.name }}</option>
+      }
+    </select>
+    <input
+      class="min-w-[120px] flex-1 rounded-lg border border-line bg-panel px-2.5 py-2 text-sm text-ink outline-none focus:border-accent"
+      type="text"
+      [value]="presetName()"
+      [placeholder]="'pokedex.filters.presetName' | transloco"
+      (input)="presetName.set($any($event.target).value)"
+    />
+    <button
+      class="rounded-lg border border-line bg-panel px-3 py-2 text-sm font-semibold text-ink transition-colors hover:border-line-strong disabled:opacity-40"
+      type="button"
+      [disabled]="presetName().trim().length === 0"
+      (click)="savePreset()"
+    >
+      {{ 'pokedex.filters.savePreset' | transloco }}
+    </button>
+  </div>
   <div class="flex flex-wrap items-end justify-between gap-3">
     <label class="flex flex-col gap-1 text-[0.72rem] text-ink-muted">
       <span>{{ 'pokedex.filters.sort' | transloco }}</span>

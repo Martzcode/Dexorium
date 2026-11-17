@@ -15,6 +15,18 @@ import { PokedexService } from './pokedex.service';
 
 export type PokedexView = 'grid' | 'list' | 'table';
 
+export interface FilterPreset {
+  readonly name: string;
+  readonly search: string;
+  readonly types: readonly string[];
+  readonly typeMatch: TypeMatchMode;
+  readonly generations: readonly number[];
+  readonly statRanges: readonly StatRange[];
+  readonly flags: SpeciesFlags;
+  readonly favoritesOnly: boolean;
+  readonly sort: readonly SortCriterion[];
+}
+
 const PAGE_SIZE = 120;
 const SEARCH_DEBOUNCE_MS = 120;
 
@@ -38,6 +50,9 @@ export class PokedexStore {
   readonly favoritesOnly = signal(false);
   readonly sort = signal<readonly SortCriterion[]>([]);
   readonly view = signal<PokedexView>('grid');
+
+  readonly presets = signal<readonly FilterPreset[]>(this.loadPresets());
+  private readonly presetsKey = 'dexorium.pokedex.presets';
 
   readonly items = signal<readonly SpeciesSummary[]>([]);
   readonly total = signal(0);
@@ -174,6 +189,76 @@ export class PokedexStore {
     this.flags.set(EMPTY_FLAGS);
     this.favoritesOnly.set(false);
     this.scheduleReload(0);
+  }
+
+  /** Persists the current filter set under a name. */
+  savePreset(name: string): void {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    const preset: FilterPreset = {
+      name: trimmed,
+      search: this.search(),
+      types: this.types(),
+      typeMatch: this.typeMatch(),
+      generations: this.generations(),
+      statRanges: this.statRanges(),
+      flags: this.flags(),
+      favoritesOnly: this.favoritesOnly(),
+      sort: this.sort(),
+    };
+
+    this.presets.update((list) => [...list.filter((entry) => entry.name !== trimmed), preset]);
+    this.persistPresets();
+  }
+
+  /** Restores a previously saved filter set. */
+  applyPreset(name: string): void {
+    const preset = this.presets().find((entry) => entry.name === name);
+    if (!preset) {
+      return;
+    }
+
+    this.search.set(preset.search);
+    this.types.set(preset.types);
+    this.typeMatch.set(preset.typeMatch);
+    this.generations.set(preset.generations);
+    this.statRanges.set(preset.statRanges);
+    this.flags.set(preset.flags);
+    this.favoritesOnly.set(preset.favoritesOnly);
+    this.sort.set(preset.sort);
+    this.scheduleReload(0);
+  }
+
+  /** Removes a saved filter set. */
+  deletePreset(name: string): void {
+    this.presets.update((list) => list.filter((entry) => entry.name !== name));
+    this.persistPresets();
+  }
+
+  private loadPresets(): readonly FilterPreset[] {
+    if (typeof localStorage === 'undefined') {
+      return [];
+    }
+    try {
+      const raw = localStorage.getItem(this.presetsKey);
+      return raw ? (JSON.parse(raw) as readonly FilterPreset[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private persistPresets(): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      localStorage.setItem(this.presetsKey, JSON.stringify(this.presets()));
+    } catch {
+      // Ignore storage failures (private mode, quota, ...).
+    }
   }
 
   retry(): void {
