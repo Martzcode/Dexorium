@@ -504,7 +504,8 @@ fn load_learnset_entries(
                     m.pp,
                     fm.method_slug,
                     fm.level,
-                    fm.machine_slug
+                    fm.machine_slug,
+                    COALESCE(ts.value, ts_en.value) AS effect_short
                FROM form_move fm
                JOIN move_ m ON m.id = fm.move_id
                JOIN poke_type pt ON pt.id = m.type_id
@@ -518,6 +519,16 @@ fn load_learnset_entries(
                      AND t_en.entity_id = m.id
                      AND t_en.lang = 'en'
                      AND t_en.field = 'name'
+               LEFT JOIN translation ts
+                      ON ts.entity_type = 'move'
+                     AND ts.entity_id = m.id
+                     AND ts.lang = ?3
+                     AND ts.field = 'effect_short'
+               LEFT JOIN translation ts_en
+                      ON ts_en.entity_type = 'move'
+                     AND ts_en.entity_id = m.id
+                     AND ts_en.lang = 'en'
+                     AND ts_en.field = 'effect_short'
               WHERE fm.form_id = ?1
                 AND fm.version_group_id = ?2
               ORDER BY CASE fm.method_slug
@@ -546,6 +557,7 @@ fn load_learnset_entries(
                 method: row.get(8)?,
                 level: get_u16(row, 9)?,
                 machine: row.get::<_, Option<String>>(10)?,
+                effect_short: row.get::<_, Option<String>>(11)?,
             })
         })
         .map_err(db_error)?

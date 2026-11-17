@@ -152,6 +152,7 @@ pub struct LearnsetEntry {
     pub method: String,
     pub level: u16,
     pub machine: Option<String>,
+    pub effect_short: Option<String>,
 }
 
 /// Version group available for a learnset.

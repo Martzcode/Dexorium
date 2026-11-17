@@ -100,6 +100,7 @@ export interface LearnsetEntry {
   readonly method: string;
   readonly level: number;
   readonly machine: string | null;
+  readonly effectShort: string | null;
 }
 
 export interface VersionGroupRef {

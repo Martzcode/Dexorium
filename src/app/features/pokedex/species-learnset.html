@@ -164,6 +164,7 @@
                       <a
                         class="font-semibold text-ink no-underline hover:text-accent"
                         [routerLink]="['/moves', entry.moveId]"
+                        [title]="entry.effectShort ?? ''"
                       >
                         {{ entry.name }}
                       </a>
