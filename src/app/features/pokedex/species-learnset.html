@@ -114,6 +114,12 @@
               <thead>
                 <tr class="border-b border-line bg-panel-muted/40">
                   <th
+                    class="px-3 py-2 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
+                    scope="col"
+                  >
+                    {{ 'pokedex.learnset.columnMethod' | transloco }}
+                  </th>
+                  <th
                     class="px-3 py-2 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
                     scope="col"
                   >
@@ -143,12 +149,6 @@
                   >
                     {{ 'pokedex.learnset.columnAccuracy' | transloco }}
                   </th>
-                  <th
-                    class="px-3 py-2 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-ink-muted"
-                    scope="col"
-                  >
-                    {{ 'pokedex.learnset.columnMethod' | transloco }}
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -157,6 +157,9 @@
                   track entry.moveId + '-' + entry.method + '-' + entry.level
                 ) {
                   <tr class="border-b border-line/70 last:border-b-0 hover:bg-panel-muted/30">
+                    <td class="px-3 py-1.5 text-right font-mono text-[0.68rem] text-ink-muted">
+                      {{ methodLabel(entry) }}
+                    </td>
                     <td class="px-3 py-1.5">
                       <a
                         class="font-semibold text-ink no-underline hover:text-accent"
@@ -180,9 +183,6 @@
                       class="px-3 py-1.5 text-right font-mono tabular-nums text-ink-soft max-sm:hidden"
                     >
                       {{ entry.accuracy === null ? '—' : entry.accuracy + ' %' }}
-                    </td>
-                    <td class="px-3 py-1.5 text-right font-mono text-[0.68rem] text-ink-muted">
-                      {{ methodLabel(entry) }}
                     </td>
                   </tr>
                 }
