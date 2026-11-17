@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { LanguageService } from '../../core/i18n/language.service';
 import { AppIcon } from '../../shared/icon/app-icon';
 import { typeBadgeClass } from './pokedex-format';
 import type { LearnsetEntry, LearnsetPage } from '../catalog/catalog.models';
@@ -20,6 +21,7 @@ const METHOD_ORDER = ['level-up', 'machine', 'egg', 'tutor'] as const;
 export class SpeciesLearnset {
   private readonly catalog = inject(CatalogService);
   private readonly transloco = inject(TranslocoService);
+  private readonly languageService = inject(LanguageService);
 
   readonly formId = input.required<number>();
 
@@ -32,9 +34,7 @@ export class SpeciesLearnset {
 
   private requestId = 0;
 
-  private readonly language = toSignal(this.transloco.langChanges$, {
-    initialValue: this.transloco.getActiveLang(),
-  });
+  protected readonly language = this.languageService.current;
 
   protected readonly methods = computed<readonly string[]>(() => {
     const present = new Set((this.page()?.entries ?? []).map((entry) => entry.method));
