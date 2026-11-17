@@ -32,6 +32,23 @@ const LANGUAGES = [
   { column: 'it-it', copy: 'it' },
 ];
 
+/** Sort and voice titles for the Store (name plus a keyword, per the Partner Center SEO guidance). */
+const SORT_TITLES = {
+  en: 'Dexorium Offline Pokédex',
+  fr: 'Dexorium Pokédex hors ligne',
+  de: 'Dexorium Offline-Pokédex',
+  es: 'Dexorium Pokédex sin conexión',
+  it: 'Dexorium Pokédex offline',
+};
+
+const VOICE_TITLES = {
+  en: 'Dexorium Pokémon encyclopedia',
+  fr: 'Dexorium encyclopédie Pokémon',
+  de: 'Dexorium Pokémon Lexikon',
+  es: 'Dexorium enciclopedia Pokémon',
+  it: 'Dexorium enciclopedia Pokémon',
+};
+
 const SCREENSHOT_FILES = [
   'screenshot-1-pokedex-dark-1920x1080.png',
   'screenshot-2-species-dark-1920x1080.png',
@@ -43,14 +60,14 @@ const SCREENSHOT_FILES = [
 ];
 
 const IMAGES = {
-  StoreLogo300x300: 'images/logos/StoreLogo-300x300.png',
-  StoreLogo720x1080: 'images/logos/StoreLogo-720x1080.png',
-  StoreLogo1080x1080: 'images/logos/StoreLogo-1080x1080.png',
-  PromoImage1920x1080: 'images/promo/promo-1920x1080.png',
-  PromoImage2400x1200: 'images/promo/promo-2400x1200.png',
-  OptionalPromo358x358: 'images/promo/promo-358x358.png',
-  OptionalPromo1000x800: 'images/promo/promo-1000x800.png',
-  OptionalPromo414x180: 'images/promo/promo-414x180.png',
+  StoreLogo300x300: 'store-listing/images/logos/StoreLogo-300x300.png',
+  StoreLogo720x1080: 'store-listing/images/logos/StoreLogo-720x1080.png',
+  StoreLogo1080x1080: 'store-listing/images/logos/StoreLogo-1080x1080.png',
+  PromoImage1920x1080: 'store-listing/images/promo/promo-1920x1080.png',
+  PromoImage2400x1200: 'store-listing/images/promo/promo-2400x1200.png',
+  OptionalPromo358x358: 'store-listing/images/promo/promo-358x358.png',
+  OptionalPromo1000x800: 'store-listing/images/promo/promo-1000x800.png',
+  OptionalPromo414x180: 'store-listing/images/promo/promo-414x180.png',
 };
 
 const COPY = {
@@ -482,11 +499,13 @@ function valuesFor(copy, code) {
     Title: 'Dexorium',
     DevStudio: 'Martzcode',
     OverrideLogosForWin10: 'False',
+    SortTitle: SORT_TITLES[code],
+    VoiceTitle: VOICE_TITLES[code],
     ...IMAGES,
   };
 
   SCREENSHOT_FILES.forEach((file, index) => {
-    values[`DesktopScreenshot${index + 1}`] = `images/screenshots/${file}`;
+    values[`DesktopScreenshot${index + 1}`] = `store-listing/images/screenshots/${file}`;
     values[`DesktopScreenshotCaption${index + 1}`] = copy.captions[index];
   });
 
@@ -582,8 +601,8 @@ function parseCsv(text) {
 }
 
 const escape = (value) => {
-  const normalized = value.replace(/\r?\n/g, '\r\n');
-  return /[",\r\n]/.test(normalized) ? `"${normalized.replaceAll('"', '""')}"` : normalized;
+  const normalized = value.replace(/\r?\n/g, '\n');
+  return /[",\n]/.test(normalized) ? `"${normalized.replaceAll('"', '""')}"` : normalized;
 };
 
 assertSameShape();
@@ -630,7 +649,7 @@ if (missing.length) {
   throw new Error(`Fields missing from the template: ${missing.join(', ')}`);
 }
 
-const csv = output.map((cells) => cells.map(escape).join(',')).join('\r\n');
+const csv = output.map((cells) => cells.map(escape).join(',')).join('\n');
 
 writeFileSync(join(DIR, template), '\uFEFF' + csv, 'utf8');
 
