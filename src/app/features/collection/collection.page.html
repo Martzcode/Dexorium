@@ -1,0 +1,17 @@
+<div class="mx-auto max-w-4xl px-4 py-6">
+  <h1 class="mb-4 text-2xl font-bold text-ink">{{ 'collection.title' | transloco }}</h1>
+  <div class="grid grid-cols-3 gap-3">
+    <div class="rounded-xl border border-line bg-panel p-4 text-center">
+      <div class="text-3xl font-bold text-ink">{{ captured() }}</div>
+      <div class="text-xs text-ink-soft">{{ 'collection.captured' | transloco }}</div>
+    </div>
+    <div class="rounded-xl border border-line bg-panel p-4 text-center">
+      <div class="text-3xl font-bold text-ink">{{ seen() }}</div>
+      <div class="text-xs text-ink-soft">{{ 'collection.seen' | transloco }}</div>
+    </div>
+    <div class="rounded-xl border border-line bg-panel p-4 text-center">
+      <div class="text-3xl font-bold text-ink">{{ shiny() }}</div>
+      <div class="text-xs text-ink-soft">{{ 'collection.shiny' | transloco }}</div>
+    </div>
+  </div>
+</div>

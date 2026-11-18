@@ -38,10 +38,10 @@ export class AppShell {
     { labelKey: 'nav.items', icon: 'package', route: '/items', ready: true },
     { labelKey: 'nav.locations', icon: 'layout-grid', route: '/locations', ready: true },
     { labelKey: 'nav.natures', icon: 'sparkles', route: '/natures', ready: true },
-    { labelKey: 'nav.teams', icon: 'users' },
+    { labelKey: 'nav.teams', icon: 'users', route: '/teams', ready: true },
     { labelKey: 'nav.tools', icon: 'wrench', route: '/tools/types', ready: true },
     { labelKey: 'nav.competitive', icon: 'swords', route: '/tools/competitive', ready: true },
-    { labelKey: 'nav.collection', icon: 'library-big' },
+    { labelKey: 'nav.collection', icon: 'library-big', route: '/collection', ready: true },
     { labelKey: 'nav.settings', icon: 'settings', route: '/settings', ready: true },
   ];
 

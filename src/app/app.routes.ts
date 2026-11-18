@@ -83,6 +83,16 @@ export const routes: Routes = [
       import('./features/tools/type-matrix.page').then((module) => module.TypeMatrixPage),
   },
   {
+    path: 'teams',
+    title: 'Équipes — Dexorium',
+    loadComponent: () => import('./features/teams/teams.page').then((module) => module.TeamsPage),
+  },
+  {
+    path: 'collection',
+    title: 'Collection — Dexorium',
+    loadComponent: () => import('./features/collection/collection.page').then((module) => module.CollectionPage),
+  },
+  {
     path: 'settings',
     title: 'Réglages — Dexorium',
     loadComponent: () =>
