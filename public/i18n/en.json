@@ -110,6 +110,8 @@
       "abilityPlaceholder": "ability slug",
       "moveLearned": "Move learned",
       "moveLearnedPlaceholder": "move slug",
+      "queryLanguage": "Expert query",
+      "apply": "Apply",
       "stats": "Stat ranges",
       "resetStats": "Reset stats"
     },
@@ -128,6 +130,7 @@
     },
     "detail": {
       "back": "Back to the Pokédex",
+      "rawData": "Raw data",
       "loading": "Loading species…",
       "notFound": {
         "title": "Species not found",

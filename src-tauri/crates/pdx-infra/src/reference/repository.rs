@@ -1577,6 +1577,54 @@ pub(crate) fn fts_query(query: &str) -> Option<String> {
     }
 }
 
+impl SqliteSpeciesRepository {
+    /// Runs a read-only `SELECT` statement against the reference database.
+    pub fn query_readonly(&self, sql: &str) -> Result<(Vec<String>, Vec<Vec<String>>), String> {
+        let trimmed = sql.trim();
+        if trimmed.is_empty() {
+            return Ok((Vec::new(), Vec::new()));
+        }
+        let lower = trimmed.to_lowercase();
+        if !lower.starts_with("select")
+            && !lower.starts_with("with")
+            && !lower.starts_with("pragma")
+        {
+            return Err("only SELECT / WITH / PRAGMA statements are allowed".to_owned());
+        }
+
+        let cleaned = trimmed.trim_end_matches(';');
+        if cleaned.contains(';') {
+            return Err("multiple statements are not allowed".to_owned());
+        }
+
+        let mut statement = self.connection.prepare(cleaned).map_err(db_error)?;
+        let column_count = statement.column_count();
+        let columns: Vec<String> = statement.column_names().iter().map(|name| (*name).to_owned()).collect();
+
+        let mut rows = statement.query([]).map_err(db_error)?;
+        let mut result_rows = Vec::new();
+        while let Some(row) = rows.next().map_err(db_error)? {
+            let mut values = Vec::with_capacity(column_count);
+            for index in 0..column_count {
+                let value: rusqlite::types::Value = row.get(index).map_err(db_error)?;
+                values.push(match value {
+                    rusqlite::types::Value::Null => String::new(),
+                    rusqlite::types::Value::Integer(number) => number.to_string(),
+                    rusqlite::types::Value::Real(number) => number.to_string(),
+                    rusqlite::types::Value::Text(text) => text,
+                    rusqlite::types::Value::Blob(bytes) => format!("<blob {} bytes>", bytes.len()),
+                });
+            }
+            result_rows.push(values);
+            if result_rows.len() >= 500 {
+                break;
+            }
+        }
+
+        Ok((columns, result_rows))
+    }
+}
+
 /// Folds accented characters and lowercases the result.
 ///
 /// FTS5 already removes diacritics, but the same normalization is used for

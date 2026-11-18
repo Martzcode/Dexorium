@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -51,7 +52,7 @@ const GENDER_KEYS: Readonly<Record<string, string>> = {
 
 @Component({
   selector: 'app-species-detail',
-  imports: [RouterLink, TranslocoPipe, AppIcon, PokemonSprite, SpeciesLearnset],
+  imports: [JsonPipe, RouterLink, TranslocoPipe, AppIcon, PokemonSprite, SpeciesLearnset],
   templateUrl: './species-detail.page.html',
 })
 export class SpeciesDetailPage {

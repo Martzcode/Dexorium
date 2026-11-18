@@ -58,6 +58,45 @@ export class SettingsPage {
     this.sprites.clear();
   }
 
+  protected exportData(): void {
+    const dump: Record<string, string | null> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        dump[key] = localStorage.getItem(key);
+      }
+    }
+    const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'dexorium-backup.json';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  protected async importData(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+    const text = await file.text();
+    try {
+      const dump = JSON.parse(text) as Record<string, string | null>;
+      for (const [key, value] of Object.entries(dump)) {
+        if (value === null) {
+          localStorage.removeItem(key);
+        } else {
+          localStorage.setItem(key, value);
+        }
+      }
+      window.location.reload();
+    } catch {
+      /* ignore */
+    }
+  }
+
   protected openDeveloperProfile(event: Event): void {
     event.preventDefault();
     void this.settings.openDeveloperProfile();

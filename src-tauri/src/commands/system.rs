@@ -1,6 +1,15 @@
-use std::process::Command;
+use crate::state::AppState;
+use tauri::State;
 
-/// URLs the interface is allowed to hand over to the system browser.
+/// Runs a read-only SQL query against the reference database.
+#[tauri::command]
+pub fn run_sql_query(
+    state: State<'_, AppState>,
+    sql: String,
+) -> Result<(Vec<String>, Vec<Vec<String>>), String> {
+    let repository = state.species()?;
+    repository.query_readonly(&sql)
+}
 const ALLOWED_URLS: [&str; 1] = ["https://github.com/Martzcode"];
 
 /// Opens an allow-listed URL in the user's default browser.

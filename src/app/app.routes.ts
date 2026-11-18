@@ -77,6 +77,12 @@ export const routes: Routes = [
       import('./features/tools/competitive.page').then((module) => module.CompetitivePage),
   },
   {
+    path: 'tools/sql',
+    title: 'Console SQL — Dexorium',
+    loadComponent: () =>
+      import('./features/tools/sql-console.page').then((module) => module.SqlConsolePage),
+  },
+  {
     path: 'tools/types',
     title: 'Table des types — Dexorium',
     loadComponent: () =>

@@ -122,6 +122,60 @@ export class PokedexFilters {
     this.store.toggleFlag(flag);
   }
 
+  protected readonly queryLanguage = signal('');
+
+  protected applyQueryLanguage(): void {
+    const text = this.queryLanguage();
+    const tokens = text.split(/\s+/).filter(Boolean);
+    this.store.clearFilters();
+    let searchTerms: string[] = [];
+    for (const token of tokens) {
+      const match = token.match(/^(\w+):(.+)$/);
+      if (match) {
+        const [, key, value] = match;
+        switch (key) {
+          case 'type':
+            this.store.toggleType(value);
+            break;
+          case 'gen':
+            for (const part of value.split(',')) {
+              if (part.includes('-')) {
+                const [start, end] = part.split('-').map(Number);
+                for (let g = start; g <= end; g++) this.store.toggleGeneration(g);
+              } else {
+                this.store.toggleGeneration(Number(part));
+              }
+            }
+            break;
+          case 'egg':
+            this.store.toggleEggGroup(value);
+            break;
+          case 'ability':
+            this.store.setAbilities([value]);
+            break;
+          case 'move':
+            this.store.setMoveLearned(value);
+            break;
+          default:
+            searchTerms.push(token);
+        }
+      } else if (token.startsWith('-')) {
+        const flag = token.slice(1);
+        if (flag === 'legendary' || flag === 'mythical' || flag === 'baby' || flag === 'ultraBeast') {
+          this.store.toggleFlag(flag as keyof SpeciesFlags);
+        }
+      } else if (/^(hp|atk|def|spa|spd|spe|bst)[><=]+\d+$/i.test(token)) {
+        // ignore advanced stat ranges for now
+        searchTerms.push(token);
+      } else {
+        searchTerms.push(token);
+      }
+    }
+    if (searchTerms.length > 0) {
+      this.store.setSearch(searchTerms.join(' '));
+    }
+  }
+
   protected onTypeMatchChange(value: string): void {
     this.store.setTypeMatch(value as 'any' | 'exact' | 'mono');
   }

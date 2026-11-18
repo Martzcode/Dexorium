@@ -110,6 +110,8 @@
       "abilityPlaceholder": "slug du talent",
       "moveLearned": "Attaque apprise",
       "moveLearnedPlaceholder": "slug de l'attaque",
+      "queryLanguage": "Requête experte",
+      "apply": "Appliquer",
       "stats": "Plages de statistiques",
       "resetStats": "Réinitialiser les stats"
     },
@@ -128,6 +130,7 @@
     },
     "detail": {
       "back": "Retour au Pokédex",
+      "rawData": "Données brutes",
       "loading": "Chargement de la fiche…",
       "notFound": {
         "title": "Espèce introuvable",

@@ -32,6 +32,7 @@ pub fn run() {
             commands::species::search_species,
             commands::species::get_species,
             commands::system::open_external,
+            commands::system::run_sql_query,
             commands::tools::get_type_matrix,
         ])
         .setup(|app| {
