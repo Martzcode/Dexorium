@@ -192,7 +192,7 @@ impl ItemRepository for SqliteSpeciesRepository {
                FROM item i
                LEFT JOIN item_category ic ON ic.id = i.category_id
                LEFT JOIN translation t ON t.entity_type='item' AND t.entity_id=i.id AND t.lang=?1 AND t.field='name'
-               LEFT JOIN translation t_en ON t_en.entity_type='item' AND t_en.entity_id=i.id AND t_en.lang='en' AND t.field='name'
+               LEFT JOIN translation t_en ON t_en.entity_type='item' AND t_en.entity_id=i.id AND t_en.lang='en' AND t_en.field='name'
               WHERE COALESCE(t.value, t_en.value, i.slug) LIKE ?2
               ORDER BY name
               LIMIT ?3",

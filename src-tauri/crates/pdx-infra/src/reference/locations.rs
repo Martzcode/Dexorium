@@ -16,7 +16,7 @@ impl LocationRepository for SqliteSpeciesRepository {
             "SELECT l.id, l.slug, COALESCE(t.value, t_en.value, l.slug) AS name, l.region_slug
                FROM location l
                LEFT JOIN translation t ON t.entity_type='location' AND t.entity_id=l.id AND t.lang=?1 AND t.field='name'
-               LEFT JOIN translation t_en ON t_en.entity_type='location' AND t_en.entity_id=l.id AND t_en.lang='en' AND t.field='name'
+               LEFT JOIN translation t_en ON t_en.entity_type='location' AND t_en.entity_id=l.id AND t_en.lang='en' AND t_en.field='name'
                WHERE 1 = 1",
         );
         let mut params: Vec<rusqlite::types::Value> = vec![rusqlite::types::Value::Text(lang.to_owned())];
@@ -65,7 +65,7 @@ impl LocationRepository for SqliteSpeciesRepository {
             .query_row(
                 "SELECT COALESCE(t.value, t_en.value, ?2) FROM location l
                   LEFT JOIN translation t ON t.entity_type='location' AND t.entity_id=l.id AND t.lang=?1 AND t.field='name'
-                  LEFT JOIN translation t_en ON t_en.entity_type='location' AND t_en.entity_id=l.id AND t_en.lang='en' AND t.field='name'
+                  LEFT JOIN translation t_en ON t_en.entity_type='location' AND t_en.entity_id=l.id AND t_en.lang='en' AND t_en.field='name'
                  WHERE l.id=?3",
                 params![lang, &slug, id],
                 |row| row.get(0),
@@ -106,14 +106,14 @@ impl LocationRepository for SqliteSpeciesRepository {
                        JOIN location l ON l.id = la.location_id
                        JOIN game_version gv ON gv.id = e.version_id
                        LEFT JOIN translation ts ON ts.entity_type='species' AND ts.entity_id=s.id AND ts.lang=?1 AND ts.field='name'
-                       LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts.field='name'
+                       LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts_en.field='name'
                        LEFT JOIN translation tv ON tv.entity_type='version' AND tv.entity_id=gv.id AND tv.lang=?1 AND tv.field='name'
-                       LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv.field='name'
+                       LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv_en.field='name'
                        LEFT JOIN translation tl ON tl.entity_type='location' AND tl.entity_id=l.id AND tl.lang=?1 AND tl.field='name'
-                       LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl.field='name'
+                       LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl_en.field='name'
                        LEFT JOIN encounter_method em ON em.slug = e.method_slug
                        LEFT JOIN translation tem ON tem.entity_type='encounter_method' AND tem.entity_id=em.id AND tem.lang=?1 AND tem.field='name'
-                       LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem.field='name'
+                       LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem_en.field='name'
                       WHERE e.location_area_id = ?2",
                 )
                 .map_err(super::repository::db_error)?;
@@ -174,14 +174,14 @@ impl LocationRepository for SqliteSpeciesRepository {
                JOIN location l ON l.id = la.location_id
                JOIN game_version gv ON gv.id = e.version_id
                LEFT JOIN translation ts ON ts.entity_type='species' AND ts.entity_id=s.id AND ts.lang=?1 AND ts.field='name'
-               LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts.field='name'
+               LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts_en.field='name'
                LEFT JOIN translation tv ON tv.entity_type='version' AND tv.entity_id=gv.id AND tv.lang=?1 AND tv.field='name'
-               LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv.field='name'
+               LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv_en.field='name'
                LEFT JOIN translation tl ON tl.entity_type='location' AND tl.entity_id=l.id AND tl.lang=?1 AND tl.field='name'
-               LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl.field='name'
+               LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl_en.field='name'
                LEFT JOIN encounter_method em ON em.slug = e.method_slug
                LEFT JOIN translation tem ON tem.entity_type='encounter_method' AND tem.entity_id=em.id AND tem.lang=?1 AND tem.field='name'
-               LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem.field='name'
+               LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem_en.field='name'
               WHERE e.species_id = ?2
               ORDER BY gv.slug, la.slug",
         ).map_err(super::repository::db_error)?;
@@ -218,7 +218,7 @@ impl LocationRepository for SqliteSpeciesRepository {
             "SELECT n.id, n.slug, COALESCE(t.value, t_en.value, n.slug) AS name, n.increased_stat_slug, n.decreased_stat_slug
                FROM nature n
                LEFT JOIN translation t ON t.entity_type='nature' AND t.entity_id=n.id AND t.lang=?1 AND t.field='name'
-               LEFT JOIN translation t_en ON t_en.entity_type='nature' AND t_en.entity_id=n.id AND t_en.lang='en' AND t.field='name'
+               LEFT JOIN translation t_en ON t_en.entity_type='nature' AND t_en.entity_id=n.id AND t_en.lang='en' AND t_en.field='name'
               ORDER BY name",
         ).map_err(super::repository::db_error)?;
         let rows = stmt
