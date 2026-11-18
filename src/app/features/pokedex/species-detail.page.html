@@ -523,47 +523,18 @@
               </section>
             }
 
-            @if (flavorGroups().length > 0) {
+            @if (latestFlavor(); as flavor) {
               <section class="rounded-xl border border-line bg-panel p-5">
                 <h2 class="m-0 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-muted">
                   {{ 'pokedex.detail.flavor.title' | transloco }}
                 </h2>
-
-                <div class="mt-3 flex flex-col gap-2">
-                  @for (group of flavorGroups(); track group.generationId; let index = $index) {
-                    <details
-                      class="rounded-lg border border-line bg-panel-muted/30 p-3"
-                      [open]="index === 0"
-                    >
-                      <summary class="cursor-pointer text-sm font-semibold text-ink">
-                        {{
-                          'pokedex.detail.flavor.generation'
-                            | transloco: { number: group.generationId }
-                        }}
-                        <span class="ml-1 font-mono text-[0.66rem] text-ink-muted">
-                          ({{ group.entries.length }})
-                        </span>
-                      </summary>
-                      <ul class="m-0 mt-3 flex list-none flex-col gap-3 p-0">
-                        @for (entry of group.entries; track entry.versionId) {
-                          <li>
-                            <p
-                              class="m-0 font-mono text-[0.64rem] tracking-[0.04em] text-ink-muted"
-                            >
-                              {{ slugLabel('versions', entry.versionSlug) }}
-                              @if (entry.lang === 'en') {
-                                <span class="ml-1 uppercase">EN</span>
-                              }
-                            </p>
-                            <p class="m-0 mt-1 text-sm leading-relaxed text-ink-soft">
-                              {{ entry.text }}
-                            </p>
-                          </li>
-                        }
-                      </ul>
-                    </details>
+                <p class="m-0 mt-3 text-sm leading-relaxed text-ink-soft">{{ flavor.text }}</p>
+                <p class="m-0 mt-2 font-mono text-[0.62rem] text-ink-muted">
+                  {{ slugLabel('versions', flavor.versionSlug) }}
+                  @if (flavor.lang === 'en') {
+                    <span class="ml-1 uppercase">EN</span>
                   }
-                </div>
+                </p>
               </section>
             }
 

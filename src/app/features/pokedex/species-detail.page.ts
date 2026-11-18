@@ -33,11 +33,6 @@ interface EffectivenessGroup {
   readonly types: readonly TypeEffectiveness[];
 }
 
-interface FlavorGroup {
-  readonly generationId: number;
-  readonly entries: readonly FlavorTextEntry[];
-}
-
 const STAT_DEFINITIONS: readonly StatRow[] = [
   { key: 'hp', labelKey: 'pokedex.stats.hp', value: 0 },
   { key: 'attack', labelKey: 'pokedex.stats.attack', value: 0 },
@@ -159,19 +154,16 @@ protected readonly encounters = signal<readonly EncounterSummary[]>([]);
     ].filter((group) => group.types.length > 0);
   });
 
-  protected readonly flavorGroups = computed<readonly FlavorGroup[]>(() => {
+  protected readonly latestFlavor = computed<FlavorTextEntry | null>(() => {
     const entries = this.species()?.flavorTexts ?? [];
-    const groups = new Map<number, FlavorTextEntry[]>();
-
-    for (const entry of entries) {
-      const bucket = groups.get(entry.generationId) ?? [];
-      bucket.push(entry);
-      groups.set(entry.generationId, bucket);
+    if (entries.length === 0) {
+      return null;
     }
 
-    return [...groups.entries()]
-      .sort(([left], [right]) => right - left)
-      .map(([generationId, groupEntries]) => ({ generationId, entries: groupEntries }));
+    return [...entries].sort(
+      (left, right) =>
+        right.generationId - left.generationId || right.versionId - left.versionId,
+    )[0]!;
   });
 
   constructor() {
