@@ -216,3 +216,83 @@ export function defaultAbilityQuery(lang: string): AbilityListQuery {
     lang,
   };
 }
+export interface ItemSummary {
+  readonly id: number;
+  readonly slug: string;
+  readonly name: string;
+  readonly categorySlug: string | null;
+  readonly pocketSlug: string | null;
+  readonly cost: number | null;
+  readonly isBerry: boolean;
+  readonly flingPower: number | null;
+}
+
+export interface BerryDetail {
+  readonly firmnessSlug: string | null;
+  readonly growthTime: number | null;
+  readonly maxHarvest: number | null;
+  readonly naturalGiftPower: number | null;
+  readonly size: number | null;
+  readonly smoothness: number | null;
+  readonly soilDryness: number | null;
+  readonly naturalGiftTypeSlug: string | null;
+  readonly flavors: readonly (readonly [string, number])[];
+}
+
+export interface ItemDetail {
+  readonly id: number;
+  readonly slug: string;
+  readonly name: string;
+  readonly categorySlug: string | null;
+  readonly pocketSlug: string | null;
+  readonly cost: number | null;
+  readonly isBerry: boolean;
+  readonly flingPower: number | null;
+  readonly flingEffectSlug: string | null;
+  readonly flags: readonly string[];
+  readonly effect: string | null;
+  readonly shortEffect: string | null;
+  readonly description: string | null;
+  readonly berry: BerryDetail | null;
+}
+
+export interface LocationSummary {
+  readonly id: number;
+  readonly slug: string;
+  readonly name: string;
+  readonly regionSlug: string | null;
+}
+
+export interface LocationAreaSummary {
+  readonly id: number;
+  readonly slug: string;
+  readonly locationSlug: string;
+  readonly gameIndex: number;
+}
+
+export interface EncounterSummary {
+  readonly speciesId: number;
+  readonly speciesSlug: string;
+  readonly speciesName: string;
+  readonly versionSlug: string;
+  readonly locationAreaSlug: string;
+  readonly methodSlug: string;
+  readonly minLevel: number;
+  readonly maxLevel: number;
+  readonly chance: number;
+  readonly conditions: readonly string[];
+}
+
+export interface LocationDetail {
+  readonly location: LocationSummary;
+  readonly areas: readonly LocationAreaSummary[];
+  readonly encounters: readonly EncounterSummary[];
+}
+
+export interface NatureSummary {
+  readonly id: number;
+  readonly slug: string;
+  readonly name: string;
+  readonly increasedStatSlug: string | null;
+  readonly decreasedStatSlug: string | null;
+}

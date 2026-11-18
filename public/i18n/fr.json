@@ -10,6 +10,8 @@
     "moves": "Attaques",
     "abilities": "Talents",
     "items": "Objets",
+    "locations": "Lieux",
+    "natures": "Natures",
     "teams": "Équipes",
     "tools": "Outils",
     "collection": "Collection",
@@ -662,5 +664,36 @@
       "close": "fermer",
       "shortcut": "Ctrl K"
     }
+  },
+  "items": {
+    "title": "Objets",
+    "search": "Rechercher un objet…",
+    "berry": "Baie",
+    "growthTime": "Temps de croissance",
+    "maxHarvest": "Récolte max",
+    "naturalGiftPower": "Puissance don naturel",
+    "firmness": "Fermeté"
+  },
+  "locations": {
+    "title": "Lieux",
+    "search": "Rechercher un lieu…",
+    "areas": "Zones",
+    "encounters": "Rencontres",
+    "species": "Espèce",
+    "version": "Version",
+    "method": "Méthode",
+    "levels": "Niveaux",
+    "chance": "Taux"
+  },
+  "natures": {
+    "title": "Natures",
+    "name": "Nom",
+    "increased": "Augmentée",
+    "decreased": "Diminuée"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Erreur",
+    "notFound": "Introuvable"
   }
 }

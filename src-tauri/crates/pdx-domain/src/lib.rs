@@ -7,6 +7,8 @@ pub mod ability;
 pub mod dataset;
 pub mod detail;
 pub mod favorites;
+pub mod item;
+pub mod location;
 pub mod moves;
 pub mod search;
 pub mod species;
@@ -18,6 +20,10 @@ pub use detail::{
     AbilityRef, EvolutionStepView, FlavorTextEntry, FormSummary, PokemonDetail, TypeEffectiveness,
 };
 pub use favorites::{FavoriteCollection, FavoriteEntry, FavoriteKind, FavoriteStatus};
+pub use item::{BerryDetail, ItemDetail, ItemSummary};
+pub use location::{
+    EncounterSummary, LocationAreaSummary, LocationDetail, LocationSummary, NatureSummary,
+};
 pub use moves::{
     LearnsetEntry, LearnsetPage, MoveDetail, MoveLearner, MoveListQuery, MovePage,
     MoveSortCriterion, MoveSortField, MoveSummary, VersionGroupRef,

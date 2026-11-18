@@ -2,6 +2,8 @@
 
 mod abilities;
 mod dataset;
+mod items;
+mod locations;
 mod moves;
 mod repository;
 mod search;

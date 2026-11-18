@@ -1413,7 +1413,7 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
         ("version", "0.1.0-fixture".to_owned()),
         ("built_at", "fixture".to_owned()),
         ("source_commit", "fixture".to_owned()),
-        ("schema_version", "2".to_owned()),
+        ("schema_version", "3".to_owned()),
         ("checksum", "fixture".to_owned()),
         (
             "row_counts_json",

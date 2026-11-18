@@ -1,0 +1,43 @@
+<div class="mx-auto max-w-4xl px-4 py-6">
+  @if (state() === 'loading') {
+    <p class="text-ink-soft">{{ 'common.loading' | transloco }}</p>
+  } @else if (detail(); as d) {
+    <h1 class="mb-2 text-2xl font-bold text-ink">{{ d.location.name }}</h1>
+    <p class="mb-4 text-sm text-ink-soft">{{ d.location.regionSlug }}</p>
+    <section class="mb-4">
+      <h2 class="mb-2 font-semibold text-ink">{{ 'locations.areas' | transloco }}</h2>
+      <ul class="flex flex-wrap gap-2">
+        @for (area of d.areas; track area.id) {
+          <li class="rounded border border-line px-2 py-1 text-sm text-ink-soft">{{ area.slug }}</li>
+        }
+      </ul>
+    </section>
+    <section>
+      <h2 class="mb-2 font-semibold text-ink">{{ 'locations.encounters' | transloco }}</h2>
+      <table class="w-full text-sm">
+        <thead class="text-ink-soft">
+          <tr>
+            <th class="text-left">{{ 'locations.species' | transloco }}</th>
+            <th class="text-left">{{ 'locations.version' | transloco }}</th>
+            <th class="text-left">{{ 'locations.method' | transloco }}</th>
+            <th class="text-left">{{ 'locations.levels' | transloco }}</th>
+            <th class="text-left">{{ 'locations.chance' | transloco }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (encounter of d.encounters; track $index) {
+            <tr class="border-t border-line">
+              <td class="py-1"><a [routerLink]="['/pokedex', encounter.speciesSlug]" class="text-ink hover:text-accent">{{ encounter.speciesName }}</a></td>
+              <td class="py-1 text-ink-soft">{{ encounter.versionSlug }}</td>
+              <td class="py-1 text-ink-soft">{{ encounter.methodSlug }}</td>
+              <td class="py-1 text-ink-soft">{{ encounter.minLevel }}–{{ encounter.maxLevel }}</td>
+              <td class="py-1 text-ink-soft">{{ encounter.chance }}%</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="text-ink-soft">{{ 'common.notFound' | transloco }}</p>
+  }
+</div>

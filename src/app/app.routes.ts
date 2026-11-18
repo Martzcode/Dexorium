@@ -42,6 +42,35 @@ export const routes: Routes = [
       import('./features/abilities/ability-detail.page').then((module) => module.AbilityDetailPage),
   },
   {
+    path: 'items',
+    title: 'Objets — Dexorium',
+    loadComponent: () => import('./features/catalog/items.page').then((module) => module.ItemsPage),
+  },
+  {
+    path: 'items/:id',
+    title: 'Objet — Dexorium',
+    loadComponent: () =>
+      import('./features/catalog/item-detail.page').then((module) => module.ItemDetailPage),
+  },
+  {
+    path: 'locations',
+    title: 'Lieux — Dexorium',
+    loadComponent: () =>
+      import('./features/catalog/locations.page').then((module) => module.LocationsPage),
+  },
+  {
+    path: 'locations/:id',
+    title: 'Lieu — Dexorium',
+    loadComponent: () =>
+      import('./features/catalog/location-detail.page').then((module) => module.LocationDetailPage),
+  },
+  {
+    path: 'natures',
+    title: 'Natures — Dexorium',
+    loadComponent: () =>
+      import('./features/catalog/natures.page').then((module) => module.NaturesPage),
+  },
+  {
     path: 'tools/types',
     title: 'Table des types — Dexorium',
     loadComponent: () =>

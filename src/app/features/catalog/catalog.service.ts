@@ -12,9 +12,14 @@ import type {
   MoveDetail,
   MoveListQuery,
   MovePage,
+  ItemDetail,
+  ItemSummary,
+  LocationDetail,
+  LocationSummary,
+  EncounterSummary,
   SearchHit,
+  NatureSummary,
 } from './catalog.models';
-
 /**
  * Facade for the move and ability catalogues plus the federated search.
  *
@@ -112,5 +117,47 @@ export class CatalogService {
 
     const result = await this.searchGlobal({ query: term, limit, lang });
     return result.hits;
+  }
+
+  async listItems(search: string | null, category: string | null, lang: string): Promise<ItemSummary[]> {
+    if (isTauriRuntime()) {
+      return invokeCommand<ItemSummary[]>('list_items', { search, category, lang, limit: 200, offset: 0 });
+    }
+    return [];
+  }
+
+  async itemDetail(id: number, lang: string): Promise<ItemDetail | null> {
+    if (isTauriRuntime()) {
+      return invokeCommand<ItemDetail | null>('get_item_detail', { id, lang });
+    }
+    return null;
+  }
+
+  async listLocations(search: string | null, lang: string): Promise<LocationSummary[]> {
+    if (isTauriRuntime()) {
+      return invokeCommand<LocationSummary[]>('list_locations', { search, lang, limit: 200, offset: 0 });
+    }
+    return [];
+  }
+
+  async locationDetail(id: number, lang: string): Promise<LocationDetail | null> {
+    if (isTauriRuntime()) {
+      return invokeCommand<LocationDetail | null>('get_location_detail', { id, lang });
+    }
+    return null;
+  }
+
+  async speciesEncounters(speciesId: number, lang: string): Promise<EncounterSummary[]> {
+    if (isTauriRuntime()) {
+      return invokeCommand<EncounterSummary[]>('get_species_encounters', { speciesId, lang });
+    }
+    return [];
+  }
+
+  async listNatures(lang: string): Promise<NatureSummary[]> {
+    if (isTauriRuntime()) {
+      return invokeCommand<NatureSummary[]>('list_natures', { lang });
+    }
+    return [];
   }
 }

@@ -10,6 +10,8 @@
     "moves": "Moves",
     "abilities": "Abilities",
     "items": "Items",
+    "locations": "Locations",
+    "natures": "Natures",
     "teams": "Teams",
     "tools": "Tools",
     "collection": "Collection",
@@ -662,5 +664,36 @@
       "close": "close",
       "shortcut": "Ctrl K"
     }
+  },
+  "items": {
+    "title": "Items",
+    "search": "Search items…",
+    "berry": "Berry",
+    "growthTime": "Growth time",
+    "maxHarvest": "Max harvest",
+    "naturalGiftPower": "Natural gift power",
+    "firmness": "Firmness"
+  },
+  "locations": {
+    "title": "Locations",
+    "search": "Search locations…",
+    "areas": "Areas",
+    "encounters": "Encounters",
+    "species": "Species",
+    "version": "Version",
+    "method": "Method",
+    "levels": "Levels",
+    "chance": "Chance"
+  },
+  "natures": {
+    "title": "Natures",
+    "name": "Name",
+    "increased": "Increased",
+    "decreased": "Decreased"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Error",
+    "notFound": "Not found"
   }
 }

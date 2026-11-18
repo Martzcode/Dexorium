@@ -1,0 +1,37 @@
+<div class="mx-auto max-w-4xl px-4 py-6">
+  @if (state() === 'loading') {
+    <p class="text-ink-soft">{{ 'common.loading' | transloco }}</p>
+  } @else if (item(); as it) {
+    <h1 class="mb-2 text-2xl font-bold text-ink">{{ it.name }}</h1>
+    <p class="mb-4 text-sm text-ink-soft">{{ it.categorySlug }} · {{ it.pocketSlug }} · {{ it.cost }}</p>
+    @if (it.shortEffect) {
+      <p class="mb-4 text-ink">{{ it.shortEffect }}</p>
+    }
+    @if (it.effect) {
+      <p class="mb-4 whitespace-pre-line text-ink-soft">{{ it.effect }}</p>
+    }
+    @if (it.description) {
+      <p class="mb-4 whitespace-pre-line text-ink-soft">{{ it.description }}</p>
+    }
+    @if (it.berry; as b) {
+      <section class="mt-4 rounded-lg border border-line bg-panel p-4">
+        <h2 class="mb-2 font-semibold text-ink">{{ 'items.berry' | transloco }}</h2>
+        <dl class="grid grid-cols-2 gap-2 text-sm text-ink-soft">
+          <dt>{{ 'items.growthTime' | transloco }}</dt><dd>{{ b.growthTime }}</dd>
+          <dt>{{ 'items.maxHarvest' | transloco }}</dt><dd>{{ b.maxHarvest }}</dd>
+          <dt>{{ 'items.naturalGiftPower' | transloco }}</dt><dd>{{ b.naturalGiftPower }}</dd>
+          <dt>{{ 'items.firmness' | transloco }}</dt><dd>{{ b.firmnessSlug }}</dd>
+        </dl>
+      </section>
+    }
+    @if (it.flags.length > 0) {
+      <div class="mt-4 flex flex-wrap gap-1">
+        @for (flag of it.flags; track flag) {
+          <span class="rounded-full border border-line px-2 py-0.5 text-xs text-ink-soft">{{ flag }}</span>
+        }
+      </div>
+    }
+  } @else {
+    <p class="text-ink-soft">{{ 'common.notFound' | transloco }}</p>
+  }
+</div>

@@ -1,0 +1,25 @@
+<div class="mx-auto max-w-6xl px-4 py-6">
+  <h1 class="mb-4 text-2xl font-bold text-ink">{{ 'items.title' | transloco }}</h1>
+  <input
+    class="mb-4 w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm text-ink"
+    type="search"
+    [value]="search()"
+    (input)="onSearch($event)"
+    [placeholder]="'items.search' | transloco"
+  />
+  @if (state() === 'loading') {
+    <p class="text-ink-soft">{{ 'common.loading' | transloco }}</p>
+  } @else if (state() === 'error') {
+    <p class="text-red-500">{{ 'common.error' | transloco }}</p>
+  } @else {
+    <p class="mb-2 text-sm text-ink-soft">{{ items().length }} / {{ total() }}</p>
+    <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      @for (item of items(); track item.id) {
+        <li class="rounded-lg border border-line bg-panel p-3">
+          <a [routerLink]="['/items', item.id]" class="font-semibold text-ink hover:text-accent">{{ item.name }}</a>
+          <div class="text-xs text-ink-soft">{{ item.categorySlug }} · {{ item.cost }}</div>
+        </li>
+      }
+    </ul>
+  }
+</div>
