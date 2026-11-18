@@ -71,6 +71,12 @@ export const routes: Routes = [
       import('./features/catalog/natures.page').then((module) => module.NaturesPage),
   },
   {
+    path: 'tools/competitive',
+    title: 'Outils compétitifs — Dexorium',
+    loadComponent: () =>
+      import('./features/tools/competitive.page').then((module) => module.CompetitivePage),
+  },
+  {
     path: 'tools/types',
     title: 'Table des types — Dexorium',
     loadComponent: () =>

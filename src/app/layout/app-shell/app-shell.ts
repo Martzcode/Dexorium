@@ -40,6 +40,7 @@ export class AppShell {
     { labelKey: 'nav.natures', icon: 'sparkles', route: '/natures', ready: true },
     { labelKey: 'nav.teams', icon: 'users' },
     { labelKey: 'nav.tools', icon: 'wrench', route: '/tools/types', ready: true },
+    { labelKey: 'nav.competitive', icon: 'swords', route: '/tools/competitive', ready: true },
     { labelKey: 'nav.collection', icon: 'library-big' },
     { labelKey: 'nav.settings', icon: 'settings', route: '/settings', ready: true },
   ];
