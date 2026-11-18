@@ -581,6 +581,8 @@
     "neutralNature": "Nature neutre",
     "increased": "Augmente",
     "decreased": "Diminue",
+    "totalEv": "Total EV",
+    "evLimit": "Limite atteinte",
     "types": {
       "title": "Table des types",
       "description": "Efficacité de chaque type attaquant contre chaque type défenseur, pour la génération sélectionnée.",

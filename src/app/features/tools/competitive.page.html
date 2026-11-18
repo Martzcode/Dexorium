@@ -77,7 +77,7 @@
                 class="w-16 rounded border border-line bg-canvas px-2 py-1 text-ink"
                 type="number"
                 min="0"
-                max="252"
+                [max]="evMax(index)"
                 [value]="stat.ev"
                 (input)="setField(index, 'ev', $any($event.target).value)"
               />
@@ -87,5 +87,12 @@
         }
       </tbody>
     </table>
+
+    <p class="mt-3 text-sm" [class.text-red-500]="totalEv() >= 510">
+      {{ 'tools.totalEv' | transloco }} : <strong>{{ totalEv() }} / 510</strong>
+      @if (totalEv() >= 510) {
+        <span class="ml-2 font-mono text-[0.65rem] uppercase">{{ 'tools.evLimit' | transloco }}</span>
+      }
+    </p>
   </section>
 </div>

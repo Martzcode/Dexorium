@@ -102,8 +102,24 @@ export class CompetitivePage {
     this.reloadNatures();
   }
 
+  protected readonly totalEv = computed(() => this.stats().reduce((sum, stat) => sum + stat.ev, 0));
+
+  protected evMax(index: number): number {
+    const others = this.stats().reduce(
+      (sum, stat, position) => sum + (position === index ? 0 : stat.ev),
+      0,
+    );
+    return Math.max(0, Math.min(252, 510 - others));
+  }
+
   protected setField(index: number, field: 'base' | 'iv' | 'ev', raw: string): void {
-    const value = Math.max(0, Math.trunc(Number(raw) || 0));
+    const parsed = Math.max(0, Math.trunc(Number(raw) || 0));
+    const value =
+      field === 'ev'
+        ? Math.min(parsed, this.evMax(index))
+        : field === 'iv'
+          ? Math.min(parsed, 31)
+          : Math.min(parsed, 255);
     this.stats.update((stats) =>
       stats.map((stat, position) => (position === index ? { ...stat, [field]: value } : stat)),
     );

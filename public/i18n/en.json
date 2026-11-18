@@ -581,6 +581,8 @@
     "neutralNature": "Neutral nature",
     "increased": "Increases",
     "decreased": "Decreases",
+    "totalEv": "Total EVs",
+    "evLimit": "Limit reached",
     "types": {
       "title": "Type chart",
       "description": "Effectiveness of every attacking type against every defending type, for the selected generation.",
