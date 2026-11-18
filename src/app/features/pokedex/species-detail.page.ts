@@ -286,6 +286,23 @@ export class SpeciesDetailPage {
       .join(' ');
   }
 
+  /**
+   * Resolves a dataset slug through the locale file and falls back to a
+   * humanized slug when the translation is missing.
+   */
+  protected slugLabel(
+    scope: 'growthRates' | 'colors' | 'shapes' | 'habitats' | 'versions',
+    slug: string | null,
+  ): string {
+    if (!slug) {
+      return '—';
+    }
+
+    const key = `pokedex.${scope}.${slug}`;
+    const label = this.transloco.translate(key);
+    return label === key ? this.humanizeSlug(slug) : label;
+  }
+
   /** Builds the localized list of conditions attached to one evolution edge. */
   protected conditionParts(step: EvolutionStep): readonly string[] {
     const parts: string[] = [];

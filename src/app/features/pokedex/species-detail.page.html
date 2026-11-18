@@ -275,7 +275,7 @@
                     {{ 'pokedex.detail.breeding.growthRate' | transloco }}
                   </dt>
                   <dd class="m-0 mt-1 text-sm font-semibold">
-                    {{ humanizeSlug(entry.growthRate) }}
+                    {{ slugLabel('growthRates', entry.growthRate) }}
                   </dd>
                 </div>
                 <div>
@@ -283,7 +283,7 @@
                     {{ 'pokedex.detail.breeding.habitat' | transloco }}
                   </dt>
                   <dd class="m-0 mt-1 text-sm font-semibold">
-                    {{ humanizeSlug(entry.habitat) }}
+                    {{ slugLabel('habitats', entry.habitat) }}
                   </dd>
                 </div>
               </dl>
@@ -548,9 +548,9 @@
                         @for (entry of group.entries; track entry.versionId) {
                           <li>
                             <p
-                              class="m-0 font-mono text-[0.64rem] uppercase tracking-[0.08em] text-ink-muted"
+                              class="m-0 font-mono text-[0.64rem] tracking-[0.04em] text-ink-muted"
                             >
-                              {{ entry.versionSlug }}
+                              {{ slugLabel('versions', entry.versionSlug) }}
                             </p>
                             <p class="m-0 mt-1 text-sm leading-relaxed text-ink-soft">
                               {{ entry.text }}
@@ -574,7 +574,7 @@
                     {{ 'pokedex.detail.identity.color' | transloco }}
                   </dt>
                   <dd class="m-0 mt-0.5 text-sm font-semibold">
-                    {{ humanizeSlug(entry.color) }}
+                    {{ slugLabel('colors', entry.color) }}
                   </dd>
                 </div>
                 <div>
@@ -582,7 +582,7 @@
                     {{ 'pokedex.detail.identity.shape' | transloco }}
                   </dt>
                   <dd class="m-0 mt-0.5 text-sm font-semibold">
-                    {{ humanizeSlug(entry.shape) }}
+                    {{ slugLabel('shapes', entry.shape) }}
                   </dd>
                 </div>
                 <div>
