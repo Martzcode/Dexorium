@@ -21,6 +21,8 @@ export interface FilterPreset {
   readonly types: readonly string[];
   readonly typeMatch: TypeMatchMode;
   readonly eggGroups: readonly string[];
+  readonly abilities: readonly string[];
+  readonly moveLearned: string | null;
   readonly generations: readonly number[];
   readonly statRanges: readonly StatRange[];
   readonly flags: SpeciesFlags;
@@ -46,6 +48,8 @@ export class PokedexStore {
   readonly types = signal<readonly string[]>([]);
   readonly typeMatch = signal<TypeMatchMode>('any');
   readonly eggGroups = signal<readonly string[]>([]);
+  readonly abilities = signal<readonly string[]>([]);
+  readonly moveLearned = signal<string | null>(null);
   readonly generations = signal<readonly number[]>([]);
   readonly statRanges = signal<readonly StatRange[]>([]);
   readonly flags = signal<SpeciesFlags>(EMPTY_FLAGS);
@@ -69,6 +73,8 @@ export class PokedexStore {
       this.search().trim().length > 0 ||
       this.types().length > 0 ||
       this.eggGroups().length > 0 ||
+      this.abilities().length > 0 ||
+      this.moveLearned() !== null ||
       this.generations().length > 0 ||
       this.statRanges().length > 0 ||
       this.flags().legendary ||
@@ -117,6 +123,26 @@ export class PokedexStore {
     this.eggGroups.set(
       selected.includes(group) ? selected.filter((entry) => entry !== group) : [...selected, group],
     );
+    this.scheduleReload(0);
+  }
+
+  setAbilities(abilities: readonly string[]): void {
+    this.abilities.set(abilities);
+    this.scheduleReload(0);
+  }
+
+  toggleAbility(ability: string): void {
+    const selected = this.abilities();
+    this.abilities.set(
+      selected.includes(ability)
+        ? selected.filter((entry) => entry !== ability)
+        : [...selected, ability],
+    );
+    this.scheduleReload(0);
+  }
+
+  setMoveLearned(moveSlug: string | null): void {
+    this.moveLearned.set(moveSlug);
     this.scheduleReload(0);
   }
 
@@ -197,6 +223,8 @@ export class PokedexStore {
     this.types.set([]);
     this.typeMatch.set('any');
     this.eggGroups.set([]);
+    this.abilities.set([]);
+    this.moveLearned.set(null);
     this.generations.set([]);
     this.statRanges.set([]);
     this.flags.set(EMPTY_FLAGS);
@@ -217,6 +245,8 @@ export class PokedexStore {
       types: this.types(),
       typeMatch: this.typeMatch(),
       eggGroups: this.eggGroups(),
+      abilities: this.abilities(),
+      moveLearned: this.moveLearned(),
       generations: this.generations(),
       statRanges: this.statRanges(),
       flags: this.flags(),
@@ -239,6 +269,8 @@ export class PokedexStore {
     this.types.set(preset.types);
     this.typeMatch.set(preset.typeMatch);
     this.eggGroups.set(preset.eggGroups ?? []);
+    this.abilities.set(preset.abilities ?? []);
+    this.moveLearned.set(preset.moveLearned ?? null);
     this.generations.set(preset.generations);
     this.statRanges.set(preset.statRanges);
     this.flags.set(preset.flags);
@@ -354,6 +386,8 @@ export class PokedexStore {
       types: this.types(),
       typeMatch: this.typeMatch(),
       eggGroups: this.eggGroups(),
+      abilities: this.abilities(),
+      moveLearned: this.moveLearned(),
       generations: this.generations(),
       statRanges: this.statRanges(),
       flags: this.flags(),

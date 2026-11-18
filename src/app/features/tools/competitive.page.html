@@ -6,23 +6,47 @@
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
       <label class="flex flex-col text-sm text-ink-soft">
         Base
-        <input class="rounded border border-line bg-canvas px-2 py-1 text-ink" type="number" [value]="base()" (input)="base.set(+$any($event.target).value)" />
+        <input
+          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          type="number"
+          [value]="base()"
+          (input)="base.set(+$any($event.target).value)"
+        />
       </label>
       <label class="flex flex-col text-sm text-ink-soft">
         IV
-        <input class="rounded border border-line bg-canvas px-2 py-1 text-ink" type="number" [value]="iv()" (input)="iv.set(+$any($event.target).value)" />
+        <input
+          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          type="number"
+          [value]="iv()"
+          (input)="iv.set(+$any($event.target).value)"
+        />
       </label>
       <label class="flex flex-col text-sm text-ink-soft">
         EV
-        <input class="rounded border border-line bg-canvas px-2 py-1 text-ink" type="number" [value]="ev()" (input)="ev.set(+$any($event.target).value)" />
+        <input
+          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          type="number"
+          [value]="ev()"
+          (input)="ev.set(+$any($event.target).value)"
+        />
       </label>
       <label class="flex flex-col text-sm text-ink-soft">
         Level
-        <input class="rounded border border-line bg-canvas px-2 py-1 text-ink" type="number" [value]="level()" (input)="level.set(+$any($event.target).value)" />
+        <input
+          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          type="number"
+          [value]="level()"
+          (input)="level.set(+$any($event.target).value)"
+        />
       </label>
       <label class="flex flex-col text-sm text-ink-soft">
         Nature
-        <select class="rounded border border-line bg-canvas px-2 py-1 text-ink" [value]="nature()" (change)="nature.set($any($event.target).value)">
+        <select
+          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          [value]="nature()"
+          (change)="nature.set($any($event.target).value)"
+        >
           @for (n of natures(); track n.slug) {
             <option [value]="n.slug">{{ n.name }}</option>
           }

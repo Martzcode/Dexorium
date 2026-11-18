@@ -1089,6 +1089,33 @@ fn build_list_sql(query: &SpeciesListQuery) -> Option<ListSql> {
         where_clause.push(')');
     }
 
+    let abilities = dedupe_slugs(&query.abilities);
+    if !abilities.is_empty() {
+        where_clause.push_str(
+            " AND EXISTS (
+                SELECT 1
+                  FROM form_ability fa
+                  JOIN ability a ON a.id = fa.ability_id
+                 WHERE fa.form_id = f.id
+                   AND a.slug IN ",
+        );
+        push_in_clause(&mut where_clause, &mut params, &abilities);
+        where_clause.push(')');
+    }
+
+    if let Some(move_slug) = &query.move_learned {
+        where_clause.push_str(
+            " AND EXISTS (
+                SELECT 1
+                  FROM form_move fm
+                  JOIN move_ m ON m.id = fm.move_id
+                 WHERE fm.form_id = f.id
+                   AND m.slug = ?",
+        );
+        params.push(Value::Text(move_slug.clone()));
+        where_clause.push(')');
+    }
+
     let generations = dedupe_generations(&query.generations);
     if !generations.is_empty() {
         where_clause.push_str(" AND s.generation_id IN ");

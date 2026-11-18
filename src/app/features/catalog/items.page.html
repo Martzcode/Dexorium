@@ -16,7 +16,9 @@
     <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
       @for (item of items(); track item.id) {
         <li class="rounded-lg border border-line bg-panel p-3">
-          <a [routerLink]="['/items', item.id]" class="font-semibold text-ink hover:text-accent">{{ item.name }}</a>
+          <a [routerLink]="['/items', item.id]" class="font-semibold text-ink hover:text-accent">{{
+            item.name
+          }}</a>
           <div class="text-xs text-ink-soft">{{ item.categorySlug }} · {{ item.cost }}</div>
         </li>
       }

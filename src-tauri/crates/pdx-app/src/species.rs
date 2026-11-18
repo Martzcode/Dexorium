@@ -84,6 +84,11 @@ pub fn list_species(
     query.lang = normalize_language(&query.lang).to_owned();
     query.types = sanitize_slugs(query.types, MAX_FILTER_TYPES);
     query.egg_groups = sanitize_slugs(query.egg_groups, MAX_FILTER_EGG_GROUPS);
+    query.abilities = sanitize_slugs(query.abilities, MAX_FILTER_TYPES);
+    query.move_learned = query
+        .move_learned
+        .map(|value| value.trim().to_lowercase())
+        .filter(|value| !value.is_empty() && value.len() <= 60);
     query.generations = sanitize_generations(query.generations);
     query.stat_ranges.truncate(MAX_STAT_RANGES);
     query.favorite_ids = query.favorite_ids.map(sanitize_ids);

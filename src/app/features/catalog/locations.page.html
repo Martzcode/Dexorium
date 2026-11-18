@@ -15,7 +15,11 @@
     <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
       @for (location of locations(); track location.id) {
         <li class="rounded-lg border border-line bg-panel p-3">
-          <a [routerLink]="['/locations', location.id]" class="font-semibold text-ink hover:text-accent">{{ location.name }}</a>
+          <a
+            [routerLink]="['/locations', location.id]"
+            class="font-semibold text-ink hover:text-accent"
+            >{{ location.name }}</a
+          >
           <div class="text-xs text-ink-soft">{{ location.regionSlug }}</div>
         </li>
       }

@@ -119,9 +119,19 @@ export class CatalogService {
     return result.hits;
   }
 
-  async listItems(search: string | null, category: string | null, lang: string): Promise<ItemSummary[]> {
+  async listItems(
+    search: string | null,
+    category: string | null,
+    lang: string,
+  ): Promise<ItemSummary[]> {
     if (isTauriRuntime()) {
-      return invokeCommand<ItemSummary[]>('list_items', { search, category, lang, limit: 200, offset: 0 });
+      return invokeCommand<ItemSummary[]>('list_items', {
+        search,
+        category,
+        lang,
+        limit: 200,
+        offset: 0,
+      });
     }
     return [];
   }
@@ -135,7 +145,12 @@ export class CatalogService {
 
   async listLocations(search: string | null, lang: string): Promise<LocationSummary[]> {
     if (isTauriRuntime()) {
-      return invokeCommand<LocationSummary[]>('list_locations', { search, lang, limit: 200, offset: 0 });
+      return invokeCommand<LocationSummary[]>('list_locations', {
+        search,
+        lang,
+        limit: 200,
+        offset: 0,
+      });
     }
     return [];
   }

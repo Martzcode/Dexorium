@@ -162,6 +162,12 @@ pub struct SpeciesListQuery {
     ///
     /// Species matching any of the requested groups are kept.
     pub egg_groups: Vec<String>,
+    /// Ability slugs to match. Empty means "no ability filter".
+    ///
+    /// Species that can have any of the requested abilities are kept.
+    pub abilities: Vec<String>,
+    /// When set, only species that can learn this move slug are kept.
+    pub move_learned: Option<String>,
     /// Generation identifiers to include. Empty means "all generations".
     pub generations: Vec<u16>,
     pub stat_ranges: Vec<StatRange>,
@@ -192,6 +198,8 @@ impl Default for SpeciesListQuery {
             types: Vec::new(),
             type_match: TypeMatchMode::Any,
             egg_groups: Vec::new(),
+            abilities: Vec::new(),
+            move_learned: None,
             generations: Vec::new(),
             stat_ranges: Vec::new(),
             flags: SpeciesFlags::default(),

@@ -104,8 +104,9 @@ function listFixture(
   const tokens = tokenize(query.search ?? '');
   const types = query.types.map((type) => type.toLowerCase());
   const eggGroups = query.eggGroups.map((group) => group.toLowerCase());
-  // The fixture may predate the egg group filter: ignore it rather than
-  // returning an empty list when no fixture entry carries the data.
+  const abilities = query.abilities.map((ability) => ability.toLowerCase());
+  const moveLearned = query.moveLearned?.toLowerCase() ?? null;
+
   const filtersEggGroups =
     eggGroups.length > 0 && species.some((entry) => (entry.eggGroups?.length ?? 0) > 0);
 
@@ -123,6 +124,14 @@ function listFixture(
     }
 
     if (filtersEggGroups && !matchesEggGroups(entry, eggGroups)) {
+      return false;
+    }
+
+    if (abilities.length > 0) {
+      return false;
+    }
+
+    if (moveLearned !== null) {
       return false;
     }
 

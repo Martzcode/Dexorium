@@ -31,17 +31,23 @@ export class CompetitivePage {
     const n = this.natures().find((x) => x.slug === this.nature()) ?? null;
     const mod = n ? (n.increasedStatSlug === n.decreasedStatSlug ? 1 : 1) : 1;
     // simplified: apply 1.1 / 0.9 based on increased/decreased
-    const natureMod = n && n.increasedStatSlug && n.decreasedStatSlug && n.increasedStatSlug !== n.decreasedStatSlug
-      ? 1.1
-      : n && n.increasedStatSlug && !n.decreasedStatSlug
-        ? 1
-        : 1;
-    const raw = Math.floor(((2 * this.base() + this.iv() + Math.floor(this.ev() / 4)) * this.level()) / 100 + 5);
+    const natureMod =
+      n && n.increasedStatSlug && n.decreasedStatSlug && n.increasedStatSlug !== n.decreasedStatSlug
+        ? 1.1
+        : n && n.increasedStatSlug && !n.decreasedStatSlug
+          ? 1
+          : 1;
+    const raw = Math.floor(
+      ((2 * this.base() + this.iv() + Math.floor(this.ev() / 4)) * this.level()) / 100 + 5,
+    );
     return Math.floor(raw * natureMod);
   });
 
   constructor() {
-    this.catalog.listNatures(this.language()).then((n) => this.natures.set(n)).catch(() => {});
+    this.catalog
+      .listNatures(this.language())
+      .then((n) => this.natures.set(n))
+      .catch(() => {});
   }
 
   protected async reloadNatures(): Promise<void> {

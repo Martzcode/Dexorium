@@ -63,6 +63,7 @@ impl ItemRepository for SqliteSpeciesRepository {
         Ok(rows)
     }
 
+    #[allow(clippy::type_complexity)]
     fn item_detail(&self, id: i64, lang: &str) -> Result<Option<ItemDetail>, String> {
         let row: Option<(i64, String, Option<String>, Option<String>, Option<i64>, i64, Option<i64>, Option<String>)> =
             self.connection

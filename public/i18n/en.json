@@ -106,6 +106,10 @@
       "baby": "Baby",
       "ultraBeast": "Ultra Beast",
       "eggGroups": "Egg groups",
+      "ability": "Ability",
+      "abilityPlaceholder": "ability slug",
+      "moveLearned": "Move learned",
+      "moveLearnedPlaceholder": "move slug",
       "stats": "Stat ranges",
       "resetStats": "Reset stats"
     },

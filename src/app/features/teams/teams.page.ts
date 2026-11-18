@@ -103,9 +103,16 @@ export class TeamsPage {
         if (m.ability) lines.push(`Ability: ${m.ability}`);
         if (m.shiny) lines.push('Shiny: Yes');
         if (m.teraType) lines.push(`Tera Type: ${m.teraType}`);
-        lines.push(`EVs: ${m.evs.map((v, i) => `${v} ${['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'][i]}`).filter((x) => !x.startsWith('0')).join(' / ')}`);
+        lines.push(
+          `EVs: ${m.evs
+            .map((v, i) => `${v} ${['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'][i]}`)
+            .filter((x) => !x.startsWith('0'))
+            .join(' / ')}`,
+        );
         lines.push(`${m.nature} Nature`);
-        lines.push(`IVs: ${m.ivs.map((v, i) => `${v} ${['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'][i]}`).join(' / ')}`);
+        lines.push(
+          `IVs: ${m.ivs.map((v, i) => `${v} ${['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'][i]}`).join(' / ')}`,
+        );
         for (const move of m.moves) {
           if (move) lines.push(`- ${move}`);
         }

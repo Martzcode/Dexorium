@@ -2004,6 +2004,7 @@ fn insert_encounters(
     staging: &Path,
     context: &Context,
 ) -> Result<(), String> {
+    #[allow(clippy::type_complexity)]
     let mut seen: HashSet<(i64, i64, i64, String, i64, i64, i64, String)> = HashSet::new();
 
     for (_, path) in numeric_dirs(&staging.join("pokemon"))? {

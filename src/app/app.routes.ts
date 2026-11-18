@@ -90,7 +90,8 @@ export const routes: Routes = [
   {
     path: 'collection',
     title: 'Collection — Dexorium',
-    loadComponent: () => import('./features/collection/collection.page').then((module) => module.CollectionPage),
+    loadComponent: () =>
+      import('./features/collection/collection.page').then((module) => module.CollectionPage),
   },
   {
     path: 'settings',

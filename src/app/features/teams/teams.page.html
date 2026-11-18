@@ -1,7 +1,11 @@
 <div class="mx-auto max-w-6xl px-4 py-6">
   <div class="mb-4 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-ink">{{ 'teams.title' | transloco }}</h1>
-    <button class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white" type="button" (click)="newTeam()">
+    <button
+      class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white"
+      type="button"
+      (click)="newTeam()"
+    >
       {{ 'teams.new' | transloco }}
     </button>
   </div>
@@ -11,10 +15,20 @@
       <ul class="space-y-1">
         @for (team of teams(); track team.id) {
           <li class="flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-panel-muted">
-            <button class="flex-1 text-left text-sm text-ink" type="button" (click)="selected.set(team)">
+            <button
+              class="flex-1 text-left text-sm text-ink"
+              type="button"
+              (click)="selected.set(team)"
+            >
               {{ team.name }}
             </button>
-            <button class="text-xs text-ink-muted hover:text-red-500" type="button" (click)="deleteTeam(team)">×</button>
+            <button
+              class="text-xs text-ink-muted hover:text-red-500"
+              type="button"
+              (click)="deleteTeam(team)"
+            >
+              ×
+            </button>
           </li>
         }
       </ul>
@@ -23,7 +37,9 @@
     <main class="rounded-xl border border-line bg-panel p-4">
       @if (selected(); as team) {
         <h2 class="mb-2 text-lg font-semibold text-ink">{{ team.name }}</h2>
-        <p class="mb-3 text-xs text-ink-soft">{{ team.format }} · {{ team.members.length }} {{ 'teams.members' | transloco }}</p>
+        <p class="mb-3 text-xs text-ink-soft">
+          {{ team.format }} · {{ team.members.length }} {{ 'teams.members' | transloco }}
+        </p>
         <textarea
           class="mb-3 w-full rounded border border-line bg-canvas p-2 text-sm text-ink"
           rows="12"

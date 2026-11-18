@@ -44,6 +44,8 @@ export interface SpeciesListQuery {
   readonly types: readonly string[];
   readonly typeMatch: TypeMatchMode;
   readonly eggGroups: readonly string[];
+  readonly abilities: readonly string[];
+  readonly moveLearned: string | null;
   readonly generations: readonly number[];
   readonly statRanges: readonly StatRange[];
   readonly flags: SpeciesFlags;
@@ -75,6 +77,8 @@ export const DEFAULT_QUERY: Omit<SpeciesListQuery, 'lang' | 'offset' | 'limit'> 
   types: [],
   typeMatch: 'any',
   eggGroups: [],
+  abilities: [],
+  moveLearned: null,
   generations: [],
   statRanges: [],
   flags: EMPTY_FLAGS,

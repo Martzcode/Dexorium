@@ -23,7 +23,9 @@ export class NaturesPage {
   protected readonly natures = signal<readonly NatureSummary[]>([]);
 
   constructor() {
-    this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.reload());
+    this.transloco.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.reload());
     this.reload();
   }
 

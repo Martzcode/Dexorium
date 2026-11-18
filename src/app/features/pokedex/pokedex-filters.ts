@@ -105,6 +105,19 @@ export class PokedexFilters {
     return this.store.flags()[flag];
   }
 
+  protected setAbilityFilter(value: string): void {
+    this.store.setAbilities(
+      value
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0),
+    );
+  }
+
+  protected setMoveLearnedFilter(value: string): void {
+    this.store.setMoveLearned(value.trim() || null);
+  }
+
   protected toggleFlag(flag: keyof SpeciesFlags): void {
     this.store.toggleFlag(flag);
   }

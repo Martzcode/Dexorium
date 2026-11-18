@@ -25,7 +25,9 @@ export class LocationDetailPage {
   protected readonly state = signal<'loading' | 'ready' | 'error'>('loading');
 
   constructor() {
-    this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.load());
+    this.transloco.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.load());
     this.load();
   }
 
