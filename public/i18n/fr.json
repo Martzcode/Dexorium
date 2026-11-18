@@ -371,7 +371,9 @@
         "versionGroup": "Version",
         "species": "Pokémon",
         "methods": "Méthodes",
-        "level": "Niveau"
+        "level": "Niveau",
+        "allMethods": "Toutes",
+        "filter": "Filtrer par méthode d’apprentissage"
       }
     }
   },

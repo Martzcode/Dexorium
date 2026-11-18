@@ -10,6 +10,13 @@ import { CatalogService } from '../catalog/catalog.service';
 
 type LoadState = 'loading' | 'ready' | 'notFound' | 'error';
 
+const METHOD_ORDER = ['level-up', 'machine', 'egg', 'tutor'] as const;
+
+interface MethodTab {
+  readonly method: string;
+  readonly count: number;
+}
+
 @Component({
   selector: 'app-move-detail',
   imports: [RouterLink, TranslocoPipe, AppIcon],
@@ -35,6 +42,43 @@ export class MoveDetailPage {
   });
 
   protected readonly learners = computed<readonly MoveLearner[]>(() => this.move()?.learners ?? []);
+
+  protected readonly selectedMethod = signal<string>('all');
+
+  protected readonly methodTabs = computed<readonly MethodTab[]>(() => {
+    const counts = new Map<string, number>();
+    for (const learner of this.learners()) {
+      for (const method of learner.methods) {
+        counts.set(method, (counts.get(method) ?? 0) + 1);
+      }
+    }
+
+    const ordered = METHOD_ORDER.filter((method) => counts.has(method));
+    const extra = [...counts.keys()]
+      .filter((method) => !(METHOD_ORDER as readonly string[]).includes(method))
+      .sort();
+
+    return [...ordered, ...extra].map((method) => ({
+      method,
+      count: counts.get(method) ?? 0,
+    }));
+  });
+
+  protected readonly visibleLearners = computed<readonly MoveLearner[]>(() => {
+    const method = this.selectedMethod();
+    if (method === 'all') {
+      return this.learners();
+    }
+
+    return this.learners().filter((learner) => learner.methods.includes(method));
+  });
+
+  protected readonly showsMethodsColumn = computed(() => this.selectedMethod() === 'all');
+
+  protected readonly showsLevelColumn = computed(() => {
+    const method = this.selectedMethod();
+    return method === 'all' || method === 'level-up';
+  });
 
   protected readonly statCards = computed(() => {
     const move = this.move();
@@ -80,6 +124,22 @@ export class MoveDetailPage {
     void this.load(Number(this.parameters().get('id')), this.language());
   }
 
+  protected setMethod(method: string): void {
+    this.selectedMethod.set(method);
+  }
+
+  protected isMethodSelected(method: string): boolean {
+    return this.selectedMethod() === method;
+  }
+
+  protected chipClass(active: boolean): string {
+    const base =
+      'rounded-full border px-2.5 py-1 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.05em] transition-colors';
+    return active
+      ? `${base} border-accent bg-accent/15 text-ink`
+      : `${base} border-line bg-panel-muted/40 text-ink-soft hover:border-line-strong`;
+  }
+
   protected humanizeSlug(slug: string | null): string {
     if (!slug) {
       return '—';
@@ -101,6 +161,7 @@ export class MoveDetailPage {
     const requestId = ++this.requestId;
     this.move.set(null);
     this.state.set('loading');
+    this.selectedMethod.set('all');
 
     try {
       const move = await this.catalog.moveDetail(id, language);
