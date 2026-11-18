@@ -4,7 +4,6 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
-import { AppIcon } from '../../shared/icon/app-icon';
 import { CatalogService } from './catalog.service';
 import type { LocationSummary } from './catalog.models';
 
@@ -12,7 +11,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-locations',
-  imports: [RouterLink, TranslocoPipe, AppIcon],
+  imports: [RouterLink, TranslocoPipe],
   templateUrl: './locations.page.html',
 })
 export class LocationsPage {

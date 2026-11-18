@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -49,19 +48,19 @@ const GENDER_KEYS: Readonly<Record<string, string>> = {
 
 @Component({
   selector: 'app-species-detail',
-  imports: [JsonPipe, RouterLink, TranslocoPipe, AppIcon, PokemonSprite, SpeciesLearnset],
+  imports: [RouterLink, TranslocoPipe, AppIcon, PokemonSprite, SpeciesLearnset],
   templateUrl: './species-detail.page.html',
 })
 export class SpeciesDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly pokedex = inject(PokedexService);
-private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogService);
   private readonly transloco = inject(TranslocoService);
 
   protected readonly collection = inject(CollectionService);
 
   protected readonly species = signal<PokemonDetail | null>(null);
-protected readonly encounters = signal<readonly EncounterSummary[]>([]);
+  protected readonly encounters = signal<readonly EncounterSummary[]>([]);
   protected readonly state = signal<LoadState>('loading');
 
   protected readonly formatDexNumber = formatDexNumber;
@@ -161,8 +160,7 @@ protected readonly encounters = signal<readonly EncounterSummary[]>([]);
     }
 
     return [...entries].sort(
-      (left, right) =>
-        right.generationId - left.generationId || right.versionId - left.versionId,
+      (left, right) => right.generationId - left.generationId || right.versionId - left.versionId,
     )[0]!;
   });
 

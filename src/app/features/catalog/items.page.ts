@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
-import { AppIcon } from '../../shared/icon/app-icon';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ItemSummary } from '../catalog/catalog.models';
 
@@ -12,7 +11,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-items',
-  imports: [RouterLink, TranslocoPipe, AppIcon],
+  imports: [RouterLink, TranslocoPipe],
   templateUrl: './items.page.html',
 })
 export class ItemsPage {
