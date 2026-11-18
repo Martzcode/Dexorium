@@ -645,7 +645,7 @@ struct EncounterMethodJson {
     name: String,
     #[serde(default)]
     names: Vec<LocalizedName>,
-}// ---------------------------------------------------------------------------
+} // ---------------------------------------------------------------------------
 
 fn insert_generations(
     tx: &rusqlite::Transaction<'_>,
@@ -1788,7 +1788,9 @@ fn insert_items(
                 category_id,
                 item.cost,
                 item.fling_power,
-                item.fling_effect.as_ref().map(|effect| effect.name.as_str()),
+                item.fling_effect
+                    .as_ref()
+                    .map(|effect| effect.name.as_str()),
             ],
         )
         .map_err(|error| format!("cannot insert item {}: {error}", item.name))?;
@@ -1873,7 +1875,10 @@ fn insert_berries(
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
             params![
                 item_id,
-                berry.firmness.as_ref().map(|firmness| firmness.name.as_str()),
+                berry
+                    .firmness
+                    .as_ref()
+                    .map(|firmness| firmness.name.as_str()),
                 berry.growth_time,
                 berry.max_harvest,
                 berry.natural_gift_power,
@@ -1900,7 +1905,8 @@ fn insert_machines(
 ) -> Result<(), String> {
     for (_, path) in numeric_dirs(&staging.join("machine"))? {
         let machine: MachineJson = read_json(&path)?;
-        let Some(&version_group_id) = context.version_groups.get(&machine.version_group.name) else {
+        let Some(&version_group_id) = context.version_groups.get(&machine.version_group.name)
+        else {
             continue;
         };
         let Some(&move_id) = context.moves.get(&machine.move_.name) else {
@@ -2044,7 +2050,11 @@ fn insert_encounters(
     let mut seen: HashSet<(i64, i64, i64, String, i64, i64, i64, String)> = HashSet::new();
 
     for (_, path) in numeric_dirs(&staging.join("pokemon"))? {
-        let encounters_path = path.parent().unwrap_or(Path::new(".")).join("encounters").join("index.json");
+        let encounters_path = path
+            .parent()
+            .unwrap_or(Path::new("."))
+            .join("encounters")
+            .join("index.json");
         if !encounters_path.is_file() {
             continue;
         }
@@ -2154,7 +2164,12 @@ fn insert_pokedexes(
                  VALUES (?1, ?2, ?3)",
                 params![pokedex.id, species_id, entry.entry_number],
             )
-            .map_err(|error| format!("cannot insert pokedex entry for {}: {error}", entry.pokemon_species.name))?;
+            .map_err(|error| {
+                format!(
+                    "cannot insert pokedex entry for {}: {error}",
+                    entry.pokemon_species.name
+                )
+            })?;
         }
     }
 

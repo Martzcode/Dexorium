@@ -27,7 +27,8 @@ impl ItemRepository for SqliteSpeciesRepository {
                      AND t_en.lang = 'en' AND t_en.field = 'name'
                WHERE 1 = 1",
         );
-        let mut params: Vec<rusqlite::types::Value> = vec![rusqlite::types::Value::Text(lang.to_owned())];
+        let mut params: Vec<rusqlite::types::Value> =
+            vec![rusqlite::types::Value::Text(lang.to_owned())];
 
         if let Some(category) = category {
             sql.push_str(" AND ic.slug = ?");
@@ -43,7 +44,10 @@ impl ItemRepository for SqliteSpeciesRepository {
         params.push(rusqlite::types::Value::Integer(i64::from(limit)));
         params.push(rusqlite::types::Value::Integer(i64::from(offset)));
 
-        let mut statement = self.connection.prepare(&sql).map_err(super::repository::db_error)?;
+        let mut statement = self
+            .connection
+            .prepare(&sql)
+            .map_err(super::repository::db_error)?;
         let rows = statement
             .query_map(rusqlite::params_from_iter(params.iter()), |row| {
                 Ok(ItemSummary {
@@ -75,7 +79,17 @@ impl ItemRepository for SqliteSpeciesRepository {
                 )
                 .optional()
                 .map_err(super::repository::db_error)?;
-        let Some((id, slug, category_slug, pocket_slug, cost, is_berry, fling_power, fling_effect_slug)) = row else {
+        let Some((
+            id,
+            slug,
+            category_slug,
+            pocket_slug,
+            cost,
+            is_berry,
+            fling_power,
+            fling_effect_slug,
+        )) = row
+        else {
             return Ok(None);
         };
 
@@ -185,7 +199,12 @@ impl ItemRepository for SqliteSpeciesRepository {
         }))
     }
 
-    fn search_items(&self, query: &str, lang: &str, limit: usize) -> Result<Vec<ItemSummary>, String> {
+    fn search_items(
+        &self,
+        query: &str,
+        lang: &str,
+        limit: usize,
+    ) -> Result<Vec<ItemSummary>, String> {
         let limit = limit.clamp(1, 100);
         let mut statement = self.connection.prepare(
             "SELECT i.id, i.slug, COALESCE(t.value, t_en.value, i.slug) AS name, ic.slug, i.pocket_slug, i.cost, i.is_berry, i.fling_power
@@ -217,4 +236,3 @@ impl ItemRepository for SqliteSpeciesRepository {
         Ok(rows)
     }
 }
-

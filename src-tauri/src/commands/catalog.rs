@@ -151,7 +151,6 @@ pub fn list_natures(
     pdx_app::list_natures(&*repository, &lang)
 }
 
-
 /// Returns a short list of suggestions for the command palette.
 #[tauri::command]
 pub fn suggest(

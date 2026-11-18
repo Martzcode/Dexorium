@@ -1,9 +1,21 @@
 use pdx_domain::{ItemDetail, ItemSummary};
 
 pub trait ItemRepository {
-    fn list_items(&self, search: Option<&str>, category: Option<&str>, lang: &str, limit: u32, offset: u32) -> Result<Vec<ItemSummary>, String>;
+    fn list_items(
+        &self,
+        search: Option<&str>,
+        category: Option<&str>,
+        lang: &str,
+        limit: u32,
+        offset: u32,
+    ) -> Result<Vec<ItemSummary>, String>;
     fn item_detail(&self, id: i64, lang: &str) -> Result<Option<ItemDetail>, String>;
-    fn search_items(&self, query: &str, lang: &str, limit: usize) -> Result<Vec<ItemSummary>, String>;
+    fn search_items(
+        &self,
+        query: &str,
+        lang: &str,
+        limit: usize,
+    ) -> Result<Vec<ItemSummary>, String>;
 }
 
 pub fn list_items(

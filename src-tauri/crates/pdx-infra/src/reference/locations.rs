@@ -1,5 +1,7 @@
 use pdx_app::LocationRepository;
-use pdx_domain::{EncounterSummary, LocationAreaSummary, LocationDetail, LocationSummary, NatureSummary};
+use pdx_domain::{
+    EncounterSummary, LocationAreaSummary, LocationDetail, LocationSummary, NatureSummary,
+};
 use rusqlite::{OptionalExtension, params};
 
 use super::repository::SqliteSpeciesRepository;
@@ -19,7 +21,8 @@ impl LocationRepository for SqliteSpeciesRepository {
                LEFT JOIN translation t_en ON t_en.entity_type='location' AND t_en.entity_id=l.id AND t_en.lang='en' AND t_en.field='name'
                WHERE 1 = 1",
         );
-        let mut params: Vec<rusqlite::types::Value> = vec![rusqlite::types::Value::Text(lang.to_owned())];
+        let mut params: Vec<rusqlite::types::Value> =
+            vec![rusqlite::types::Value::Text(lang.to_owned())];
         if let Some(search) = search {
             sql.push_str(" AND (COALESCE(t.value, t_en.value, l.slug) LIKE ? OR l.slug LIKE ?)");
             let needle = format!("%{}%", search.to_lowercase());
@@ -30,7 +33,10 @@ impl LocationRepository for SqliteSpeciesRepository {
         params.push(rusqlite::types::Value::Integer(i64::from(limit)));
         params.push(rusqlite::types::Value::Integer(i64::from(offset)));
 
-        let mut statement = self.connection.prepare(&sql).map_err(super::repository::db_error)?;
+        let mut statement = self
+            .connection
+            .prepare(&sql)
+            .map_err(super::repository::db_error)?;
         let rows = statement
             .query_map(rusqlite::params_from_iter(params.iter()), |row| {
                 Ok(LocationSummary {
