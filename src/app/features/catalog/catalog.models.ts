@@ -275,8 +275,11 @@ export interface EncounterSummary {
   readonly speciesSlug: string;
   readonly speciesName: string;
   readonly versionSlug: string;
+  readonly versionName: string;
   readonly locationAreaSlug: string;
+  readonly locationName: string;
   readonly methodSlug: string;
+  readonly methodName: string;
   readonly minLevel: number;
   readonly maxLevel: number;
   readonly chance: number;

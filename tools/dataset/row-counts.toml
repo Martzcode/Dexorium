@@ -11,6 +11,7 @@ ability = { min = 300, max = 500 }
 move_ = { min = 900, max = 1200 }
 form_move = { min = 100000, max = 3000000 }
 evolution_step = { min = 400, max = 1200 }
+encounter_method = { min = 50, max = 80 }
 translation = { min = 8000, max = 60000 }
 flavor_text = { min = 10000, max = 100000 }
 type_efficacy = { min = 2916, max = 2916 }

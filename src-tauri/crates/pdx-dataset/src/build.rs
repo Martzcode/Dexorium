@@ -82,6 +82,7 @@ pub fn build(options: &BuildOptions) -> Result<BuildReport, String> {
         insert_items(&tx, staging, &mut context)?;
         insert_natures(&tx, staging, &context)?;
         insert_locations(&tx, staging, &mut context)?;
+        insert_encounter_methods(&tx, staging, &context)?;
         insert_berries(&tx, staging, &context)?;
         insert_machines(&tx, staging, &context)?;
         insert_evolution_chain_stubs(&tx, staging)?;
@@ -183,6 +184,8 @@ struct VersionJson {
     id: i64,
     name: String,
     version_group: Named,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -636,9 +639,13 @@ struct PokedexEntryJson {
     pokemon_species: Named,
 }
 
-// ---------------------------------------------------------------------------
-// Referentials
-// ---------------------------------------------------------------------------
+#[derive(Debug, Deserialize)]
+struct EncounterMethodJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
+}// ---------------------------------------------------------------------------
 
 fn insert_generations(
     tx: &rusqlite::Transaction<'_>,
@@ -715,6 +722,12 @@ fn insert_versions(
             params![version.id, version.name, group_id],
         )
         .map_err(|error| format!("cannot insert version {}: {error}", version.name))?;
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&version.names, lang) {
+                put_translation(tx, "version", version.id, lang, "name", name)?;
+            }
+        }
 
         context.versions.insert(version.name, version.id);
     }
@@ -1999,6 +2012,29 @@ fn insert_locations(
     Ok(())
 }
 
+fn insert_encounter_methods(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("encounter-method"))? {
+        let method: EncounterMethodJson = read_json(&path)?;
+        tx.execute(
+            "INSERT OR REPLACE INTO encounter_method (id, slug) VALUES (?1, ?2)",
+            params![method.id, method.name],
+        )
+        .map_err(|error| format!("cannot insert encounter method {}: {error}", method.name))?;
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&method.names, lang) {
+                put_translation(tx, "encounter_method", method.id, lang, "name", name)?;
+            }
+        }
+    }
+
+    Ok(())
+}
+
 fn insert_encounters(
     tx: &rusqlite::Transaction<'_>,
     staging: &Path,
@@ -2179,7 +2215,7 @@ fn insert_meta(
             "source_lock",
             options.source_lock.clone().unwrap_or_default(),
         ),
-        ("schema_version", "3".to_owned()),
+        ("schema_version", "4".to_owned()),
         ("langs", context.langs.join(",")),
         (
             "row_counts_json",

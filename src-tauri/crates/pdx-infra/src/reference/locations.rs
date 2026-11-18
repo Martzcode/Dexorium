@@ -95,20 +95,31 @@ impl LocationRepository for SqliteSpeciesRepository {
             let mut stmt = self
                 .connection
                 .prepare(
-                    "SELECT e.species_id, s.slug, COALESCE(ts.value, ts_en.value, s.slug), e.version_id, gv.slug, la.slug,
-                            e.method_slug, e.min_level, e.max_level, e.chance, e.conditions_json
+                    "SELECT e.species_id, s.slug, COALESCE(ts.value, ts_en.value, s.slug), e.version_id, gv.slug,
+                            COALESCE(tv.value, tv_en.value, gv.slug), la.slug,
+                            COALESCE(tl.value, tl_en.value, l.slug), e.method_slug,
+                            COALESCE(tem.value, tem_en.value, e.method_slug),
+                            e.min_level, e.max_level, e.chance, e.conditions_json
                        FROM encounter e
                        JOIN species s ON s.id = e.species_id
                        JOIN location_area la ON la.id = e.location_area_id
+                       JOIN location l ON l.id = la.location_id
                        JOIN game_version gv ON gv.id = e.version_id
                        LEFT JOIN translation ts ON ts.entity_type='species' AND ts.entity_id=s.id AND ts.lang=?1 AND ts.field='name'
                        LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts.field='name'
+                       LEFT JOIN translation tv ON tv.entity_type='version' AND tv.entity_id=gv.id AND tv.lang=?1 AND tv.field='name'
+                       LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv.field='name'
+                       LEFT JOIN translation tl ON tl.entity_type='location' AND tl.entity_id=l.id AND tl.lang=?1 AND tl.field='name'
+                       LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl.field='name'
+                       LEFT JOIN encounter_method em ON em.slug = e.method_slug
+                       LEFT JOIN translation tem ON tem.entity_type='encounter_method' AND tem.entity_id=em.id AND tem.lang=?1 AND tem.field='name'
+                       LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem.field='name'
                       WHERE e.location_area_id = ?2",
                 )
                 .map_err(super::repository::db_error)?;
             let rows = stmt
                 .query_map(params![lang, area_id], |row| {
-                    let conditions_raw: Option<String> = row.get(10)?;
+                    let conditions_raw: Option<String> = row.get(13)?;
                     let conditions = conditions_raw
                         .and_then(|raw| serde_json::from_str::<Vec<String>>(&raw).ok())
                         .unwrap_or_default();
@@ -117,11 +128,14 @@ impl LocationRepository for SqliteSpeciesRepository {
                         species_slug: row.get(1)?,
                         species_name: row.get(2)?,
                         version_slug: row.get(4)?,
-                        location_area_slug: row.get(5)?,
-                        method_slug: row.get(6)?,
-                        min_level: row.get(7)?,
-                        max_level: row.get(8)?,
-                        chance: row.get(9)?,
+                        version_name: row.get(5)?,
+                        location_area_slug: row.get(6)?,
+                        location_name: row.get(7)?,
+                        method_slug: row.get(8)?,
+                        method_name: row.get(9)?,
+                        min_level: row.get(10)?,
+                        max_level: row.get(11)?,
+                        chance: row.get(12)?,
                         conditions,
                     })
                 })
@@ -149,20 +163,31 @@ impl LocationRepository for SqliteSpeciesRepository {
         lang: &str,
     ) -> Result<Vec<EncounterSummary>, String> {
         let mut stmt = self.connection.prepare(
-            "SELECT e.species_id, s.slug, COALESCE(ts.value, ts_en.value, s.slug), e.version_id, gv.slug, la.slug,
-                    e.method_slug, e.min_level, e.max_level, e.chance, e.conditions_json
+            "SELECT e.species_id, s.slug, COALESCE(ts.value, ts_en.value, s.slug), e.version_id, gv.slug,
+                    COALESCE(tv.value, tv_en.value, gv.slug), la.slug,
+                    COALESCE(tl.value, tl_en.value, l.slug), e.method_slug,
+                    COALESCE(tem.value, tem_en.value, e.method_slug),
+                    e.min_level, e.max_level, e.chance, e.conditions_json
                FROM encounter e
                JOIN species s ON s.id = e.species_id
                JOIN location_area la ON la.id = e.location_area_id
+               JOIN location l ON l.id = la.location_id
                JOIN game_version gv ON gv.id = e.version_id
                LEFT JOIN translation ts ON ts.entity_type='species' AND ts.entity_id=s.id AND ts.lang=?1 AND ts.field='name'
                LEFT JOIN translation ts_en ON ts_en.entity_type='species' AND ts_en.entity_id=s.id AND ts_en.lang='en' AND ts.field='name'
+               LEFT JOIN translation tv ON tv.entity_type='version' AND tv.entity_id=gv.id AND tv.lang=?1 AND tv.field='name'
+               LEFT JOIN translation tv_en ON tv_en.entity_type='version' AND tv_en.entity_id=gv.id AND tv_en.lang='en' AND tv.field='name'
+               LEFT JOIN translation tl ON tl.entity_type='location' AND tl.entity_id=l.id AND tl.lang=?1 AND tl.field='name'
+               LEFT JOIN translation tl_en ON tl_en.entity_type='location' AND tl_en.entity_id=l.id AND tl_en.lang='en' AND tl.field='name'
+               LEFT JOIN encounter_method em ON em.slug = e.method_slug
+               LEFT JOIN translation tem ON tem.entity_type='encounter_method' AND tem.entity_id=em.id AND tem.lang=?1 AND tem.field='name'
+               LEFT JOIN translation tem_en ON tem_en.entity_type='encounter_method' AND tem_en.entity_id=em.id AND tem_en.lang='en' AND tem.field='name'
               WHERE e.species_id = ?2
               ORDER BY gv.slug, la.slug",
         ).map_err(super::repository::db_error)?;
         let rows = stmt
             .query_map(params![lang, species_id], |row| {
-                let conditions_raw: Option<String> = row.get(10)?;
+                let conditions_raw: Option<String> = row.get(13)?;
                 let conditions = conditions_raw
                     .and_then(|raw| serde_json::from_str::<Vec<String>>(&raw).ok())
                     .unwrap_or_default();
@@ -171,11 +196,14 @@ impl LocationRepository for SqliteSpeciesRepository {
                     species_slug: row.get(1)?,
                     species_name: row.get(2)?,
                     version_slug: row.get(4)?,
-                    location_area_slug: row.get(5)?,
-                    method_slug: row.get(6)?,
-                    min_level: row.get(7)?,
-                    max_level: row.get(8)?,
-                    chance: row.get(9)?,
+                    version_name: row.get(5)?,
+                    location_area_slug: row.get(6)?,
+                    location_name: row.get(7)?,
+                    method_slug: row.get(8)?,
+                    method_name: row.get(9)?,
+                    min_level: row.get(10)?,
+                    max_level: row.get(11)?,
+                    chance: row.get(12)?,
                     conditions,
                 })
             })

@@ -1440,7 +1440,7 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
         ("version", "0.1.0-fixture".to_owned()),
         ("built_at", "fixture".to_owned()),
         ("source_commit", "fixture".to_owned()),
-        ("schema_version", "3".to_owned()),
+        ("schema_version", "4".to_owned()),
         ("checksum", "fixture".to_owned()),
         (
             "row_counts_json",
@@ -1656,7 +1656,7 @@ pub(crate) fn db_error(error: rusqlite::Error) -> String {
 }
 
 /// Schema version written by `pdx-dataset` and understood by this build.
-const EXPECTED_SCHEMA_VERSION: &str = "3";
+const EXPECTED_SCHEMA_VERSION: &str = "4";
 
 /// Runs the read-only integrity check and validates the schema version.
 fn verify_reference(connection: &Connection) -> Result<(), String> {

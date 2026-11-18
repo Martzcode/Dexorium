@@ -624,11 +624,11 @@
               <tbody>
                 @for (encounter of encounters(); track $index) {
                   <tr class="border-t border-line">
-                    <td class="py-1 text-ink-soft">{{ encounter.versionSlug }}</td>
-                    <td class="py-1 text-ink-soft">{{ encounter.methodSlug }}</td>
+                    <td class="py-1 text-ink-soft">{{ encounter.versionName }}</td>
+                    <td class="py-1 text-ink-soft">{{ encounter.methodName }}</td>
                     <td class="py-1 text-ink-soft">{{ encounter.minLevel }}–{{ encounter.maxLevel }}</td>
                     <td class="py-1 text-ink-soft">{{ encounter.chance }}%</td>
-                    <td class="py-1 text-ink-soft">{{ encounter.locationAreaSlug }}</td>
+                    <td class="py-1 text-ink-soft">{{ encounter.locationName }}</td>
                   </tr>
                 }
               </tbody>

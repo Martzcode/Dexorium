@@ -107,7 +107,7 @@ mod tests {
         let metadata = repository.dataset_metadata().expect("metadata should load");
 
         assert!(!metadata.version.is_empty());
-        assert_eq!(metadata.schema_version, "3");
+        assert_eq!(metadata.schema_version, "4");
         assert_eq!(metadata.source_commit.len(), 40);
         assert!(metadata.languages.contains(&"en".to_owned()));
         assert!(metadata.languages.contains(&"fr".to_owned()));

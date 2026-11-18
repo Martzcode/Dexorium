@@ -333,6 +333,11 @@ CREATE INDEX idx_pokedex_entry_number ON pokedex_entry(pokedex_id, entry_number)
 -- =========================================================
 -- LIEUX ET RENCONTRES
 -- =========================================================
+CREATE TABLE encounter_method (
+    id   INTEGER PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE
+);
+
 CREATE TABLE location (
     id          INTEGER PRIMARY KEY,
     slug        TEXT NOT NULL UNIQUE,
