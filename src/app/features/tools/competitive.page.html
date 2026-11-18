@@ -13,7 +13,7 @@
           min="1"
           max="100"
           [value]="level()"
-          (input)="onLevel($any($event.target).value)"
+          (input)="onLevel($any($event.target).value, $any($event.target))"
         />
       </label>
 
@@ -59,7 +59,7 @@
                 type="number"
                 min="0"
                 [value]="stat.base"
-                (input)="setField(index, 'base', $any($event.target).value)"
+                (input)="setField(index, 'base', $any($event.target).value, $any($event.target))"
               />
             </td>
             <td class="py-1.5">
@@ -69,7 +69,7 @@
                 min="0"
                 max="31"
                 [value]="stat.iv"
-                (input)="setField(index, 'iv', $any($event.target).value)"
+                (input)="setField(index, 'iv', $any($event.target).value, $any($event.target))"
               />
             </td>
             <td class="py-1.5">
@@ -79,7 +79,7 @@
                 min="0"
                 [max]="evMax(index)"
                 [value]="stat.ev"
-                (input)="setField(index, 'ev', $any($event.target).value)"
+                (input)="setField(index, 'ev', $any($event.target).value, $any($event.target))"
               />
             </td>
             <td class="py-1.5 font-mono font-bold text-ink">{{ stat.value }}</td>

@@ -112,7 +112,12 @@ export class CompetitivePage {
     return Math.max(0, Math.min(252, 510 - others));
   }
 
-  protected setField(index: number, field: 'base' | 'iv' | 'ev', raw: string): void {
+  protected setField(
+    index: number,
+    field: 'base' | 'iv' | 'ev',
+    raw: string,
+    input?: HTMLInputElement,
+  ): void {
     const parsed = Math.max(0, Math.trunc(Number(raw) || 0));
     const value =
       field === 'ev'
@@ -123,10 +128,17 @@ export class CompetitivePage {
     this.stats.update((stats) =>
       stats.map((stat, position) => (position === index ? { ...stat, [field]: value } : stat)),
     );
+    if (input && String(value) !== input.value) {
+      input.value = String(value);
+    }
   }
 
-  protected onLevel(raw: string): void {
-    this.level.set(Math.max(1, Math.min(100, Math.trunc(Number(raw) || 50))));
+  protected onLevel(raw: string, input?: HTMLInputElement): void {
+    const value = Math.max(1, Math.min(100, Math.trunc(Number(raw) || 50)));
+    this.level.set(value);
+    if (input && String(value) !== input.value) {
+      input.value = String(value);
+    }
   }
 
   private statLabel(slug: string): string {
