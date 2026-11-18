@@ -11,6 +11,14 @@ ability = { min = 300, max = 500 }
 move_ = { min = 900, max = 1200 }
 form_move = { min = 100000, max = 3000000 }
 evolution_step = { min = 400, max = 1200 }
-translation = { min = 8000, max = 40000 }
+translation = { min = 8000, max = 60000 }
 flavor_text = { min = 10000, max = 100000 }
 type_efficacy = { min = 2916, max = 2916 }
+item = { min = 1800, max = 3000 }
+berry = { min = 50, max = 100 }
+machine = { min = 1500, max = 6000 }
+nature = { min = 25, max = 30 }
+location = { min = 900, max = 1500 }
+location_area = { min = 1200, max = 2000 }
+encounter = { min = 90000, max = 160000 }
+pokedex_entry = { min = 6000, max = 12000 }

@@ -1581,7 +1581,7 @@ pub(crate) fn db_error(error: rusqlite::Error) -> String {
 }
 
 /// Schema version written by `pdx-dataset` and understood by this build.
-const EXPECTED_SCHEMA_VERSION: &str = "2";
+const EXPECTED_SCHEMA_VERSION: &str = "3";
 
 /// Runs the read-only integrity check and validates the schema version.
 fn verify_reference(connection: &Connection) -> Result<(), String> {

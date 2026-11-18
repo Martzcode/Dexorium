@@ -1,8 +1,8 @@
--- Reference database schema.
+-- Reference database schema (version 3).
 --
--- Mirrors `docs/pokedex/pokedex-pro-specifications.md` (section 3.5.1) for the
--- scope of the MVP. Items, locations and encounters are intentionally omitted:
--- they belong to phase 2 and are not part of the MVP perimeter.
+-- Mirrors `docs/pokedex/pokedex-pro-specifications.md` (section 3.5.1).
+-- Version 3 adds items, berries, machines, natures, locations, location areas
+-- and encounters on top of the version 2 schema.
 --
 -- The schema is shared by two consumers:
 --   * `pdx-dataset` builds the real reference database from the pinned sources;
@@ -252,6 +252,117 @@ CREATE TABLE evolution_step (
 );
 CREATE INDEX idx_evo_chain ON evolution_step(chain_id);
 CREATE INDEX idx_evo_to ON evolution_step(to_species_id);
+
+-- =========================================================
+-- OBJETS, BAIES ET MACHINES
+-- =========================================================
+CREATE TABLE item_category (
+    id          INTEGER PRIMARY KEY,
+    slug        TEXT NOT NULL UNIQUE,
+    pocket_slug TEXT
+);
+
+CREATE TABLE item (
+    id               INTEGER PRIMARY KEY,
+    slug             TEXT NOT NULL UNIQUE,
+    category_id      INTEGER REFERENCES item_category(id),
+    cost             INTEGER,
+    fling_power      INTEGER,
+    fling_effect_slug TEXT,
+    is_berry         INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX idx_item_category ON item(category_id);
+
+CREATE TABLE item_flag (
+    item_id   INTEGER NOT NULL REFERENCES item(id) ON DELETE CASCADE,
+    flag_slug TEXT NOT NULL,
+    PRIMARY KEY (item_id, flag_slug)
+) WITHOUT ROWID;
+
+CREATE TABLE berry (
+    item_id             INTEGER PRIMARY KEY REFERENCES item(id) ON DELETE CASCADE,
+    firmness_slug       TEXT,
+    growth_time         INTEGER,
+    max_harvest         INTEGER,
+    natural_gift_power  INTEGER,
+    size                INTEGER,
+    smoothness          INTEGER,
+    soil_dryness        INTEGER,
+    natural_gift_type_id INTEGER REFERENCES poke_type(id),
+    flavors_json        TEXT
+);
+
+-- TM / HM / TR / DT per version group.
+CREATE TABLE machine (
+    version_group_id INTEGER NOT NULL REFERENCES version_group(id),
+    machine_slug     TEXT NOT NULL,     -- tm00, hm01, tr12...
+    item_id          INTEGER REFERENCES item(id),
+    move_id          INTEGER NOT NULL REFERENCES move_(id),
+    PRIMARY KEY (version_group_id, machine_slug)
+) WITHOUT ROWID;
+CREATE INDEX idx_machine_move ON machine(move_id);
+
+-- =========================================================
+-- NATURES
+-- =========================================================
+CREATE TABLE nature (
+    id                   INTEGER PRIMARY KEY,
+    slug                 TEXT NOT NULL UNIQUE,
+    increased_stat_slug  TEXT,
+    decreased_stat_slug  TEXT
+);
+
+-- =========================================================
+-- POKÉDEX RÉGIONAUX
+-- =========================================================
+CREATE TABLE pokedex (
+    id              INTEGER PRIMARY KEY,
+    slug            TEXT NOT NULL UNIQUE,
+    region_slug     TEXT,
+    is_main_series  INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE pokedex_entry (
+    pokedex_id   INTEGER NOT NULL REFERENCES pokedex(id) ON DELETE CASCADE,
+    species_id   INTEGER NOT NULL REFERENCES species(id) ON DELETE CASCADE,
+    entry_number INTEGER NOT NULL,
+    PRIMARY KEY (pokedex_id, species_id)
+) WITHOUT ROWID;
+CREATE INDEX idx_pokedex_entry_number ON pokedex_entry(pokedex_id, entry_number);
+
+-- =========================================================
+-- LIEUX ET RENCONTRES
+-- =========================================================
+CREATE TABLE location (
+    id          INTEGER PRIMARY KEY,
+    slug        TEXT NOT NULL UNIQUE,
+    region_slug TEXT
+);
+CREATE INDEX idx_location_region ON location(region_slug);
+
+CREATE TABLE location_area (
+    id          INTEGER PRIMARY KEY,
+    location_id INTEGER NOT NULL REFERENCES location(id) ON DELETE CASCADE,
+    slug        TEXT NOT NULL UNIQUE,
+    game_index  INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX idx_area_location ON location_area(location_id);
+
+-- One row per encounter detail (method + level range + conditions), never one
+-- row per Pokémon/area couple.
+CREATE TABLE encounter (
+    id               INTEGER PRIMARY KEY,
+    species_id       INTEGER NOT NULL REFERENCES species(id) ON DELETE CASCADE,
+    version_id       INTEGER NOT NULL REFERENCES game_version(id),
+    location_area_id INTEGER NOT NULL REFERENCES location_area(id) ON DELETE CASCADE,
+    method_slug      TEXT NOT NULL,
+    min_level        INTEGER NOT NULL,
+    max_level        INTEGER NOT NULL,
+    chance           INTEGER NOT NULL,
+    conditions_json  TEXT
+);
+CREATE INDEX idx_encounter_species ON encounter(species_id, version_id);
+CREATE INDEX idx_encounter_area ON encounter(location_area_id, version_id);
 
 -- =========================================================
 -- LOCALISATION

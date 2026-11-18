@@ -120,6 +120,11 @@ fn val_01(connection: &Connection) -> Result<RuleResult, String> {
         ("type", "poke_type"),
         ("version", "game_version"),
         ("egg_group", "egg_group"),
+        ("item", "item"),
+        ("item_category", "item_category"),
+        ("location", "location"),
+        ("location_area", "location_area"),
+        ("nature", "nature"),
     ];
 
     let mut details = orphan_rows;

@@ -78,11 +78,19 @@ pub fn build(options: &BuildOptions) -> Result<BuildReport, String> {
         insert_stat_names(&tx, staging, &context)?;
         insert_abilities(&tx, staging, &mut context)?;
         insert_moves(&tx, staging, &mut context)?;
+        insert_item_categories(&tx, staging, &mut context)?;
+        insert_items(&tx, staging, &mut context)?;
+        insert_natures(&tx, staging, &context)?;
+        insert_locations(&tx, staging, &mut context)?;
+        insert_berries(&tx, staging, &context)?;
+        insert_machines(&tx, staging, &context)?;
         insert_evolution_chain_stubs(&tx, staging)?;
         insert_species(&tx, staging, &mut context)?;
         resolve_evolves_from(&tx, staging, &context)?;
         insert_forms(&tx, staging, &mut context)?;
         insert_evolution_steps(&tx, staging, &context)?;
+        insert_encounters(&tx, staging, &context)?;
+        insert_pokedexes(&tx, staging, &context)?;
         insert_meta(&tx, options, &context)?;
 
         tx.commit()
@@ -127,6 +135,10 @@ struct Context {
     species_names: HashMap<String, (String, String)>,
     species_generation: HashMap<i64, i64>,
     fallback_names: usize,
+    item_categories: HashMap<String, i64>,
+    items: HashMap<String, i64>,
+    locations: HashMap<String, i64>,
+    location_areas: HashMap<String, i64>,
 }
 
 // ---------------------------------------------------------------------------
@@ -473,6 +485,155 @@ struct EvolutionDetail {
     condition_expression: Option<serde_json::Value>,
     #[serde(flatten)]
     extra: HashMap<String, serde_json::Value>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ItemJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    cost: Option<i64>,
+    #[serde(default)]
+    fling_power: Option<i64>,
+    #[serde(default)]
+    fling_effect: Option<Named>,
+    #[serde(default)]
+    attributes: Vec<Named>,
+    #[serde(default)]
+    category: Option<Named>,
+    #[serde(default)]
+    effect_entries: Vec<EffectEntry>,
+    #[serde(default)]
+    flavor_text_entries: Vec<ItemFlavorText>,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ItemFlavorText {
+    text: String,
+    language: Named,
+}
+
+#[derive(Debug, Deserialize)]
+struct ItemCategoryJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    pocket: Option<Named>,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
+}
+
+#[derive(Debug, Deserialize)]
+struct BerryJson {
+    name: String,
+    #[serde(default)]
+    growth_time: Option<i64>,
+    #[serde(default)]
+    max_harvest: Option<i64>,
+    #[serde(default)]
+    natural_gift_power: Option<i64>,
+    #[serde(default)]
+    size: Option<i64>,
+    #[serde(default)]
+    smoothness: Option<i64>,
+    #[serde(default)]
+    soil_dryness: Option<i64>,
+    #[serde(default)]
+    firmness: Option<Named>,
+    #[serde(default)]
+    flavors: Vec<BerryFlavor>,
+    #[serde(default)]
+    natural_gift_type: Option<Named>,
+    item: Named,
+}
+
+#[derive(Debug, Deserialize)]
+struct BerryFlavor {
+    potency: i64,
+    flavor: Named,
+}
+
+#[derive(Debug, Deserialize)]
+struct MachineJson {
+    item: Named,
+    version_group: Named,
+    #[serde(rename = "move")]
+    move_: Named,
+}
+
+#[derive(Debug, Deserialize)]
+struct NatureJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    increased_stat: Option<Named>,
+    #[serde(default)]
+    decreased_stat: Option<Named>,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
+}
+
+#[derive(Debug, Deserialize)]
+struct LocationJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    region: Option<Named>,
+    #[serde(default)]
+    names: Vec<LocalizedName>,
+}
+
+#[derive(Debug, Deserialize)]
+struct LocationAreaJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    game_index: i64,
+    location: Named,
+}
+
+#[derive(Debug, Deserialize)]
+struct PokemonEncounterJson {
+    location_area: Named,
+    #[serde(default)]
+    version_details: Vec<EncounterVersionDetail>,
+}
+
+#[derive(Debug, Deserialize)]
+struct EncounterVersionDetail {
+    version: Named,
+    #[serde(default)]
+    encounter_details: Vec<EncounterDetailJson>,
+}
+
+#[derive(Debug, Deserialize)]
+struct EncounterDetailJson {
+    min_level: i64,
+    max_level: i64,
+    chance: i64,
+    method: Named,
+    #[serde(default)]
+    condition_values: Vec<Named>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PokedexJson {
+    id: i64,
+    name: String,
+    #[serde(default)]
+    is_main_series: bool,
+    #[serde(default)]
+    region: Option<Named>,
+    #[serde(default)]
+    pokemon_entries: Vec<PokedexEntryJson>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PokedexEntryJson {
+    entry_number: i64,
+    pokemon_species: Named,
 }
 
 // ---------------------------------------------------------------------------
@@ -1557,6 +1718,413 @@ fn walk_chain(
 }
 
 // ---------------------------------------------------------------------------
+// Items, berries, machines
+// ---------------------------------------------------------------------------
+
+fn insert_item_categories(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &mut Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("item-category"))? {
+        let category: ItemCategoryJson = read_json(&path)?;
+        let pocket = category.pocket.as_ref().map(|pocket| pocket.name.as_str());
+
+        tx.execute(
+            "INSERT OR REPLACE INTO item_category (id, slug, pocket_slug) VALUES (?1, ?2, ?3)",
+            params![category.id, category.name, pocket],
+        )
+        .map_err(|error| format!("cannot insert item category {}: {error}", category.name))?;
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&category.names, lang) {
+                put_translation(tx, "item_category", category.id, lang, "name", name)?;
+            }
+        }
+
+        context.item_categories.insert(category.name, category.id);
+    }
+
+    Ok(())
+}
+
+fn insert_items(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &mut Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("item"))? {
+        let item: ItemJson = read_json(&path)?;
+        // A few items are duplicated across ids in the source (same slug). Keep
+        // the first occurrence so translations never point to a deleted row.
+        if context.items.contains_key(&item.name) {
+            continue;
+        }
+        let category_id = item
+            .category
+            .as_ref()
+            .and_then(|category| context.item_categories.get(&category.name).copied());
+
+        tx.execute(
+            "INSERT OR REPLACE INTO item
+                (id, slug, category_id, cost, fling_power, fling_effect_slug, is_berry)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, 0)",
+            params![
+                item.id,
+                item.name,
+                category_id,
+                item.cost,
+                item.fling_power,
+                item.fling_effect.as_ref().map(|effect| effect.name.as_str()),
+            ],
+        )
+        .map_err(|error| format!("cannot insert item {}: {error}", item.name))?;
+
+        for attribute in &item.attributes {
+            tx.execute(
+                "INSERT OR IGNORE INTO item_flag (item_id, flag_slug) VALUES (?1, ?2)",
+                params![item.id, attribute.name],
+            )
+            .map_err(|error| format!("cannot insert item flag {}: {error}", item.name))?;
+        }
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&item.names, lang) {
+                put_translation(tx, "item", item.id, lang, "name", name)?;
+            }
+            if let Some(entry) = item
+                .effect_entries
+                .iter()
+                .find(|entry| entry.language.name == *lang)
+            {
+                put_translation(
+                    tx,
+                    "item",
+                    item.id,
+                    lang,
+                    "effect",
+                    &clean_text(&entry.effect),
+                )?;
+                put_translation(
+                    tx,
+                    "item",
+                    item.id,
+                    lang,
+                    "short_effect",
+                    &clean_text(&entry.short_effect),
+                )?;
+            }
+            if let Some(description) = last_flavor(&item.flavor_text_entries, lang) {
+                put_translation(tx, "item", item.id, lang, "description", &description)?;
+            }
+        }
+
+        index_localized(tx, "item", item.id, &item.names, &item.name)?;
+        context.items.insert(item.name, item.id);
+    }
+
+    Ok(())
+}
+
+fn insert_berries(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("berry"))? {
+        let berry: BerryJson = read_json(&path)?;
+        let Some(&item_id) = context.items.get(&berry.item.name) else {
+            continue;
+        };
+        let natural_gift_type_id = berry
+            .natural_gift_type
+            .as_ref()
+            .and_then(|type_| context.types.get(&type_.name).copied());
+        let flavors = serde_json::Value::Array(
+            berry
+                .flavors
+                .iter()
+                .map(|flavor| {
+                    serde_json::json!({
+                        "flavor": flavor.flavor.name,
+                        "potency": flavor.potency,
+                    })
+                })
+                .collect(),
+        );
+
+        tx.execute(
+            "INSERT OR REPLACE INTO berry
+                (item_id, firmness_slug, growth_time, max_harvest, natural_gift_power,
+                 size, smoothness, soil_dryness, natural_gift_type_id, flavors_json)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+            params![
+                item_id,
+                berry.firmness.as_ref().map(|firmness| firmness.name.as_str()),
+                berry.growth_time,
+                berry.max_harvest,
+                berry.natural_gift_power,
+                berry.size,
+                berry.smoothness,
+                berry.soil_dryness,
+                natural_gift_type_id,
+                flavors.to_string(),
+            ],
+        )
+        .map_err(|error| format!("cannot insert berry {}: {error}", berry.name))?;
+
+        tx.execute("UPDATE item SET is_berry = 1 WHERE id = ?1", [item_id])
+            .map_err(|error| format!("cannot flag berry item {}: {error}", berry.name))?;
+    }
+
+    Ok(())
+}
+
+fn insert_machines(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("machine"))? {
+        let machine: MachineJson = read_json(&path)?;
+        let Some(&version_group_id) = context.version_groups.get(&machine.version_group.name) else {
+            continue;
+        };
+        let Some(&move_id) = context.moves.get(&machine.move_.name) else {
+            continue;
+        };
+        let item_id = context.items.get(&machine.item.name).copied();
+
+        tx.execute(
+            "INSERT OR REPLACE INTO machine (version_group_id, machine_slug, item_id, move_id)
+             VALUES (?1, ?2, ?3, ?4)",
+            params![version_group_id, machine.item.name, item_id, move_id],
+        )
+        .map_err(|error| format!("cannot insert machine {}: {error}", machine.item.name))?;
+    }
+
+    Ok(())
+}
+
+// ---------------------------------------------------------------------------
+// Natures, locations and encounters
+// ---------------------------------------------------------------------------
+
+fn insert_natures(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("nature"))? {
+        let nature: NatureJson = read_json(&path)?;
+        let increased = nature
+            .increased_stat
+            .as_ref()
+            .and_then(|stat| stat_slug(&stat.name));
+        let decreased = nature
+            .decreased_stat
+            .as_ref()
+            .and_then(|stat| stat_slug(&stat.name));
+
+        tx.execute(
+            "INSERT OR REPLACE INTO nature (id, slug, increased_stat_slug, decreased_stat_slug)
+             VALUES (?1, ?2, ?3, ?4)",
+            params![nature.id, nature.name, increased, decreased],
+        )
+        .map_err(|error| format!("cannot insert nature {}: {error}", nature.name))?;
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&nature.names, lang) {
+                put_translation(tx, "nature", nature.id, lang, "name", name)?;
+            }
+        }
+
+        index_localized(tx, "nature", nature.id, &nature.names, &nature.name)?;
+    }
+
+    Ok(())
+}
+
+fn insert_locations(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &mut Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("location"))? {
+        let location: LocationJson = read_json(&path)?;
+        if context.locations.contains_key(&location.name) {
+            continue;
+        }
+
+        tx.execute(
+            "INSERT OR REPLACE INTO location (id, slug, region_slug) VALUES (?1, ?2, ?3)",
+            params![
+                location.id,
+                location.name,
+                location.region.as_ref().map(|region| region.name.as_str()),
+            ],
+        )
+        .map_err(|error| format!("cannot insert location {}: {error}", location.name))?;
+
+        for lang in &context.langs {
+            if let Some(name) = localized_name(&location.names, lang) {
+                put_translation(tx, "location", location.id, lang, "name", name)?;
+            }
+        }
+
+        index_localized(tx, "location", location.id, &location.names, &location.name)?;
+        context.locations.insert(location.name, location.id);
+    }
+
+    for (_, path) in numeric_dirs(&staging.join("location-area"))? {
+        let area: LocationAreaJson = read_json(&path)?;
+        if context.location_areas.contains_key(&area.name) {
+            continue;
+        }
+        let Some(&location_id) = context.locations.get(&area.location.name) else {
+            continue;
+        };
+
+        tx.execute(
+            "INSERT OR REPLACE INTO location_area (id, location_id, slug, game_index)
+             VALUES (?1, ?2, ?3, ?4)",
+            params![area.id, location_id, area.name, area.game_index],
+        )
+        .map_err(|error| format!("cannot insert location area {}: {error}", area.name))?;
+
+        put_translation(tx, "location_area", area.id, "en", "name", &area.name)?;
+        context.location_areas.insert(area.name, area.id);
+    }
+
+    Ok(())
+}
+
+fn insert_encounters(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    let mut seen: HashSet<(i64, i64, i64, String, i64, i64, i64, String)> = HashSet::new();
+
+    for (_, path) in numeric_dirs(&staging.join("pokemon"))? {
+        let encounters_path = path.parent().unwrap_or(Path::new(".")).join("encounters").join("index.json");
+        if !encounters_path.is_file() {
+            continue;
+        }
+
+        let pokemon: PokemonJson = read_json(&path)?;
+        let Some(&species_id) = context.species.get(&pokemon.species.name) else {
+            continue;
+        };
+        let encounters: Vec<PokemonEncounterJson> = read_json(&encounters_path)?;
+
+        for encounter in encounters {
+            let Some(&area_id) = context.location_areas.get(&encounter.location_area.name) else {
+                continue;
+            };
+
+            for version_detail in encounter.version_details {
+                let Some(&version_id) = context.versions.get(&version_detail.version.name) else {
+                    continue;
+                };
+
+                for detail in version_detail.encounter_details {
+                    let mut conditions: Vec<&str> = detail
+                        .condition_values
+                        .iter()
+                        .map(|value| value.name.as_str())
+                        .collect();
+                    conditions.sort_unstable();
+                    let conditions_json = serde_json::Value::Array(
+                        conditions
+                            .iter()
+                            .map(|condition| serde_json::Value::from(*condition))
+                            .collect(),
+                    )
+                    .to_string();
+
+                    let key = (
+                        species_id,
+                        version_id,
+                        area_id,
+                        detail.method.name.clone(),
+                        detail.min_level,
+                        detail.max_level,
+                        detail.chance,
+                        conditions_json.clone(),
+                    );
+                    if !seen.insert(key) {
+                        continue;
+                    }
+
+                    tx.execute(
+                        "INSERT INTO encounter
+                            (species_id, version_id, location_area_id, method_slug,
+                             min_level, max_level, chance, conditions_json)
+                         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                        params![
+                            species_id,
+                            version_id,
+                            area_id,
+                            detail.method.name,
+                            detail.min_level,
+                            detail.max_level,
+                            detail.chance,
+                            conditions_json,
+                        ],
+                    )
+                    .map_err(|error| {
+                        format!(
+                            "cannot insert encounter for {} in {}: {error}",
+                            pokemon.species.name, encounter.location_area.name
+                        )
+                    })?;
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn insert_pokedexes(
+    tx: &rusqlite::Transaction<'_>,
+    staging: &Path,
+    context: &Context,
+) -> Result<(), String> {
+    for (_, path) in numeric_dirs(&staging.join("pokedex"))? {
+        let pokedex: PokedexJson = read_json(&path)?;
+
+        tx.execute(
+            "INSERT OR REPLACE INTO pokedex (id, slug, region_slug, is_main_series)
+             VALUES (?1, ?2, ?3, ?4)",
+            params![
+                pokedex.id,
+                pokedex.name,
+                pokedex.region.as_ref().map(|region| region.name.as_str()),
+                i64::from(pokedex.is_main_series),
+            ],
+        )
+        .map_err(|error| format!("cannot insert pokedex {}: {error}", pokedex.name))?;
+
+        for entry in pokedex.pokemon_entries {
+            let Some(&species_id) = context.species.get(&entry.pokemon_species.name) else {
+                continue;
+            };
+
+            tx.execute(
+                "INSERT OR REPLACE INTO pokedex_entry (pokedex_id, species_id, entry_number)
+                 VALUES (?1, ?2, ?3)",
+                params![pokedex.id, species_id, entry.entry_number],
+            )
+            .map_err(|error| format!("cannot insert pokedex entry for {}: {error}", entry.pokemon_species.name))?;
+        }
+    }
+
+    Ok(())
+}
+
+// ---------------------------------------------------------------------------
 // Metadata and helpers
 // ---------------------------------------------------------------------------
 
@@ -1579,6 +2147,14 @@ fn insert_meta(
         "translation",
         "flavor_text",
         "type_efficacy",
+        "item",
+        "berry",
+        "machine",
+        "nature",
+        "location",
+        "location_area",
+        "encounter",
+        "pokedex_entry",
     ];
 
     let mut counts = serde_json::Map::new();
@@ -1602,7 +2178,7 @@ fn insert_meta(
             "source_lock",
             options.source_lock.clone().unwrap_or_default(),
         ),
-        ("schema_version", "2".to_owned()),
+        ("schema_version", "3".to_owned()),
         ("langs", context.langs.join(",")),
         (
             "row_counts_json",
@@ -1636,6 +2212,14 @@ fn read_row_counts(connection: &Connection) -> Result<Vec<(String, i64)>, String
         "translation",
         "flavor_text",
         "type_efficacy",
+        "item",
+        "berry",
+        "machine",
+        "nature",
+        "location",
+        "location_area",
+        "encounter",
+        "pokedex_entry",
     ];
 
     let mut counts = Vec::new();
@@ -1749,6 +2333,16 @@ impl FlavorEntry for AbilityFlavorText {
 
     fn text(&self) -> &str {
         &self.flavor_text
+    }
+}
+
+impl FlavorEntry for ItemFlavorText {
+    fn language(&self) -> &str {
+        &self.language.name
+    }
+
+    fn text(&self) -> &str {
+        &self.text
     }
 }
 
