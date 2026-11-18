@@ -553,8 +553,26 @@
       }
     }
   },
+  "teams": {
+    "title": "Équipes",
+    "new": "Nouvelle équipe",
+    "members": "membres",
+    "empty": "Aucune équipe sélectionnée"
+  },
+  "collection": {
+    "title": "Collection",
+    "captured": "Capturés",
+    "seen": "Vus",
+    "shiny": "Shinys"
+  },
   "tools": {
     "eyebrow": "Outils",
+    "competitive": {
+      "title": "Outils compétitifs"
+    },
+    "statCalc": {
+      "title": "Calculateur de stats"
+    },
     "types": {
       "title": "Table des types",
       "description": "Efficacité de chaque type attaquant contre chaque type défenseur, pour la génération sélectionnée.",

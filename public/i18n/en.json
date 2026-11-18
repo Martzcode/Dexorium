@@ -553,8 +553,26 @@
       }
     }
   },
+  "teams": {
+    "title": "Teams",
+    "new": "New team",
+    "members": "members",
+    "empty": "No team selected"
+  },
+  "collection": {
+    "title": "Collection",
+    "captured": "Captured",
+    "seen": "Seen",
+    "shiny": "Shiny"
+  },
   "tools": {
     "eyebrow": "Tools",
+    "competitive": {
+      "title": "Competitive tools"
+    },
+    "statCalc": {
+      "title": "Stat calculator"
+    },
     "types": {
       "title": "Type chart",
       "description": "Effectiveness of every attacking type against every defending type, for the selected generation.",
