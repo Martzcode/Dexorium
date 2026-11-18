@@ -172,6 +172,27 @@
             </button>
           }
         </div>
+
+        <h3 class="mb-0 mt-4 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-ink-muted">
+          {{ 'pokedex.filters.eggGroups' | transloco }}
+        </h3>
+        <div class="mt-2 flex flex-wrap gap-1.5">
+          @for (group of eggGroups; track group) {
+            <button
+              class="rounded-full border px-2.5 py-1 font-mono text-[0.64rem] font-semibold transition-colors"
+              [class]="
+                store.eggGroups().includes(group)
+                  ? 'border-accent bg-accent/10 text-ink'
+                  : 'border-line bg-panel text-ink-soft hover:border-line-strong'
+              "
+              type="button"
+              [attr.aria-pressed]="store.eggGroups().includes(group)"
+              (click)="store.toggleEggGroup(group)"
+            >
+              {{ 'pokedex.eggGroups.' + group | transloco }}
+            </button>
+          }
+        </div>
       </div>
 
       <div>

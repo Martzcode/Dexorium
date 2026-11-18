@@ -43,6 +43,7 @@ export interface SpeciesListQuery {
   readonly search: string | null;
   readonly types: readonly string[];
   readonly typeMatch: TypeMatchMode;
+  readonly eggGroups: readonly string[];
   readonly generations: readonly number[];
   readonly statRanges: readonly StatRange[];
   readonly flags: SpeciesFlags;
@@ -73,6 +74,7 @@ export const DEFAULT_QUERY: Omit<SpeciesListQuery, 'lang' | 'offset' | 'limit'> 
   search: null,
   types: [],
   typeMatch: 'any',
+  eggGroups: [],
   generations: [],
   statRanges: [],
   flags: EMPTY_FLAGS,
@@ -117,6 +119,8 @@ export interface FixtureSpecies {
   readonly baseHappiness: number | null;
   readonly isLegendary: boolean;
   readonly isMythical: boolean;
+  /** Only present in the browser preview fixture. */
+  readonly eggGroups?: readonly string[];
 }
 
 /** One playable form of a species. */

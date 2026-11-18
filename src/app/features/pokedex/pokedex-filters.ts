@@ -29,6 +29,24 @@ const TYPES = [
 
 const GENERATIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
+const EGG_GROUPS = [
+  'monster',
+  'water1',
+  'bug',
+  'flying',
+  'ground',
+  'fairy',
+  'plant',
+  'humanshape',
+  'water3',
+  'mineral',
+  'indeterminate',
+  'water2',
+  'ditto',
+  'dragon',
+  'no-eggs',
+] as const;
+
 interface StatFilter {
   readonly stat: SpeciesStat;
   readonly labelKey: string;
@@ -56,6 +74,7 @@ export class PokedexFilters {
 
   protected readonly types = TYPES;
   protected readonly generations = GENERATIONS;
+  protected readonly eggGroups = EGG_GROUPS;
   protected readonly statFilters = STAT_FILTERS;
   protected readonly typeBadgeClass = typeBadgeClass;
   protected readonly flagFilters: readonly { key: keyof SpeciesFlags; label: string }[] = [
@@ -68,6 +87,7 @@ export class PokedexFilters {
   protected readonly activeCount = computed(
     () =>
       this.store.types().length +
+      this.store.eggGroups().length +
       this.store.generations().length +
       this.store.statRanges().length +
       (this.store.flags().legendary ? 1 : 0) +

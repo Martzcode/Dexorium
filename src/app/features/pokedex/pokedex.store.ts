@@ -20,6 +20,7 @@ export interface FilterPreset {
   readonly search: string;
   readonly types: readonly string[];
   readonly typeMatch: TypeMatchMode;
+  readonly eggGroups: readonly string[];
   readonly generations: readonly number[];
   readonly statRanges: readonly StatRange[];
   readonly flags: SpeciesFlags;
@@ -44,6 +45,7 @@ export class PokedexStore {
   readonly search = signal('');
   readonly types = signal<readonly string[]>([]);
   readonly typeMatch = signal<TypeMatchMode>('any');
+  readonly eggGroups = signal<readonly string[]>([]);
   readonly generations = signal<readonly number[]>([]);
   readonly statRanges = signal<readonly StatRange[]>([]);
   readonly flags = signal<SpeciesFlags>(EMPTY_FLAGS);
@@ -66,6 +68,7 @@ export class PokedexStore {
     () =>
       this.search().trim().length > 0 ||
       this.types().length > 0 ||
+      this.eggGroups().length > 0 ||
       this.generations().length > 0 ||
       this.statRanges().length > 0 ||
       this.flags().legendary ||
@@ -105,6 +108,15 @@ export class PokedexStore {
 
   setTypeMatch(mode: TypeMatchMode): void {
     this.typeMatch.set(mode);
+    this.scheduleReload(0);
+  }
+
+  /** Selects or clears one egg group; species matching any selected group are kept. */
+  toggleEggGroup(group: string): void {
+    const selected = this.eggGroups();
+    this.eggGroups.set(
+      selected.includes(group) ? selected.filter((entry) => entry !== group) : [...selected, group],
+    );
     this.scheduleReload(0);
   }
 
@@ -184,6 +196,7 @@ export class PokedexStore {
     this.search.set('');
     this.types.set([]);
     this.typeMatch.set('any');
+    this.eggGroups.set([]);
     this.generations.set([]);
     this.statRanges.set([]);
     this.flags.set(EMPTY_FLAGS);
@@ -203,6 +216,7 @@ export class PokedexStore {
       search: this.search(),
       types: this.types(),
       typeMatch: this.typeMatch(),
+      eggGroups: this.eggGroups(),
       generations: this.generations(),
       statRanges: this.statRanges(),
       flags: this.flags(),
@@ -224,6 +238,7 @@ export class PokedexStore {
     this.search.set(preset.search);
     this.types.set(preset.types);
     this.typeMatch.set(preset.typeMatch);
+    this.eggGroups.set(preset.eggGroups ?? []);
     this.generations.set(preset.generations);
     this.statRanges.set(preset.statRanges);
     this.flags.set(preset.flags);
@@ -338,6 +353,7 @@ export class PokedexStore {
       search: this.search().trim() || null,
       types: this.types(),
       typeMatch: this.typeMatch(),
+      eggGroups: this.eggGroups(),
       generations: this.generations(),
       statRanges: this.statRanges(),
       flags: this.flags(),

@@ -102,6 +102,7 @@
       "flags": "Status",
       "baby": "Baby",
       "ultraBeast": "Ultra Beast",
+      "eggGroups": "Egg groups",
       "stats": "Stat ranges",
       "resetStats": "Reset stats"
     },
@@ -278,6 +279,23 @@
       "dark": "Dark",
       "steel": "Steel",
       "fairy": "Fairy"
+    },
+    "eggGroups": {
+      "monster": "Monster",
+      "water1": "Water 1",
+      "bug": "Bug",
+      "flying": "Flying",
+      "ground": "Field",
+      "fairy": "Fairy",
+      "plant": "Grass",
+      "humanshape": "Human-Like",
+      "water3": "Water 3",
+      "mineral": "Mineral",
+      "indeterminate": "Amorphous",
+      "water2": "Water 2",
+      "ditto": "Ditto",
+      "dragon": "Dragon",
+      "no-eggs": "Undiscovered"
     },
     "growthRates": {
       "fast": "Fast",

@@ -450,6 +450,38 @@ mod tests {
             .expect("list should succeed");
         assert_eq!(kanto.total, 151);
 
+        let monster = repository
+            .list_species(&SpeciesListQuery {
+                lang: "fr".to_owned(),
+                egg_groups: vec!["monster".to_owned()],
+                limit: 500,
+                ..SpeciesListQuery::default()
+            })
+            .expect("list should succeed");
+        assert!(monster.total > 0);
+        assert!(
+            monster
+                .items
+                .iter()
+                .any(|species| species.national_dex_number == 1)
+        );
+        assert!(
+            monster
+                .items
+                .iter()
+                .all(|species| species.national_dex_number != 10)
+        );
+
+        let monster_or_dragon = repository
+            .list_species(&SpeciesListQuery {
+                lang: "fr".to_owned(),
+                egg_groups: vec!["monster".to_owned(), "dragon".to_owned()],
+                limit: 500,
+                ..SpeciesListQuery::default()
+            })
+            .expect("list should succeed");
+        assert!(monster_or_dragon.total >= monster.total);
+
         let fire = repository
             .list_species(&SpeciesListQuery {
                 lang: "fr".to_owned(),
@@ -525,7 +557,7 @@ mod tests {
         assert_eq!(detail.form.ev_yield.bst(), 0);
         assert_eq!(detail.forms.len(), 1);
         assert!(detail.abilities.is_empty());
-        assert!(detail.egg_groups.is_empty());
+        assert_eq!(detail.egg_groups, vec!["monster", "dragon"]);
         assert!(detail.flavor_texts.is_empty());
         assert!(detail.evolutions.is_empty());
         assert_eq!(detail.effectiveness_generation_id, 9);

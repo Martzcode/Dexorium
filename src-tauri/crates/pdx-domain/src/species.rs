@@ -158,6 +158,10 @@ pub struct SpeciesListQuery {
     /// Type slugs to match. Empty means "no type filter".
     pub types: Vec<String>,
     pub type_match: TypeMatchMode,
+    /// Egg group slugs to match. Empty means "no egg group filter".
+    ///
+    /// Species matching any of the requested groups are kept.
+    pub egg_groups: Vec<String>,
     /// Generation identifiers to include. Empty means "all generations".
     pub generations: Vec<u16>,
     pub stat_ranges: Vec<StatRange>,
@@ -187,6 +191,7 @@ impl Default for SpeciesListQuery {
             search: None,
             types: Vec::new(),
             type_match: TypeMatchMode::Any,
+            egg_groups: Vec::new(),
             generations: Vec::new(),
             stat_ranges: Vec::new(),
             flags: SpeciesFlags::default(),
@@ -317,6 +322,7 @@ mod tests {
         assert_eq!(query.search.as_deref(), Some("dracaufeu"));
         assert_eq!(query.types, vec!["fire", "flying"]);
         assert_eq!(query.type_match, TypeMatchMode::Any);
+        assert!(query.egg_groups.is_empty());
         assert!(query.generations.is_empty());
         assert_eq!(query.offset, 0);
         assert_eq!(query.limit, 0);

@@ -58,6 +58,24 @@ const TYPES: &[(&str, i64)] = &[
     ("fairy", 6),
 ];
 
+const EGG_GROUPS: &[&str] = &[
+    "monster",
+    "water1",
+    "bug",
+    "flying",
+    "ground",
+    "fairy",
+    "plant",
+    "humanshape",
+    "water3",
+    "mineral",
+    "indeterminate",
+    "water2",
+    "ditto",
+    "dragon",
+    "no-eggs",
+];
+
 const LIST_FROM: &str = r"
 FROM species s
 JOIN pokemon_form f ON f.species_id = s.id AND f.is_default = 1
@@ -1057,6 +1075,20 @@ fn build_list_sql(query: &SpeciesListQuery) -> Option<ListSql> {
         }
     }
 
+    let egg_groups = dedupe_slugs(&query.egg_groups);
+    if !egg_groups.is_empty() {
+        where_clause.push_str(
+            " AND EXISTS (
+                SELECT 1
+                  FROM species_egg_group seg
+                  JOIN egg_group eg ON eg.id = seg.egg_group_id
+                 WHERE seg.species_id = s.id
+                   AND eg.slug IN ",
+        );
+        push_in_clause(&mut where_clause, &mut params, &egg_groups);
+        where_clause.push(')');
+    }
+
     let generations = dedupe_generations(&query.generations);
     if !generations.is_empty() {
         where_clause.push_str(" AND s.generation_id IN ");
@@ -1242,6 +1274,15 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
         type_ids.insert(*slug, id);
     }
 
+    for (index, slug) in EGG_GROUPS.iter().enumerate() {
+        transaction
+            .execute(
+                "INSERT INTO egg_group (id, slug) VALUES (?1, ?2)",
+                params![index as i64 + 1, slug],
+            )
+            .map_err(db_error)?;
+    }
+
     for entry in species {
         transaction
             .execute(
@@ -1293,6 +1334,25 @@ fn seed(connection: &mut Connection, species: &[FixtureSpecies]) -> Result<(), S
                 .execute(
                     "INSERT INTO form_type (form_id, slot, type_id) VALUES (?1, ?2, ?3)",
                     params![entry.id, index as i64 + 1, type_id],
+                )
+                .map_err(db_error)?;
+        }
+
+        for egg_group_slug in &entry.egg_groups {
+            let egg_group_id = EGG_GROUPS
+                .iter()
+                .position(|slug| slug == egg_group_slug)
+                .ok_or_else(|| {
+                    format!(
+                        "unknown egg group `{egg_group_slug}` in fixture species `{}`",
+                        entry.slug
+                    )
+                })?;
+
+            transaction
+                .execute(
+                    "INSERT INTO species_egg_group (species_id, egg_group_id) VALUES (?1, ?2)",
+                    params![entry.id, egg_group_id as i64 + 1],
                 )
                 .map_err(db_error)?;
         }
@@ -1561,6 +1621,8 @@ struct FixtureSpecies {
     generation: i64,
     names: FixtureNames,
     types: Vec<String>,
+    #[serde(default)]
+    egg_groups: Vec<String>,
     stats: FixtureStats,
     height_dm: u16,
     weight_hg: u16,

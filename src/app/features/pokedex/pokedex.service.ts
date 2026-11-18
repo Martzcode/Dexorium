@@ -103,6 +103,11 @@ function listFixture(
 ): SpeciesPage {
   const tokens = tokenize(query.search ?? '');
   const types = query.types.map((type) => type.toLowerCase());
+  const eggGroups = query.eggGroups.map((group) => group.toLowerCase());
+  // The fixture may predate the egg group filter: ignore it rather than
+  // returning an empty list when no fixture entry carries the data.
+  const filtersEggGroups =
+    eggGroups.length > 0 && species.some((entry) => (entry.eggGroups?.length ?? 0) > 0);
 
   const filtered = species.filter((entry) => {
     if (favoriteIds && !favoriteIds.has(entry.id)) {
@@ -114,6 +119,10 @@ function listFixture(
     }
 
     if (types.length > 0 && !matchesTypes(entry, types, query.typeMatch)) {
+      return false;
+    }
+
+    if (filtersEggGroups && !matchesEggGroups(entry, eggGroups)) {
       return false;
     }
 
@@ -160,6 +169,11 @@ function matchesTypes(
     default:
       return selected.some((type) => types.includes(type));
   }
+}
+
+function matchesEggGroups(species: FixtureSpecies, selected: readonly string[]): boolean {
+  const groups = (species.eggGroups ?? []).map((group) => group.toLowerCase());
+  return selected.some((group) => groups.includes(group));
 }
 
 function matchesStatRange(

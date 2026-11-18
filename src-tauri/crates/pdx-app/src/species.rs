@@ -43,6 +43,7 @@ pub const DEFAULT_PAGE_SIZE: u32 = 60;
 pub const MAX_PAGE_SIZE: u32 = 500;
 
 const MAX_FILTER_TYPES: usize = 18;
+const MAX_FILTER_EGG_GROUPS: usize = 15;
 const MAX_FILTER_GENERATIONS: usize = 9;
 const MAX_STAT_RANGES: usize = 16;
 const MAX_SORT_CRITERIA: usize = 3;
@@ -82,6 +83,7 @@ pub fn list_species(
         .filter(|value| !value.is_empty());
     query.lang = normalize_language(&query.lang).to_owned();
     query.types = sanitize_slugs(query.types, MAX_FILTER_TYPES);
+    query.egg_groups = sanitize_slugs(query.egg_groups, MAX_FILTER_EGG_GROUPS);
     query.generations = sanitize_generations(query.generations);
     query.stat_ranges.truncate(MAX_STAT_RANGES);
     query.favorite_ids = query.favorite_ids.map(sanitize_ids);
@@ -403,6 +405,11 @@ mod tests {
             ],
             type_match: TypeMatchMode::Exact,
             generations: vec![1, 1, 0, 9],
+            egg_groups: vec![
+                " Monster ".to_owned(),
+                "monster".to_owned(),
+                "Dragon".to_owned(),
+            ],
             sort: Vec::new(),
             offset: 10,
             limit: 10_000,
@@ -418,6 +425,7 @@ mod tests {
         assert!(captured.search.is_none());
         assert_eq!(captured.lang, "en");
         assert_eq!(captured.types, vec!["fire", "water"]);
+        assert_eq!(captured.egg_groups, vec!["monster", "dragon"]);
         assert_eq!(captured.generations, vec![1, 9]);
         assert_eq!(captured.offset, 10);
         assert_eq!(captured.limit, MAX_PAGE_SIZE);
