@@ -161,7 +161,12 @@ export class PokedexFilters {
         }
       } else if (token.startsWith('-')) {
         const flag = token.slice(1);
-        if (flag === 'legendary' || flag === 'mythical' || flag === 'baby' || flag === 'ultraBeast') {
+        if (
+          flag === 'legendary' ||
+          flag === 'mythical' ||
+          flag === 'baby' ||
+          flag === 'ultraBeast'
+        ) {
           this.store.toggleFlag(flag as keyof SpeciesFlags);
         }
       } else if (/^(hp|atk|def|spa|spd|spe|bst)[><=]+\d+$/i.test(token)) {

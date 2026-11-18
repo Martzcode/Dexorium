@@ -1,4 +1,5 @@
 use crate::state::AppState;
+use std::process::Command;
 use tauri::State;
 
 /// Runs a read-only SQL query against the reference database.

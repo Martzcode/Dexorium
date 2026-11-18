@@ -1599,7 +1599,7 @@ impl SqliteSpeciesRepository {
 
         let mut statement = self.connection.prepare(cleaned).map_err(db_error)?;
         let column_count = statement.column_count();
-        let columns: Vec<String> = statement.column_names().iter().map(|name| (*name).to_owned()).collect();
+        let columns: Vec<String> = statement.column_names().map(|name| name.to_owned()).collect();
 
         let mut rows = statement.query([]).map_err(db_error)?;
         let mut result_rows = Vec::new();

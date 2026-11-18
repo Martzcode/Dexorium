@@ -29,7 +29,9 @@ export class SqlConsolePage {
     this.running.set(true);
     this.error.set(null);
     try {
-      const result = await invokeCommand<[string[], string[][]]>('run_sql_query', { sql: this.sql() });
+      const result = await invokeCommand<[string[], string[][]]>('run_sql_query', {
+        sql: this.sql(),
+      });
       this.columns.set(result[0]);
       this.rows.set(result[1]);
     } catch (error) {
