@@ -6,7 +6,9 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppIcon } from '../../shared/icon/app-icon';
 import { PokemonSprite } from '../../shared/pokemon-sprite/pokemon-sprite';
+import { CatalogService } from '../catalog/catalog.service';
 import { CollectionService } from '../../core/collection/collection.service';
+import type { EncounterSummary } from '../catalog/catalog.models';
 import { formatDexNumber, typeBadgeClass } from './pokedex-format';
 import { SpeciesLearnset } from './species-learnset';
 import type {
@@ -58,11 +60,13 @@ const GENDER_KEYS: Readonly<Record<string, string>> = {
 export class SpeciesDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly pokedex = inject(PokedexService);
+private readonly catalog = inject(CatalogService);
   private readonly transloco = inject(TranslocoService);
 
   protected readonly collection = inject(CollectionService);
 
   protected readonly species = signal<PokemonDetail | null>(null);
+protected readonly encounters = signal<readonly EncounterSummary[]>([]);
   protected readonly state = signal<LoadState>('loading');
 
   protected readonly formatDexNumber = formatDexNumber;
@@ -438,6 +442,18 @@ export class SpeciesDetailPage {
 
       this.species.set(species);
       this.state.set(species ? 'ready' : 'notFound');
+
+      if (species) {
+        this.catalog
+          .speciesEncounters(species.speciesId, language)
+          .then((encounters) => {
+            if (requestId !== this.requestId) return;
+            this.encounters.set(encounters);
+          })
+          .catch(() => {});
+      } else {
+        this.encounters.set([]);
+      }
     } catch {
       if (requestId !== this.requestId) {
         return;
