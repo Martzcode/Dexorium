@@ -551,6 +551,9 @@
                               class="m-0 font-mono text-[0.64rem] tracking-[0.04em] text-ink-muted"
                             >
                               {{ slugLabel('versions', entry.versionSlug) }}
+                              @if (entry.lang === 'en') {
+                                <span class="ml-1 uppercase">EN</span>
+                              }
                             </p>
                             <p class="m-0 mt-1 text-sm leading-relaxed text-ink-soft">
                               {{ entry.text }}

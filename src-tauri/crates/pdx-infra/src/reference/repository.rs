@@ -702,16 +702,19 @@ fn load_flavor_texts(
 ) -> Result<Vec<FlavorTextEntry>, String> {
     let mut statement = connection
         .prepare(
-            "SELECT ft.version_id,
+            "SELECT gv.id,
                     gv.slug,
                     vg.generation_id,
-                    ft.text
-               FROM flavor_text ft
-               JOIN game_version gv ON gv.id = ft.version_id
+                    COALESCE(fr.text, en.text),
+                    CASE WHEN fr.text IS NOT NULL THEN ?2 ELSE 'en' END
+               FROM game_version gv
                JOIN version_group vg ON vg.id = gv.version_group_id
-              WHERE ft.species_id = ?1
-                AND ft.lang = ?2
-              ORDER BY vg.generation_id DESC, ft.version_id DESC",
+               LEFT JOIN flavor_text fr
+                      ON fr.species_id = ?1 AND fr.version_id = gv.id AND fr.lang = ?2
+               LEFT JOIN flavor_text en
+                      ON en.species_id = ?1 AND en.version_id = gv.id AND en.lang = 'en'
+              WHERE fr.text IS NOT NULL OR en.text IS NOT NULL
+              ORDER BY vg.generation_id DESC, gv.id DESC",
         )
         .map_err(db_error)?;
 
@@ -722,6 +725,7 @@ fn load_flavor_texts(
                 version_slug: row.get(1)?,
                 generation_id: get_u16(row, 2)?,
                 text: row.get(3)?,
+                lang: row.get(4)?,
             })
         })
         .map_err(db_error)?

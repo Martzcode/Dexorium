@@ -162,6 +162,7 @@ export interface FlavorTextEntry {
   readonly versionSlug: string;
   readonly generationId: number;
   readonly text: string;
+  readonly lang: string;
 }
 
 /** Defensive multiplier of one attacking type against the selected form. */

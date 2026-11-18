@@ -43,6 +43,7 @@ pub struct FlavorTextEntry {
     pub version_slug: String,
     pub generation_id: u16,
     pub text: String,
+    pub lang: String,
 }
 
 /// Defensive multiplier of one attacking type against the selected form.
