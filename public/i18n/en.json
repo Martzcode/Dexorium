@@ -110,6 +110,7 @@
       "abilityPlaceholder": "ability slug",
       "moveLearned": "Move learned",
       "moveLearnedPlaceholder": "move slug",
+      "nature": "Nature",
       "queryLanguage": "Expert query",
       "apply": "Apply",
       "stats": "Stat ranges",
@@ -573,6 +574,13 @@
     "statCalc": {
       "title": "Stat calculator"
     },
+    "level": "Level",
+    "stat": "Stat",
+    "base": "Base",
+    "final": "Final",
+    "neutralNature": "Neutral nature",
+    "increased": "Increases",
+    "decreased": "Decreases",
     "types": {
       "title": "Type chart",
       "description": "Effectiveness of every attacking type against every defending type, for the selected generation.",

@@ -1,58 +1,91 @@
 <div class="mx-auto max-w-4xl px-4 py-6">
   <h1 class="mb-4 text-2xl font-bold text-ink">{{ 'tools.competitive.title' | transloco }}</h1>
 
-  <section class="mb-6 rounded-xl border border-line bg-panel p-4">
+  <section class="rounded-xl border border-line bg-panel p-4">
     <h2 class="mb-3 font-semibold text-ink">{{ 'tools.statCalc.title' | transloco }}</h2>
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
+
+    <div class="mb-4 flex flex-wrap items-end gap-4">
       <label class="flex flex-col text-sm text-ink-soft">
-        Base
+        {{ 'tools.level' | transloco }}
         <input
-          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          class="mt-1 w-24 rounded border border-line bg-canvas px-2 py-1 text-ink"
           type="number"
-          [value]="base()"
-          (input)="base.set(+$any($event.target).value)"
-        />
-      </label>
-      <label class="flex flex-col text-sm text-ink-soft">
-        IV
-        <input
-          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
-          type="number"
-          [value]="iv()"
-          (input)="iv.set(+$any($event.target).value)"
-        />
-      </label>
-      <label class="flex flex-col text-sm text-ink-soft">
-        EV
-        <input
-          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
-          type="number"
-          [value]="ev()"
-          (input)="ev.set(+$any($event.target).value)"
-        />
-      </label>
-      <label class="flex flex-col text-sm text-ink-soft">
-        Level
-        <input
-          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
-          type="number"
+          min="1"
+          max="100"
           [value]="level()"
-          (input)="level.set(+$any($event.target).value)"
+          (input)="onLevel($any($event.target).value)"
         />
       </label>
+
       <label class="flex flex-col text-sm text-ink-soft">
-        Nature
+        {{ 'pokedex.filters.nature' | transloco }}
         <select
-          class="rounded border border-line bg-canvas px-2 py-1 text-ink"
+          class="mt-1 rounded border border-line bg-canvas px-2 py-1 text-ink"
           [value]="nature()"
+          [title]="natureDetail()"
           (change)="nature.set($any($event.target).value)"
         >
-          @for (n of natures(); track n.slug) {
-            <option [value]="n.slug">{{ n.name }}</option>
+          @for (nature of natures(); track nature.slug) {
+            <option [value]="nature.slug" [title]="natureDetail()">{{ nature.name }}</option>
           }
         </select>
       </label>
+
+      <span
+        class="rounded-full border border-line bg-panel-muted px-2.5 py-1 font-mono text-[0.65rem] text-ink-soft"
+        [title]="natureDetail()"
+      >
+        {{ natureDetail() }}
+      </span>
     </div>
-    <p class="mt-3 text-lg font-bold text-ink">{{ finalStat() }}</p>
+
+    <table class="w-full text-sm">
+      <thead class="text-ink-soft">
+        <tr>
+          <th class="text-left">{{ 'tools.stat' | transloco }}</th>
+          <th class="text-left">{{ 'tools.base' | transloco }}</th>
+          <th class="text-left">IV</th>
+          <th class="text-left">EV</th>
+          <th class="text-left">{{ 'tools.final' | transloco }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (stat of results(); track stat.key; let index = $index) {
+          <tr class="border-t border-line">
+            <td class="py-1.5 font-semibold text-ink">{{ stat.labelKey | transloco }}</td>
+            <td class="py-1.5">
+              <input
+                class="w-16 rounded border border-line bg-canvas px-2 py-1 text-ink"
+                type="number"
+                min="0"
+                [value]="stat.base"
+                (input)="setField(index, 'base', $any($event.target).value)"
+              />
+            </td>
+            <td class="py-1.5">
+              <input
+                class="w-16 rounded border border-line bg-canvas px-2 py-1 text-ink"
+                type="number"
+                min="0"
+                max="31"
+                [value]="stat.iv"
+                (input)="setField(index, 'iv', $any($event.target).value)"
+              />
+            </td>
+            <td class="py-1.5">
+              <input
+                class="w-16 rounded border border-line bg-canvas px-2 py-1 text-ink"
+                type="number"
+                min="0"
+                max="252"
+                [value]="stat.ev"
+                (input)="setField(index, 'ev', $any($event.target).value)"
+              />
+            </td>
+            <td class="py-1.5 font-mono font-bold text-ink">{{ stat.value }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
   </section>
 </div>

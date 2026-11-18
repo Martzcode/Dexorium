@@ -110,6 +110,7 @@
       "abilityPlaceholder": "slug du talent",
       "moveLearned": "Attaque apprise",
       "moveLearnedPlaceholder": "slug de l'attaque",
+      "nature": "Nature",
       "queryLanguage": "Requête experte",
       "apply": "Appliquer",
       "stats": "Plages de statistiques",
@@ -573,6 +574,13 @@
     "statCalc": {
       "title": "Calculateur de stats"
     },
+    "level": "Niveau",
+    "stat": "Statistique",
+    "base": "Base",
+    "final": "Finale",
+    "neutralNature": "Nature neutre",
+    "increased": "Augmente",
+    "decreased": "Diminue",
     "types": {
       "title": "Table des types",
       "description": "Efficacité de chaque type attaquant contre chaque type défenseur, pour la génération sélectionnée.",
