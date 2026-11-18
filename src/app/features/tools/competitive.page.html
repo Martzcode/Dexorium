@@ -26,7 +26,7 @@
           (change)="nature.set($any($event.target).value)"
         >
           @for (nature of natures(); track nature.slug) {
-            <option [value]="nature.slug" [title]="natureDetail()">{{ nature.name }}</option>
+            <option [value]="nature.slug" [title]="natureDetail(nature)">{{ nature.name }}</option>
           }
         </select>
       </label>

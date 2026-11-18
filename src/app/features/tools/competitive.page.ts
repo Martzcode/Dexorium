@@ -64,15 +64,15 @@ export class CompetitivePage {
     () => this.natures().find((nature) => nature.slug === this.nature()) ?? null,
   );
 
-  protected readonly natureDetail = computed(() => {
-    const nature = this.selectedNature();
-    if (!nature || (!nature.increasedStatSlug && !nature.decreasedStatSlug)) {
+  protected natureDetail(nature: NatureSummary | null = null): string {
+    const selected = nature ?? this.selectedNature();
+    if (!selected || (!selected.increasedStatSlug && !selected.decreasedStatSlug)) {
       return this.transloco.translate('tools.neutralNature');
     }
-    const increased = nature.increasedStatSlug ? this.statLabel(nature.increasedStatSlug) : '—';
-    const decreased = nature.decreasedStatSlug ? this.statLabel(nature.decreasedStatSlug) : '—';
+    const increased = selected.increasedStatSlug ? this.statLabel(selected.increasedStatSlug) : '-';
+    const decreased = selected.decreasedStatSlug ? this.statLabel(selected.decreasedStatSlug) : '-';
     return `${this.transloco.translate('tools.increased')} ${increased} · ${this.transloco.translate('tools.decreased')} ${decreased}`;
-  });
+  }
 
   protected readonly results = computed(() => {
     const level = Math.max(1, Math.min(100, this.level()));
