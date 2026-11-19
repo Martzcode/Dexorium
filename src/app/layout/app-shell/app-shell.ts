@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AppIcon, type IconName } from '../../shared/icon/app-icon';
+import { BrandMark } from '../../shared/brand-mark/brand-mark';
 import { CollectionService } from '../../core/collection/collection.service';
 import { CommandPalette } from '../command-palette/command-palette';
 import { CommandPaletteService } from '../command-palette/command-palette.service';
@@ -24,6 +25,7 @@ interface NavItem {
     RouterLinkActive,
     TranslocoPipe,
     AppIcon,
+    BrandMark,
     AppTitlebar,
     CommandPalette,
   ],

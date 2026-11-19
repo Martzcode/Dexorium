@@ -6,10 +6,11 @@ import { LanguageService } from '../../core/i18n/language.service';
 import { isTauriRuntime } from '../../core/ipc/tauri-ipc';
 import { ThemeService } from '../../core/theme/theme.service';
 import { AppIcon } from '../../shared/icon/app-icon';
+import { BrandMark } from '../../shared/brand-mark/brand-mark';
 
 @Component({
   selector: 'app-titlebar',
-  imports: [TranslocoPipe, AppIcon],
+  imports: [TranslocoPipe, AppIcon, BrandMark],
   templateUrl: './app-titlebar.html',
 })
 export class AppTitlebar {

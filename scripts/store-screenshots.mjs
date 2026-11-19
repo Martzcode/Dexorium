@@ -193,12 +193,15 @@ async function main() {
   });
 
   // Lock the language and theme used by every shot, then let the app boot once
-  // so the next navigations pick the stored preferences up.
+  // so the next navigations pick the stored preferences up. The sprite folder is
+  // cleared on purpose: Store screenshots must only show the original
+  // placeholders, never third-party artwork from an optional media pack.
   await evaluate(
     client,
     `(() => {
       localStorage.setItem('dexorium.language', ${JSON.stringify(shots[0].language)});
       localStorage.setItem('dexorium.theme', ${JSON.stringify(shots[0].theme)});
+      localStorage.removeItem('dexorium.sprites.folder');
       return true;
     })()`,
   );

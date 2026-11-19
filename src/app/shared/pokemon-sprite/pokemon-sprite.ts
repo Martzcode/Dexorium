@@ -48,14 +48,11 @@ const EXTENSIONS = ['.png', '.jpg', '.jpeg', '.svg'] as const;
           (error)="onImageError()"
         />
       } @else {
-        <span class="absolute inset-x-0 top-1/2 h-px bg-black/30"></span>
-        <span class="absolute inset-[18%] rounded-full border border-white/25"></span>
+        <span class="absolute inset-[12%] rounded-full border border-dashed border-white/35"></span>
+        <span class="absolute inset-[28%] rounded-full border border-white/15"></span>
         <span
-          class="absolute left-1/2 top-1/2 h-[18%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/50 bg-black/20"
-        ></span>
-        <span
-          class="relative z-10 mt-[38%] font-mono font-bold leading-none text-white/95"
-          [style.font-size.px]="size() * 0.2"
+          class="relative z-10 font-mono font-bold leading-none tracking-[-0.02em] text-white/95"
+          [style.font-size.px]="size() * 0.22"
         >
           {{ dexLabel() }}
         </span>

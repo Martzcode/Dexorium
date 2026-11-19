@@ -17,7 +17,6 @@
 
   --accent: #e8402a;
   --accent-soft: #ff8a65;
-  --orb-border: #1b1d26;
 
   --bg: #0e1016;
   --surface: #141823;
@@ -37,7 +36,6 @@
 [data-theme='light'] {
   --accent: #d92d1b;
   --accent-soft: #ff7a59;
-  --orb-border: #24262f;
 
   --bg: #f6f6fa;
   --surface: #ffffff;

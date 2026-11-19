@@ -8,12 +8,7 @@
       aria-label="Dexorium home"
       (click)="closeMobileNav()"
     >
-      <span
-        class="grid size-[38px] place-items-center overflow-hidden rounded-full border-2 border-orb bg-[linear-gradient(180deg,var(--accent)_0_46%,var(--orb-border)_46%_54%,#eef0f6_54%)] shadow-[0_8px_20px_color-mix(in_srgb,var(--accent)_22%,transparent)]"
-        aria-hidden="true"
-      >
-        <span class="size-3 rounded-full border-4 border-orb bg-[#eef0f6]"></span>
-      </span>
+      <app-brand-mark class="shrink-0" [size]="38" />
       <span class="flex min-w-0 flex-col">
         <strong class="text-base tracking-[-0.02em]">Dexorium</strong>
         <small
